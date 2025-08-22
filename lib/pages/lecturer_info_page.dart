@@ -92,7 +92,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
           children: [
         
             HeaderText(
-              '${widget.lecturer.name!}\'s profile',
+              '${widget.lecturer.name}\'s profile',
               fontSize: 25,
             ),
 

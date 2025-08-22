@@ -10,7 +10,11 @@ import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/course.dart';
 import 'package:selc_admin/model/question.dart';
+import 'package:selc_admin/pages/evaluations/suggestions_table.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
+
+import '../../components/cells.dart';
+import 'category_remarks_table.dart';
 
 
 class EvaluationPage extends StatefulWidget {
@@ -31,7 +35,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
   List<CourseEvaluationSummary> evalSummary = [];
   List<CategoryRemark> categoryRemarks = [];
-  List<String> evaluationSuggestions = [];
+  List<EvaluationSuggestion> evaluationSuggestions = [];
 
   bool loading = false;
 
@@ -154,7 +158,11 @@ class _EvaluationPageState extends State<EvaluationPage> {
                         children: [
                           HeaderText('Lecturer rating for this course'),
                           const SizedBox(height: 8,),
-                          buildCourseInfoField(title: 'Rating', detail: widget.classCourse.lecturerRating.toStringAsFixed(3))
+
+                          DetailContainer(
+                              title: 'Rating',
+                              detail: formatDecimal(widget.classCourse.lecturerRating)
+                          )
                         ],
                       )
                     ),
@@ -180,15 +188,18 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                         children: [
 
-                          HeaderText('Coure Remark'),
+                          HeaderText('Course Remark'),
 
                           const SizedBox(height: 12,),
 
-                          buildCourseInfoField(title: 'Score', detail: widget.classCourse.grandMeanScore.toString()),
+                          DetailContainer(
+                              title: 'Score',
+                              detail: formatDecimal(widget.classCourse.grandMeanScore)
+                          ),
 
                           const SizedBox(height: 8,),
 
-                          buildCourseInfoField(title: 'Remark', detail: widget.classCourse.remark!),
+                          DetailContainer(title: 'Remark', detail: widget.classCourse.remark!),
 
                         ],
                       ),
@@ -250,13 +261,18 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                         Expanded(
                           child: PageTransitionSwitcher(
+
                             duration: Duration(milliseconds: 200),
+
                             transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
                               animation: animation,
                               secondaryAnimation: secondaryAnimation,
                               child: child,
                             ),
-                            child: selectedTab == 0 ? buildQuestionnaireTable() : selectedTab == 1 ? buildCategoryRemarksSection() : buildSuggestionsSection()
+
+                            child: selectedTab == 0 ? buildQuestionnaireTable() :
+                                    selectedTab == 1 ? CategoryRemarksTable(categoryRemarks: categoryRemarks) :
+                                    SuggestionsTable(suggestions: evaluationSuggestions)
                           ),
                         )
 
@@ -278,7 +294,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
 
-
+  //course information section
 
   Widget buildClassCourseInfoSection(){
     return Card(  
@@ -303,21 +319,21 @@ class _EvaluationPageState extends State<EvaluationPage> {
           children: [
 
             HeaderText(
-              'Class Course Information'
+              'Course Information'
             ),
 
 
             const SizedBox(height: 8),
 
-            buildCourseInfoField(title: 'Course', detail: course!.toString()),
+            DetailContainer(title: 'Course', detail: course!.toString()),
 
             const SizedBox(height: 8,), 
 
-            buildCourseInfoField(title: 'Lecturer', detail: widget.classCourse.lecturer!.name!),
+            DetailContainer(title: 'Lecturer', detail: widget.classCourse.lecturer!.name!),
 
             const SizedBox(height: 8,),
 
-            buildCourseInfoField(title: 'Department', detail: widget.classCourse.lecturer!.department!),
+            DetailContainer(title: 'Department', detail: widget.classCourse.lecturer!.department!),
 
             const SizedBox(height: 8,),
 
@@ -325,13 +341,13 @@ class _EvaluationPageState extends State<EvaluationPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
-                  child: buildCourseInfoField(title: 'Year', detail: widget.classCourse.year!.toString()),
+                  child: DetailContainer(title: 'Year', detail: widget.classCourse.year!.toString()),
                 ),
                 
                 const SizedBox(width: 8,),
 
                 Expanded(
-                  child: buildCourseInfoField(title: 'Semester', detail: widget.classCourse.semester!.toString()),
+                  child: DetailContainer(title: 'Semester', detail: widget.classCourse.semester!.toString()),
                 )
               ],
             )
@@ -345,39 +361,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
 
-  Widget buildCourseInfoField({required String title, required String detail}){
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 1.5,
-          color: Colors.black38
-        ),
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12)
-      ),
-
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-
-        children: [
-
-          CustomText(  
-            title,
-            maxLines: 1,
-            fontWeight: FontWeight.w600,
-          ),
-
-          const SizedBox(height: 3,),
-
-          CustomText(detail)
-        ],
-      ),
-    );
-  }
 
 
 
@@ -599,105 +582,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
               //separatorBuilder: (_, index) => Divider(),
 
-              itemBuilder: (_, index){
-                
-                CourseEvaluationSummary summary = evalSummary[index];
-
-                QuestionAnswerType answerType = summary.answerType;
-
-                //but actually is Map<String, int>
-                Map<String, dynamic> answerSummary = summary.answerSummary!;
-
-                List<CustomPieSection> pieSections = [];
-
-
-                String statSentence = '';
-
-                for(int i=0; i < answerType.possibleValues.length; i++){
-                  String possibleValue = answerType.possibleValues[i];
-                  int count = 0;
-
-                  if(answerSummary.containsKey(possibleValue)) count = answerSummary[possibleValue];
-
-                  //todo: create a piechart section
-                  final pieSection = CustomPieSection(title:possibleValue, value: count.toDouble(),);
-                  pieSections.add(pieSection);
-
-                  //todo: forming a sentence with the data.
-                  statSentence += '${answerType.possibleValues[i]}: $count';
-
-                  if(i != answerType.possibleValues.length) statSentence += '\n';
-                }
-
-                return Container(
-                  decoration: BoxDecoration(
-                    border: Border(  
-                      left: BorderSide.none,
-                      top: BorderSide.none,
-                      right: BorderSide.none,
-                      bottom: BorderSide(  
-                        color: Colors.black38,
-                        width: 1
-                      )
-                    )
-                  ),
-                  child: Row(  
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                                  
-                      Expanded( 
-                        flex: 2, 
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: CustomText(  
-                            summary.question
-                          ),
-                        ),
-                      ), 
-                  
-                  
-                      buildVerticalDivider(),
-                  
-                  
-                      Expanded(  
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: CustomText(  
-                            answerType.typeString
-                          )
-                        ),
-                      ),
-                  
-                  
-                      buildVerticalDivider(),
-                                  
-                                  
-                      Expanded(  
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: CustomText(  
-                            statSentence
-                          ),
-                        ),
-                      ),
-                  
-                  
-                      buildVerticalDivider(),
-                                  
-                                  
-                      Expanded(
-                        child: CustomPieChart(
-                          //width: 90,
-                          height: 250,
-                          pieSections: pieSections,
-                        ),
-                      )
-                                  
-                    ],
-                  ),
-                );
-              },
+              itemBuilder: (_, index) => buildQuestionnaireTableRow(index)
             ),
           ),                         
           
@@ -707,190 +592,154 @@ class _EvaluationPageState extends State<EvaluationPage> {
   }
 
 
-  
-
-  //todo: question remarks table.
-  Widget buildCategoryRemarksSection(){
-    return Container(
-      padding: const EdgeInsets.all(8),
-      width: double.infinity,
-      height: double.infinity,
-
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.shade200
-      ),
-
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-
-        children: [
-
-          HeaderText(  
-            'Category Remarks',
-            fontSize: 15
-          ),
-
-
-          const SizedBox(height: 8,),
-
-          //todo: category remarks table headers
-          Container(  
-            padding: const EdgeInsets.all(8),
-            width: double.infinity,
-
-            decoration: BoxDecoration(  
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(12)
-            ),
-
-            child: Row(  
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-
-              children: [
-
-                Expanded( 
-                  flex: 2, 
-                  child: CustomText(  
-                    'Question Category',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
 
 
 
-                Expanded(  
-                  child: CustomText(  
-                    'Avg. Score',
-                    fontWeight: FontWeight.w600,
-                    textAlignment: TextAlign.center,
-                  ),
-                ),
+  Widget buildQuestionnaireTableRow(int index){
+
+    CourseEvaluationSummary summary = evalSummary[index];
+
+    QuestionAnswerType answerType = summary.answerType;
+
+    //but actually is Map<String, int>
+    Map<String, dynamic> answerSummary = summary.answerSummary!;
+
+    List<CustomPieSection> pieSections = [];
+
+    List<Row> statRows = [];
 
 
-                Expanded(  
-                  flex: 1,
-                  child: CustomText(
-                    'Remarks',
-                    fontWeight: FontWeight.w600,
-                    textAlignment: TextAlign.center,
-                  ),
-                )
-              ],
-            ),
-          ),
+
+    for(int i=0; i < answerType.possibleValues.length; i++){
+
+      String possibleValue = answerType.possibleValues[i];
+
+      int count = 0;
+
+      if(answerSummary.containsKey(possibleValue)) count = answerSummary[possibleValue];
 
 
-          //todo: category remarks table rows.
-          Expanded(
-            flex: 2,
-            child: ListView.separated( 
-              itemCount: categoryRemarks.length, 
-              separatorBuilder: (_, index) => Divider(),
-            
-              itemBuilder: (_, index) {
-                CategoryRemark remark = categoryRemarks[index];
-                return buildCategoryReportRow(
-                  remark.categoryName,
-                  remark.avgScore.toStringAsFixed(3),
-                  remark.remark
-                );
-              }
-            ),
+      statRows.add(
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomText(possibleValue),
+            Spacer(),
+            CustomText(count.toString())
+          ]
+        )
+      );
+
+      //todo: create a piechart section
+      final pieSection = CustomPieSection(title:possibleValue, value: count.toDouble(),);
+      pieSections.add(pieSection);
+
+    }
+
+
+    if(answerSummary.containsKey("No Answer")){
+
+      statRows.add(
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
+            children: [
+              CustomText("No Answer"),
+              Spacer(),
+              CustomText(answerSummary['No Answer'].toString())
+            ],
+
           )
-        ],
+      );
+
+
+      pieSections.add(
+          CustomPieSection(
+              title: "No Answer", value: answerSummary["No Answer"].toDouble())
+      );
+
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          left: BorderSide.none,
+          top: BorderSide.none,
+          right: BorderSide.none,
+          bottom: BorderSide(
+              color: Colors.black38,
+              width: 1
+          )
+        )
       ),
-    );
-  }
 
-
-
-
-  Widget buildCategoryReportRow(String categoryName, String avgScore,  String remarks){
-    return Padding(  
-      padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
 
-          Expanded(  
+          Expanded(
             flex: 2,
-            child: CustomText(  
-              categoryName
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: CustomText(
+                  summary.question
+              ),
             ),
           ),
+
+
+          buildVerticalDivider(),
 
 
           Expanded(
-            child: CustomText(
-              avgScore,
-              textAlignment: TextAlign.center,
+            child: Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: CustomText(
+                    answerType.typeString
+                )
             ),
           ),
 
 
-          //todo: perform the calculations and put them here.
-          Expanded(  
-            child: CustomText(  
-              remarks,
-              textAlignment: TextAlign.center,
+          buildVerticalDivider(),
+
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: statRows
+              )
             ),
-          )
-        ],
-      ),
-    );
-  }
-
-
-
-
-
-  Widget buildSuggestionsSection(){
-    return Container(
-      padding: const EdgeInsets.all(8),
-      width: double.infinity,
-
-      decoration: BoxDecoration( 
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12)
-      ),
-
-
-
-      child: Column(  
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-          HeaderText(  
-            'Evaluation suggestions',
-            fontSize: 18,
           ),
 
-          const SizedBox(height: 8),
+
+          buildVerticalDivider(),
 
 
-          Expanded(  
-            child: ListView.separated(
-              itemCount: evaluationSuggestions.length,
-              separatorBuilder: (_, index) => Divider(),
-              itemBuilder: (_, index) => ListTile(
-                leading: Icon(Icons.chat_bubble_outline_rounded, color: Colors.green.shade300),
-                title: CustomText(  
-                  evaluationSuggestions[index]
-                ),
-              ),
+          Expanded(
+            child: CustomPieChart(
+              //width: 90,
+              height: 250,
+              pieSections: pieSections,
             ),
           )
+
         ],
-      )
+      ),
     );
+
   }
+
+
 
 
 

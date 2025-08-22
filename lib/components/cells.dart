@@ -389,19 +389,33 @@ class ClickableMenuItem extends StatelessWidget {
 class RatingStars extends StatelessWidget {
 
   final double rating;
+  final bool transparentBackground;
+  final bool zeroPadding;
+  final double spacing;
 
-  const RatingStars({super.key, required this.rating});
+  const RatingStars({
+    super.key,
+    required this.rating,
+    this.transparentBackground = false,
+    this.zeroPadding = false,
+    this.spacing = 5
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      padding: zeroPadding ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+
       decoration: BoxDecoration(  
-        color: Colors.grey.shade100,
+        color: transparentBackground ? Colors.transparent : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(12)
       ),
-      child: Wrap( 
-        spacing: 5,
+
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: spacing,
         children: List<Widget>.generate(5,  (index) => buildStar(index, rating)),
       )
     );

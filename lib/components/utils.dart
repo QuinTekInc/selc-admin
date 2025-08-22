@@ -55,3 +55,16 @@ enum QuestionAnswerType{
   @override String toString() => typeString;
   
 }
+
+
+
+String formatDecimal(double number){
+
+  int numberInt = number.toInt();
+
+  if((number - numberInt).abs() == 0){
+    return numberInt.toString();
+  }
+
+  return number.toStringAsFixed(2);
+}

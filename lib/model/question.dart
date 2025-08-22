@@ -29,11 +29,11 @@ class Question{
 
 class Category extends Equatable{
 
-  int? categoryId;
-  String? categoryName;
+  int categoryId;
+  String categoryName;
 
 
-  Category({this.categoryId, this.categoryName});
+  Category({required this.categoryId, required this.categoryName});
 
 
   factory Category.fromJson(Map<String, dynamic> jsonMap){
@@ -75,6 +75,25 @@ class CategoryRemark{
       categoryName: jsonMap['category'],
       avgScore: jsonMap['average_score'].toDouble() ?? 0,
       remark: jsonMap['remark']
+    );
+  }
+
+}
+
+
+
+class EvaluationSuggestion{
+
+  final double rating;
+  final String suggestion;
+
+  EvaluationSuggestion({required this.rating, required this.suggestion});
+
+
+  factory EvaluationSuggestion.fromJson(Map<String, dynamic> jsonMap){
+    return EvaluationSuggestion(
+      rating: jsonMap['rating'].toDouble(),
+      suggestion: jsonMap['suggestion']
     );
   }
 

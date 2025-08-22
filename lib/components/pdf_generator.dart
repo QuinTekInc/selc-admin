@@ -51,6 +51,8 @@ class CourseReportGenerator{
 
 
 
+
+
   static pw.Widget buildHeader(Uint8List logoImageData) {
 
     final memoryImage =  pw.MemoryImage(logoImageData);
@@ -216,6 +218,12 @@ class CourseReportGenerator{
     );
   }
 
-  
 
 }
+
+
+
+
+
+
+
