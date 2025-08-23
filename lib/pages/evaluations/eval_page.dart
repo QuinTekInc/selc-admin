@@ -14,6 +14,8 @@ import 'package:selc_admin/pages/evaluations/suggestions_table.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 import '../../components/cells.dart';
+import '../../components/report_view.dart';
+import '../../providers/page_provider.dart';
 import 'category_remarks_table.dart';
 
 
@@ -610,13 +612,9 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
 
-    for(int i=0; i < answerType.possibleValues.length; i++){
+    for(String answer in answerSummary.keys){
 
-      String possibleValue = answerType.possibleValues[i];
-
-      int count = 0;
-
-      if(answerSummary.containsKey(possibleValue)) count = answerSummary[possibleValue];
+      int answerCount = answerSummary[answer];
 
 
       statRows.add(
@@ -625,46 +623,47 @@ class _EvaluationPageState extends State<EvaluationPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CustomText(possibleValue),
+            CustomText(answer),
             Spacer(),
-            CustomText(count.toString())
+            CustomText(answerCount.toString())
           ]
         )
       );
 
       //todo: create a piechart section
-      final pieSection = CustomPieSection(title:possibleValue, value: count.toDouble(),);
+      final pieSection = CustomPieSection(title:answer, value: answerCount.toDouble(),);
       pieSections.add(pieSection);
 
     }
 
 
-    if(answerSummary.containsKey("No Answer")){
-
-      statRows.add(
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-
-            children: [
-              CustomText("No Answer"),
-              Spacer(),
-              CustomText(answerSummary['No Answer'].toString())
-            ],
-
-          )
-      );
-
-
-      pieSections.add(
-          CustomPieSection(
-              title: "No Answer", value: answerSummary["No Answer"].toDouble())
-      );
-
-    }
+    // if(answerSummary.containsKey("No Answer")){
+    //
+    //   statRows.add(
+    //       Row(
+    //         mainAxisSize: MainAxisSize.min,
+    //         mainAxisAlignment: MainAxisAlignment.start,
+    //         crossAxisAlignment: CrossAxisAlignment.center,
+    //
+    //         children: [
+    //           CustomText("No Answer"),
+    //           Spacer(),
+    //           CustomText(answerSummary['No Answer'].toString())
+    //         ],
+    //
+    //       )
+    //   );
+    //
+    //
+    //   pieSections.add(
+    //       CustomPieSection(
+    //           title: "No Answer", value: answerSummary["No Answer"].toDouble())
+    //   );
+    //
+    // }
 
     return Container(
+
       decoration: BoxDecoration(
         border: Border(
           left: BorderSide.none,
@@ -693,7 +692,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
           ),
 
 
-          buildVerticalDivider(),
+          CustomVerticalDivider(color: Colors.black38),
 
 
           Expanded(
@@ -706,7 +705,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
           ),
 
 
-          buildVerticalDivider(),
+          CustomVerticalDivider(color: Colors.black38),
 
 
           Expanded(
@@ -722,7 +721,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
           ),
 
 
-          buildVerticalDivider(),
+          CustomVerticalDivider(color: Colors.black38,),
 
 
           Expanded(
@@ -743,15 +742,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
 
-
-  Widget buildVerticalDivider() => Container(
-    height: 250,
-    width: 1,
-    color: Colors.black38,
-  );
-
-
-
   //TODO: implement exporting to various formats.
   void handleXMLExport() async {
 
@@ -759,6 +749,8 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
   void handlePDFExport() async {
+
+    Provider.of<PageProvider>(context, listen: false).pushPage(ReportView(classCourse: widget.classCourse), 'Report View');
 
   }
 }

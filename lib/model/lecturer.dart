@@ -32,6 +32,7 @@ class Lecturer {
 }
 
 
+
 class LecturerRating{
   
   final Lecturer lecturer;
@@ -50,6 +51,10 @@ class LecturerRating{
     );
   }
 }
+
+
+
+
 
 
 

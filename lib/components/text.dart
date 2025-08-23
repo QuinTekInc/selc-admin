@@ -521,3 +521,24 @@ class CollectionPlaceholder extends StatelessWidget {
   }
 }
 
+
+
+
+//todo: hello world
+class CustomVerticalDivider extends StatelessWidget {
+
+  final double height;
+  final Color? color;
+  const CustomVerticalDivider({super.key, this.height=250, this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 1,
+      height: height,
+      color: color ?? Colors.grey.shade300,
+    );
+  }
+}
+
+

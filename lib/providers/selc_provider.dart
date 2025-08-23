@@ -410,7 +410,7 @@ class SelcProvider with ChangeNotifier{
       throw Error();
     }
 
-    courses.add(Course(courseCode: courseMap['course_code'], title: courseMap['course_title']));
+    courses.add(Course(courseCode: courseMap['course_code']!, title: courseMap['course_title']!));
 
     notifyListeners();
   }

@@ -7,12 +7,12 @@ import 'package:selc_admin/model/lecturer.dart';
 
 class Course{
 
-  String? courseCode;
-  String? title;
+  String courseCode;
+  String title;
   double? meanScore;
   String? remark;
 
-  Course({this.courseCode, this.title, this.meanScore, this.remark});
+  Course({required this.courseCode, required this.title, this.meanScore, this.remark});
 
 
   factory Course.fromJson(Map<String, dynamic> jsonMap){
@@ -37,23 +37,23 @@ class Course{
 
 class ClassCourse{
 
-  int? classCourseId;
-  int? semester;
-  int? year;
-  String? klass;
-  Lecturer? lecturer;
-  Course? course;
+  int classCourseId;
+  int semester;
+  int year;
+  String klass;
+  Lecturer lecturer;
+  Course course;
   double grandMeanScore;
   double lecturerRating;
   String? remark;
 
   ClassCourse({
-    this.classCourseId, 
-    this.semester, 
-    this.year, 
-    this.klass, 
-    this.course, 
-    this.lecturer, 
+    required this.classCourseId,
+    required this.semester,
+    required this.year,
+    required this.klass,
+    required this.course,
+    required this.lecturer,
     this.grandMeanScore = 0,
     this.lecturerRating = 0,
     this.remark,
@@ -90,14 +90,51 @@ class CourseEvaluationSummary{
 
   CourseEvaluationSummary({required this.question, required this.answerType, this.answerSummary});
 
+
+
   factory CourseEvaluationSummary.fromJson(Map<String, dynamic> jsonMap){
+
+    QuestionAnswerType answerType = QuestionAnswerType.fromString(jsonMap['answer_type'])!;
+    Map<String, dynamic> answerSummary = jsonMap['answer_summary'];
+
+    answerSummary = processOtherPossibleAnswers(answerType, answerSummary);
 
     return CourseEvaluationSummary(
       question: jsonMap['question'],
-      answerType: QuestionAnswerType.fromString(jsonMap['answer_type'])!,
-      answerSummary: jsonMap['answer_summary']
+      answerType: answerType,
+      answerSummary: answerSummary
     );
   }
+
+
+  static Map<String, dynamic> processOtherPossibleAnswers(QuestionAnswerType answerType, Map<String, dynamic> answerSummary){
+
+    Map<String, dynamic> newAnswerSummary = {};
+
+
+    for(String possibleValue in answerType.possibleValues){
+
+      // if(answerSummary.containsKey(possibleValue)){
+      //   newAnswerSummary[possibleValue] = answerSummary[possibleValue];
+      //   continue;
+      // }
+      // newAnswerSummary.addAll({possibleValue:  0});
+      newAnswerSummary.addAll({possibleValue: answerSummary[possibleValue] ?? 0});
+    }
+
+
+    if(answerSummary.containsKey("No Answer")){
+      newAnswerSummary.addAll({'No Answer': answerSummary['No Answer']});
+    }
+
+
+    answerSummary.clear();
+
+
+    return newAnswerSummary;
+
+  }
+
 
   @override String toString() => '$question -> ${answerType.typeString}';
 
