@@ -9,8 +9,8 @@ import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
-import 'package:selc_admin/model/question.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
+import 'package:selc_admin/model/models.dart';
 
 
 class QuestionsPage extends StatefulWidget {

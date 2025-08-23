@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart' as pdf;
 import 'package:pdf/widgets.dart' as pw;
-import 'package:selc_admin/model/course.dart';
+import 'package:selc_admin/model/models.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 

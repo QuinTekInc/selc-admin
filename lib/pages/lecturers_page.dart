@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/text.dart';
-import 'package:selc_admin/model/lecturer.dart';
+import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/lecturer_info_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';

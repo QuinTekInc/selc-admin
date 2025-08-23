@@ -1,12 +1,11 @@
 
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
-import 'package:selc_admin/model/course.dart';
-import 'package:selc_admin/model/lecturer.dart';
+import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 

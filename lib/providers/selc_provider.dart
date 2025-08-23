@@ -5,12 +5,9 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:selc_admin/components/preferences_util.dart';
-import 'package:selc_admin/model/course.dart';
-import 'package:selc_admin/model/general_model.dart';
-import 'package:selc_admin/model/lecturer.dart';
-import 'package:selc_admin/model/question.dart';
-import 'package:selc_admin/model/user.dart';
 import 'package:selc_admin/components/server_connector.dart' as connector;
+
+import 'package:selc_admin/model/models.dart';
 
 class SelcProvider with ChangeNotifier{
 
@@ -43,6 +40,11 @@ class SelcProvider with ChangeNotifier{
         'password': password,
       })
     );
+
+
+    if(response.statusCode == 403 || response.statusCode == 401){
+      throw Exception(jsonDecode(response.body)['message']);
+    }
 
     if(response.statusCode != 200){
       throw Error();

@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/utils.dart';
+import 'package:selc_admin/model/models.dart';
 
 import '../../components/text.dart';
-import '../../model/question.dart';
 
 class SuggestionsTable extends StatelessWidget {
 

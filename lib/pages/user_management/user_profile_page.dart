@@ -9,7 +9,7 @@ import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/text.dart';
-import 'package:selc_admin/model/user.dart';
+import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 
