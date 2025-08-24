@@ -6,8 +6,9 @@ import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:selc_admin/components/preferences_util.dart';
 import 'package:selc_admin/components/server_connector.dart' as connector;
-
 import 'package:selc_admin/model/models.dart';
+
+
 
 class SelcProvider with ChangeNotifier{
 
@@ -457,6 +458,7 @@ class SelcProvider with ChangeNotifier{
       response = await connector.postRequest(endpoint: 'courses-ratings-rank/', body: jsonEncode(filterBody));
     }
 
+
     if(response.statusCode != 200){
       throw Error();
     }
@@ -471,8 +473,10 @@ class SelcProvider with ChangeNotifier{
 
 
 
-  //todo users management functions
 
+
+
+  //todo: users management functions
   Future<void> getUsers() async {
 
     final response = await connector.getRequest(endPoint: 'all-users/');
@@ -492,6 +496,9 @@ class SelcProvider with ChangeNotifier{
     notifyListeners();
   }
 
+
+
+
   Future<void> createUser(Map<String, String> userMap) async {
 
     final response = await connector.postRequest(  
@@ -507,6 +514,9 @@ class SelcProvider with ChangeNotifier{
     notifyListeners();
 
   }
+
+
+
 
   Future<void> suUpdateUserAccount({required Map<String, dynamic> updateMap}) async {
     final response = await connector.postRequest(

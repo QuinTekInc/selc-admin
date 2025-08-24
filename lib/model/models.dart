@@ -160,6 +160,7 @@ class Question{
 
 
 
+
 //todo: category
 class Category extends Equatable{
 
@@ -191,7 +192,6 @@ class Category extends Equatable{
   }
 
 }
-
 
 
 
@@ -231,6 +231,7 @@ class Lecturer {
 
 
 
+//todo: lecturer rating
 class LecturerRating{
 
   final Lecturer lecturer;
@@ -254,7 +255,7 @@ class LecturerRating{
 
 
 
-//todo: course objects.
+//todo: course
 class Course{
 
   String courseCode;
@@ -285,6 +286,7 @@ class Course{
 
 
 
+//todo: class course
 class ClassCourse{
 
   int classCourseId;
@@ -329,16 +331,22 @@ class ClassCourse{
 
 
 
-
-
 //todo: course evaluation summary
 class CourseEvaluationSummary{
 
   String question;
   QuestionAnswerType answerType;
   Map<String, dynamic>? answerSummary;
+  double percentageScore; //note: this value is in percentages
+  double averageScore;
 
-  CourseEvaluationSummary({required this.question, required this.answerType, this.answerSummary});
+  CourseEvaluationSummary({
+    required this.question,
+    required this.answerType,
+    this.answerSummary,
+    this.percentageScore = 0,
+    this.averageScore = 0,
+  });
 
 
 
@@ -352,6 +360,8 @@ class CourseEvaluationSummary{
     return CourseEvaluationSummary(
         question: jsonMap['question'],
         answerType: answerType,
+        averageScore: jsonMap['average_score'],
+        percentageScore: jsonMap['percentage_score'],
         answerSummary: answerSummary
     );
   }
@@ -387,6 +397,36 @@ class CourseEvaluationSummary{
 
 
 
+//todo: category remarks for evaluations
+class CategoryRemark{
+
+  final String categoryName;
+  final double percentageScore;
+  final double averageScore;
+  final String remark;
+
+  CategoryRemark({
+    required this.categoryName,
+    this.percentageScore = 0,
+    required this.averageScore,
+    required this.remark,
+  });
+
+
+  factory CategoryRemark.fromJson(Map<String, dynamic> jsonMap){
+    print(jsonMap);
+    return CategoryRemark(
+        categoryName: jsonMap['category'],
+        percentageScore: jsonMap['percentage_score'].toDouble() ?? 0,
+        averageScore: jsonMap['average_score'].toDouble() ?? 0,
+        remark: jsonMap['remark']
+    );
+  }
+
+}
+
+
+
 
 //todo: course rating  (also normally shown on the desktop)
 class CourseRating{
@@ -412,30 +452,6 @@ class CourseRating{
 
 
 
-
-
-//todo: category remarks for evaluations
-class CategoryRemark{
-
-  final String categoryName;
-  final double avgScore;
-  final String remark;
-
-  CategoryRemark({required this.categoryName, required this.avgScore, required this.remark});
-
-
-  factory CategoryRemark.fromJson(Map<String, dynamic> jsonMap){
-    return CategoryRemark(
-        categoryName: jsonMap['category'],
-        avgScore: jsonMap['average_score'].toDouble() ?? 0,
-        remark: jsonMap['remark']
-    );
-  }
-
-}
-
-
-
 //todo: evaluation suggestion
 class EvaluationSuggestion{
 
@@ -453,5 +469,7 @@ class EvaluationSuggestion{
   }
 
 }
+
+
 
 

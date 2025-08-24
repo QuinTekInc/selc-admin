@@ -40,7 +40,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
     super.initState();
     
     semesterController.value = Provider.of<SelcProvider>(context, listen: false).currentSemester;
-    academicYearController.value = DateTime.now().year;
+    academicYearController.value = DateTime.now().year; //set the year controller's value to the current academic year
   }
 
 

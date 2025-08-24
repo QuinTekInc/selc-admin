@@ -502,8 +502,8 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
 
 
   List<LecturerRating> applySearchFilter(String searchText, List<LecturerRating> ratings){
-    return ratings.where((rating) => rating.lecturer.name!.toLowerCase().contains(searchText.toLowerCase()) ||
-          rating.lecturer.department!.toLowerCase().contains(searchText.toLowerCase())).toList();
+    return ratings.where((rating) => rating.lecturer.name.toLowerCase().contains(searchText.toLowerCase()) ||
+          rating.lecturer.department.toLowerCase().contains(searchText.toLowerCase())).toList();
   }
 
 

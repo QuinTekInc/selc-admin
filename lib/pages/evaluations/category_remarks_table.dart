@@ -62,6 +62,15 @@ class CategoryRemarksTable extends StatelessWidget {
                 ),
 
 
+                Expanded(
+                  child: CustomText(
+                    'Percentage Score(%)',
+                    fontWeight: FontWeight.w600,
+                    textAlignment: TextAlign.center,
+                  ),
+                ),
+
+
 
                 Expanded(
                   child: CustomText(
@@ -93,12 +102,8 @@ class CategoryRemarksTable extends StatelessWidget {
                 separatorBuilder: (_, index) => Divider(),
 
                 itemBuilder: (_, index) {
-                  CategoryRemark remark = categoryRemarks[index];
-                  return buildCategoryReportRow(
-                      remark.categoryName,
-                      remark.avgScore.toStringAsFixed(3),
-                      remark.remark
-                  );
+                  CategoryRemark categoryRemark = categoryRemarks[index];
+                  return buildCategoryReportRow(categoryRemark);
                 }
             ),
           )
@@ -110,7 +115,7 @@ class CategoryRemarksTable extends StatelessWidget {
 
 
 
-  Widget buildCategoryReportRow(String categoryName, String avgScore,  String remarks){
+  Widget buildCategoryReportRow(CategoryRemark categoryRemark){
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(
@@ -122,14 +127,22 @@ class CategoryRemarksTable extends StatelessWidget {
           Expanded(
             flex: 2,
             child: CustomText(
-                categoryName
+                categoryRemark.categoryName
             ),
           ),
 
 
           Expanded(
             child: CustomText(
-              avgScore,
+              categoryRemark.percentageScore.toString(),
+              textAlignment: TextAlign.center,
+            )
+          ),
+
+
+          Expanded(
+            child: CustomText(
+              categoryRemark.averageScore.toString(),
               textAlignment: TextAlign.center,
             ),
           ),
@@ -138,7 +151,7 @@ class CategoryRemarksTable extends StatelessWidget {
           //todo: perform the calculations and put them here.
           Expanded(
             child: CustomText(
-              remarks,
+              categoryRemark.remark,
               textAlignment: TextAlign.center,
             ),
           )
