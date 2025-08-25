@@ -8,8 +8,15 @@ import 'package:selc_admin/model/models.dart';
 class ReportView extends StatelessWidget {
 
   final ClassCourse classCourse;
+  final List<CourseEvaluationSummary> evaluationSummaries;
+  final List<CategoryRemark> categoryRemarks;
 
-  const ReportView({super.key, required this.classCourse});
+  const ReportView({
+    super.key,
+    required this.classCourse,
+    required this.evaluationSummaries,
+    required this.categoryRemarks
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -300,7 +307,7 @@ class ReportView extends StatelessWidget {
                 SizedBox(
                   width: 120,
                   child: CustomText(
-                      'Percentage Score'
+                      'Percentage Score(%)'
                   ),
                 ),
 
@@ -322,7 +329,7 @@ class ReportView extends StatelessWidget {
           ),
 
 
-          for(int i=0; i < 10; i++) DecoratedBox(
+          for(int i=0; i < evaluationSummaries.length; i++) DecoratedBox(
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: Colors.grey.shade300))
             ),
@@ -336,12 +343,12 @@ class ReportView extends StatelessWidget {
                   flex: 3,
                   child: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: CustomText('The question appear here'),
+                    child: CustomText(evaluationSummaries[i].question),
                   ),
                 ),
 
 
-                CustomVerticalDivider(height: 150),
+                CustomVerticalDivider(height: 130),
 
                 //todo: answer type
 
@@ -354,13 +361,21 @@ class ReportView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: List<Widget>.generate(
-                          5, (index) => Row(
-                        children: [
-                          CustomText('Answer $index :'),
-                          Spacer(),
-                          CustomText('100')
-                        ],
-                      )
+                        evaluationSummaries[i].answerSummary!.length,
+                        (index) {
+
+                          String answerKey = evaluationSummaries[i].answerSummary!.keys.toList()[index];
+
+                          int answerFrequency = evaluationSummaries[i].answerSummary![answerKey];
+
+                          return Row(
+                            children: [
+                              CustomText('$answerKey :'),
+                              Spacer(),
+                              CustomText(answerFrequency.toString())
+                            ],
+                          );
+                        }
                       )
                     ),
                   )
@@ -368,35 +383,36 @@ class ReportView extends StatelessWidget {
 
 
 
-                CustomVerticalDivider(height: 150,),
+                CustomVerticalDivider(height: 130,),
 
 
+                //todo: percentage score
                 SizedBox(
                   width: 120,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: CustomText('100'),
+                    child: CustomText(evaluationSummaries[i].percentageScore.toString()),
                   )
                 ),
 
 
-                CustomVerticalDivider(height: 150),
+                CustomVerticalDivider(height: 130),
 
 
                 SizedBox(
                   width: 120,
                   child: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: CustomText('0.45')
+                    child: CustomText(evaluationSummaries[i].averageScore.toString())
                   )
                 ),
 
 
-                CustomVerticalDivider(height: 150,),
+                CustomVerticalDivider(height: 130,),
 
 
                 Expanded(
-                  child: CustomText('Remarks here')
+                  child: CustomText(evaluationSummaries[i].remark)
                 )
               ]
             ),
@@ -425,7 +441,7 @@ class ReportView extends StatelessWidget {
 
         children: [
 
-
+          //todo: categories table row
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -444,13 +460,20 @@ class ReportView extends StatelessWidget {
                 ),
 
 
+
                 Expanded(
-                  child: CustomText('Mean Score'),
+                  child: CustomText(
+                    'Percentage Score',
+                    textAlignment: TextAlign.center,
+                  ),
                 ),
 
 
                 Expanded(
-                  child: CustomText('Mean Rating'),
+                  child: CustomText(
+                    'Mean Rating',
+                    textAlignment: TextAlign.center,
+                  ),
                 ),
 
 
@@ -461,6 +484,74 @@ class ReportView extends StatelessWidget {
 
               ]
             )
+          ),
+
+
+
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: categoryRemarks.length,
+            itemBuilder: (_, index){
+
+
+              final categoryRemark = categoryRemarks[index];
+
+
+              return Container(
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300)
+                  ),
+                ),
+
+                child: Row(
+                  children: [
+                    //todo: category name
+                    Expanded(
+                      flex: 2,
+                      child: CustomText(categoryRemark.categoryName),
+                    ),
+
+
+                    CustomVerticalDivider(height: 60),
+
+                    //the percentage score
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomText(
+                            categoryRemark.percentageScore.toString(),
+                          textAlignment: TextAlign.center,
+                        ),
+                      ),
+                    ),
+
+                    CustomVerticalDivider(height: 60),
+
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomText(
+                            categoryRemark.averageScore.toString(),
+                          textAlignment: TextAlign.center,
+                        ),
+                      ),
+                    ),
+
+                    CustomVerticalDivider(height: 60),
+
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomText(categoryRemark.remark),
+                      ),
+                    ),
+                  ]
+                )
+              );
+            }
           )
 
         ]

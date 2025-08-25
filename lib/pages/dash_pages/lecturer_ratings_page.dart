@@ -474,6 +474,7 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
             ),
           ),
 
+
           //1
           Expanded(
             child: CustomText(

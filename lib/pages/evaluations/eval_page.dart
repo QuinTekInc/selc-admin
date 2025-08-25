@@ -749,7 +749,14 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
   void handlePDFExport() async {
 
-    Provider.of<PageProvider>(context, listen: false).pushPage(ReportView(classCourse: widget.classCourse), 'Report View');
+    Provider.of<PageProvider>(context, listen: false).pushPage(
+      ReportView(
+        classCourse: widget.classCourse,
+        evaluationSummaries: this.evalSummary,
+        categoryRemarks: this.categoryRemarks,
+      ),
+      'Report View'
+    );
 
   }
 }

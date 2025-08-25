@@ -339,6 +339,7 @@ class CourseEvaluationSummary{
   Map<String, dynamic>? answerSummary;
   double percentageScore; //note: this value is in percentages
   double averageScore;
+  String remark;
 
   CourseEvaluationSummary({
     required this.question,
@@ -346,6 +347,7 @@ class CourseEvaluationSummary{
     this.answerSummary,
     this.percentageScore = 0,
     this.averageScore = 0,
+    this.remark = ''
   });
 
 
@@ -358,11 +360,12 @@ class CourseEvaluationSummary{
     answerSummary = processOtherPossibleAnswers(answerType, answerSummary);
 
     return CourseEvaluationSummary(
-        question: jsonMap['question'],
-        answerType: answerType,
-        averageScore: jsonMap['average_score'],
-        percentageScore: jsonMap['percentage_score'],
-        answerSummary: answerSummary
+      question: jsonMap['question'],
+      answerType: answerType,
+      averageScore: jsonMap['average_score'],
+      percentageScore: jsonMap['percentage_score'],
+      answerSummary: answerSummary,
+      remark: jsonMap['remark']
     );
   }
 
