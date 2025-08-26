@@ -24,10 +24,10 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
 
+  final searchController = TextEditingController();
+  List<User> filteredUsers = [];
 
   bool isLoading = false;
-
-  List<User> users = [];
 
 
   @override
@@ -43,10 +43,9 @@ class _UsersPageState extends State<UsersPage> {
 
     setState(() => isLoading = true);
 
-
     try{
       await Provider.of<SelcProvider>(context, listen:false).getUsers();
-      users = Provider.of<SelcProvider>(context, listen: false).users;
+      filteredUsers = Provider.of<SelcProvider>(context, listen: false).users;
     }on SocketException catch(_){
       showNoConnectionAlertDialog(context);
     }on Error catch(_){
@@ -85,9 +84,10 @@ class _UsersPageState extends State<UsersPage> {
               SizedBox(  
                 width: MediaQuery.of(context).size.width * 0.45,
                 child: CustomTextField(  
-                  controller: TextEditingController(),
+                  controller: searchController,
                   hintText: 'Search Users',
-                  leadingIcon: Icons.search
+                  leadingIcon: Icons.search,
+                  onChanged: (newValue) => handleFilter()
                 ),
               ),
 
@@ -135,13 +135,13 @@ class _UsersPageState extends State<UsersPage> {
                       child: CircularProgressIndicator(),
                     ),
                   )
-                  else if(!isLoading && users.isEmpty) Expanded(  
+                  else if(!isLoading && filteredUsers.isEmpty) Expanded(  
                     child: CollectionPlaceholder( title: 'No Data!', detail: 'All Administrative users appear here.'),
                   )
                   else Expanded(
                     child: ListView.builder(
-                      itemCount: users.length,
-                      itemBuilder: (_, index) => buildUserTableRow(user: users[index]),
+                      itemCount: filteredUsers.length,
+                      itemBuilder: (_, index) => UserManagementRow(user: filteredUsers[index]),
                     )
                   )
 
@@ -198,105 +198,6 @@ class _UsersPageState extends State<UsersPage> {
 
 
 
-  Widget buildUserTableRow({required User user}){
-
-    bool isCurrentUser = user == Provider.of<SelcProvider>(context, listen: false).user;
-
-    return GestureDetector(
-
-      onTap: isCurrentUser ? null : () => Provider.of<PageProvider>(context, listen:false).pushPage(UserProfilePage(user: user), 'User Profile'),
-
-      child: Container( 
-      
-        padding: const EdgeInsets.all(8),
-      
-        decoration: BoxDecoration(  
-          
-        ),
-      
-        child: Row(  
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center, 
-      
-          children: [
-      
-            //todo: uername of the user
-            Expanded(  
-              child: !isCurrentUser ?  CustomText(  
-                user.username!
-              ) : Row(  
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-      
-                children: [
-      
-                  CircleAvatar(  
-                    backgroundColor: roleColor(user.isSuperuser),
-                    radius: 5,
-                  ),
-      
-                  const SizedBox(width: 8),
-      
-                  CustomText( 
-                    user.username!
-                  )
-                ],
-              ),
-            ),
-      
-      
-            //todo: first name of the user
-            Expanded(  
-              child: CustomText(  
-                user.firstName!
-              ),
-            ),
-      
-      
-            //todo: last name of the user
-            Expanded(  
-              flex: 2,
-              child: CustomText(  
-                user.lastName!
-              ),
-            ),
-      
-      
-      
-            //todo: email of the user.
-            Expanded(  
-              child: CustomText(  
-                user.email!
-              ),
-            ),
-      
-      
-      
-            //todo: role of the user in the system.
-            Expanded(  
-              child: CustomText(  
-                user.isSuperuser ? 'Super User' : 'Admin/Staff',
-                textColor: roleColor(user.isSuperuser),
-                fontWeight: FontWeight.w600,
-                textAlignment: TextAlign.center,
-              ),
-            )
-          
-          ],
-        ),
-      ),
-    );
-  }
-
-
-
-  Color roleColor(bool isSuperUser){
-    return isSuperUser ? Colors.green.shade400 : Colors.blue.shade400;
-  }
-
-
-
 
   // Widget buildRoleIndicator(String role){
   //   return Container(  
@@ -320,7 +221,162 @@ class _UsersPageState extends State<UsersPage> {
   //     ),
   //   );
   // }
+
+
+  void handleFilter(){
+
+    if(searchController.text.isEmpty){
+      setState(() => filteredUsers = Provider.of<SelcProvider>(context, listen: false).users);
+
+      return;
+    }
+
+
+    String searchText = searchController.text.toLowerCase();
+
+    filteredUsers = filteredUsers.where((user) =>
+        user.username!.toLowerCase().contains(searchText) || '${user.firstName} ${user.lastName}'.toLowerCase().contains(searchText))
+        .toList();
+
+    setState((){});
+
+  }
 }
+
+
+
+
+
+
+
+class UserManagementRow extends StatefulWidget {
+
+  final User user;
+  const UserManagementRow({super.key, required this.user});
+
+  @override
+  State<UserManagementRow> createState() => _UserManagementRowState();
+}
+
+class _UserManagementRowState extends State<UserManagementRow> {
+
+  Color backgroundColor = Colors.transparent;
+
+
+  bool isCurrentUser = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    isCurrentUser = widget.user == Provider.of<SelcProvider>(context, listen: false).user;
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+
+      onHover: (mouseEvent) => setState(() => backgroundColor = Colors.green.shade100),
+      onExit: (mouseEvent) => setState(() => backgroundColor = Colors.transparent),
+
+      child: GestureDetector(
+        onTap: () => isCurrentUser ? null : Provider.of<PageProvider>(context, listen:false).pushPage(UserProfilePage(user: widget.user), 'User Profile'),
+
+        child: Container(
+
+          margin: const EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(12)
+          ),
+
+          child:  Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
+            children: [
+
+              //todo: uername of the user
+              Expanded(
+                child: !isCurrentUser ?  CustomText(
+                    widget.user.username!
+                ) : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+
+                  children: [
+
+                    CircleAvatar(
+                      backgroundColor: roleColor(widget.user.isSuperuser),
+                      radius: 5,
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    CustomText(
+                        widget.user.username!
+                    )
+                  ],
+                ),
+              ),
+
+
+              //todo: first name of the user
+              Expanded(
+                child: CustomText(
+                    widget.user.firstName!
+                ),
+              ),
+
+
+              //todo: last name of the user
+              Expanded(
+                flex: 2,
+                child: CustomText(
+                    widget.user.lastName!
+                ),
+              ),
+
+
+
+              //todo: email of the user.
+              Expanded(
+                child: CustomText(
+                    widget.user.email!
+                ),
+              ),
+
+
+
+              //todo: role of the user in the system.
+              Expanded(
+                child: CustomText(
+                  widget.user.isSuperuser ? 'Super User' : 'Admin/Staff',
+                  textColor: roleColor(widget.user.isSuperuser),
+                  fontWeight: FontWeight.w600,
+                  textAlignment: TextAlign.center,
+                ),
+              )
+
+            ],
+          ),
+        )
+      )
+    );
+  }
+
+
+
+  Color roleColor(bool isSuperUser){
+    return isSuperUser ? Colors.green.shade400 : Colors.blue.shade400;
+  }
+}
+
 
 
 

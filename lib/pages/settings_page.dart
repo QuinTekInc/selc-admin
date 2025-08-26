@@ -8,6 +8,7 @@ import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -18,13 +19,14 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
+
 class _SettingsPageState extends State<SettingsPage> {
 
 
   PreferencesProvider? _preferencesProvider;
   PreferencesProvider get preferencesProvider => _preferencesProvider!;
 
- //just don't mind this instaciation
+ //just don't mind this instanciation
   final semesterController = DropdownController<int>();
 
   bool isDisableEvaluations = false;
@@ -93,7 +95,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
 
                   CustomText(
-                    'Helps to retrieve information related to the current academic calendar (the acadmic year and semester)'
+                    'Helps to retrieve information related to the current academic calendar (the academic year and semester)'
                   ),
 
 
@@ -154,12 +156,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   ListTile(  
 
                     title: CustomText(
-                      'Evaluation Lock',
+                      'Accept Evaluations',
                       fontWeight: FontWeight.w600,
                     ), 
 
                     subtitle: CustomText(  
-                      'Choose whether to open or lock evalutions. This prevents students from entering evaluations data.'
+                      'Choose whether to open or lock the students\' evaluations portal.'
+                      '\nWhen disabled, evaluation is locked.'
                     ),
 
 
@@ -324,6 +327,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
 
 
+  //todo: build about section
   Column buildAboutSection() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -416,7 +420,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
   }
 
-  void handleChangeDestinationPressed(){
+
+
+
+  void handleChangeDestinationPressed() async {
+
+
+    final directory = await FilePicker.platform;
 
   }
 }

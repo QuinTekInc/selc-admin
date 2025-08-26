@@ -231,6 +231,7 @@ class Lecturer {
 
 
 
+
 //todo: lecturer rating
 class LecturerRating{
 
@@ -417,7 +418,6 @@ class CategoryRemark{
 
 
   factory CategoryRemark.fromJson(Map<String, dynamic> jsonMap){
-    print(jsonMap);
     return CategoryRemark(
         categoryName: jsonMap['category'],
         percentageScore: jsonMap['percentage_score'].toDouble() ?? 0,
@@ -452,6 +452,8 @@ class CourseRating{
 
 
 }
+
+
 
 
 

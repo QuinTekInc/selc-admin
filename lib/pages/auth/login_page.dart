@@ -153,9 +153,12 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pop(context); //closes the loading alert dialog
       showNoConnectionAlertDialog(context);
 
-    }on Exception catch(exception){
+    }on Exception catch(exception, stackTrace){
 
       Navigator.pop(context); //closes the loading alert dialog
+
+
+      debugPrint(stackTrace.toString());
 
       showCustomAlertDialog(
         context, 
