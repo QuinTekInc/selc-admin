@@ -81,7 +81,6 @@ class _HomepageState extends State<Homepage> {
             selectedIndex: selectedIndex,
             onSelectionChanged: (newIndex) => setState(() {
               selectedIndex = newIndex;
-              
               Provider.of<PageProvider>(context, listen: false).pushReplacementPage(fragments[newIndex], fragmentNames[selectedIndex]);
             }),
           ),
@@ -104,7 +103,7 @@ class _HomepageState extends State<Homepage> {
 
 class SideBar extends StatefulWidget {
 
-  final isSuperSuper;
+  final bool isSuperSuper;
   final int selectedIndex;
   final void Function(int) onSelectionChanged;
 
@@ -145,7 +144,7 @@ class _SideBarState extends State<SideBar> {
 
       child: Container(
         //width: 129,
-        padding: EdgeInsets.symmetric(vertical:8, horizontal: 0),
+        padding: EdgeInsets.symmetric(vertical:12, horizontal: 0),
       
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12)
@@ -233,6 +232,7 @@ class _NavigatorItemState extends State<NavigatorItem> {
         onExit: (pointerEvent) => setState(() => isHovered = false),
 
         child: Container(
+
           padding: EdgeInsets.all(8),
 
           child: Column(
@@ -261,6 +261,7 @@ class _NavigatorItemState extends State<NavigatorItem> {
                 widget.name,
                 textColor: textColor,
                 fontWeight: widget.selected ? FontWeight.w600 : FontWeight.normal,
+                padding: EdgeInsets.zero,
               )
           
             ],

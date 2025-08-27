@@ -50,7 +50,7 @@ class CustomButton extends StatelessWidget {
     Color iconColor = Colors.white,
     Color? backgroundColor,
     bool forceIconLeading = false,
-    double width = 135,
+    double? width,
     bool disable = false
   }){
 
@@ -74,12 +74,13 @@ class CustomButton extends StatelessWidget {
       child: SizedBox(
         width: width,
         child: Row( 
-          mainAxisAlignment: MainAxisAlignment.center, 
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 5,
           children: [
 
             if(forceIconLeading) iconWidget else textWidget,
 
-            const SizedBox(width: 5,),
 
             if(forceIconLeading) textWidget else iconWidget
             

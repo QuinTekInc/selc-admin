@@ -9,12 +9,11 @@ class PreferencesProvider extends ChangeNotifier{
 
   void loadPreferences() async{
     preferences = await  Preferences.fromSharedPreferences();
-   
     notifyListeners();
   }
 
 
-  void setFontScale(int newScale){
+  void setFontScale(double newScale){
 
     try{
 
@@ -38,6 +37,19 @@ class PreferencesProvider extends ChangeNotifier{
       notifyListeners();
     }catch(_){
       //also do nothing here.
+    }
+
+  }
+
+
+
+  void setDefaultDownloadPath(String downloadPath){
+    try{
+      preferences.defaultDownloadDirectory = downloadPath;
+      preferences.save();
+      notifyListeners();
+    }catch(_){
+      throw Exception();
     }
   }
 

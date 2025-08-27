@@ -86,323 +86,332 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return Padding(
+      padding: const EdgeInsets.all(16),
 
-        //todo: top row.......more like and app bar.
-        Row(  
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-    
-          children: [
-    
-            HeaderText('Dashboard', fontSize: 25,),
-    
-            Spacer(),
-    
-            //the notification button.
-            GestureDetector(
-    
-              onTap: () => Provider.of<PageProvider>(context, listen:false).pushPage(NotificationsPage(), "Notifications"),
-    
-              child: NotificationBadge(
-                child: Container(
-                  height: 43,
-                  width: 45,
-                  alignment: Alignment.center,
-              
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade500,
-                    borderRadius: BorderRadius.circular(12)
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          //todo: top row.......more like and app bar.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
+            children: [
+
+              HeaderText('Dashboard', fontSize: 25,),
+
+              Spacer(),
+
+              //todo: the notification button.
+              GestureDetector(
+
+                onTap: () => Provider.of<PageProvider>(context, listen:false).pushPage(NotificationsPage(), "Notifications"),
+
+                child: NotificationBadge(
+                  child: Container(
+                    height: 43,
+                    width: 45,
+                    alignment: Alignment.center,
+
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade500,
+                      borderRadius: BorderRadius.circular(12)
+                    ),
+
+                    child: Icon(CupertinoIcons.bell, color: Colors.white),
                   ),
-              
-                  child: Icon(CupertinoIcons.bell, color: Colors.white),
                 ),
               ),
-            ),
-    
-            SizedBox(
-              width: 250,
-              child: ListTile(
-                horizontalTitleGap: 4,
-                leading: Container(
-                  height: 45,
-                  width: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade400,
-                    borderRadius: BorderRadius.circular(12)
+
+              //todo: the user info section
+              SizedBox(
+                width: 250,
+                child: ListTile(
+                  horizontalTitleGap: 4,
+                  leading: Container(
+                    height: 45,
+                    width: 45,
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade400,
+                      borderRadius: BorderRadius.circular(12)
+                    ),
+
+                    child: Icon(CupertinoIcons.person, color: Colors.white, ),
                   ),
-                  
-                  child: Icon(CupertinoIcons.person, color: Colors.white, ),
-                ),
-    
-                title: CustomText(
-                  'Welcome',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-    
-                subtitle: CustomText(
-                  Provider.of<SelcProvider>(context).user.username!,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  maxLines: 1,
-                  softwrap: false,
-                  overflow: TextOverflow.ellipsis,
-                ),
-    
-                trailing: PopupMenuButton(
-                  icon: Icon(Icons.arrow_drop_down),
 
-                  onSelected: (newValue){
+                  title: CustomText(
+                    'Welcome',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
 
-                    switch(newValue){
+                  subtitle: CustomText(
+                    Provider.of<SelcProvider>(context).user.username!,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    maxLines: 1,
+                    softwrap: false,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  trailing: PopupMenuButton(
+                    icon: Icon(Icons.arrow_drop_down),
+
+                    onSelected: (newValue){
+
+                      switch(newValue){
 
 
-                      case 'viewProfile':
-                        //todo: navigate to the user profile page.
-                        Provider.of<PageProvider>(context, listen: false).pushPage(UserProfilePage(), 'User Profile');
-                        return;
+                        case 'viewProfile':
+                          //todo: navigate to the user profile page.
+                          Provider.of<PageProvider>(context, listen: false).pushPage(UserProfilePage(), 'User Profile');
+                          return;
 
-                      case 'logout':
-                        //todo: logout the user. 
-                        handleLogout(context);
-                        return;
+                        case 'logout':
+                          //todo: logout the user.
+                          handleLogout(context);
+                          return;
 
-                      default:
-                        break;
-                    }
+                        default:
+                          break;
+                      }
 
-                  },
+                    },
 
-                  itemBuilder: (_){
-                    return <PopupMenuItem>[
+                    itemBuilder: (_){
+                      return <PopupMenuItem>[
 
-                      PopupMenuItem(
-                        value: 'viewProfile',
-                        child: Row(  
-                          mainAxisSize: MainAxisSize.min,
+                        PopupMenuItem(
+                          value: 'viewProfile',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
 
-                          children: [
-                            
-                            Icon(CupertinoIcons.person, color: Colors.green.shade400,),
-                            
-                            const SizedBox(width: 8,),
+                            children: [
 
-                            CustomText(
-                              'View Profile'
-                            )
+                              Icon(CupertinoIcons.person, color: Colors.green.shade400,),
 
-                          ],
+                              const SizedBox(width: 8,),
+
+                              CustomText(
+                                'View Profile'
+                              )
+
+                            ],
+                          ),
                         ),
-                      ),
 
-                      PopupMenuItem(
-                        value: 'logout',
-                        child: Row(  
-                          mainAxisSize: MainAxisSize.min,
+                        PopupMenuItem(
+                          value: 'logout',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
 
-                          children: [
-                            
-                            Icon(CupertinoIcons.square_arrow_right, color: Colors.red.shade400,),
-                            
-                            const SizedBox(width: 8,),
+                            children: [
 
-                            CustomText(
-                              'Logout'
-                            )
+                              Icon(CupertinoIcons.square_arrow_right, color: Colors.red.shade400,),
 
-                          ],
+                              const SizedBox(width: 8,),
+
+                              CustomText(
+                                'Logout'
+                              )
+
+                            ],
+                          ),
                         ),
-                      ),
 
-                    ];
-                  },
+                      ];
+                    },
+                  ),
                 ),
-              ),
-            )
-    
-          ],
-        ),
+              )
+
+            ],
+          ),
 
 
-        Expanded(
-          flex: 2,
+          Expanded(
+            flex: 2,
 
-          child: SingleChildScrollView(
-            
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-            
-              children: [
-            
-                //welcome container
-                Container(  
-                  margin: EdgeInsets.only(top: 8),
-                  padding: EdgeInsets.all(12),
-                  child: buildUserWelcomeWidget(context),
-                ),
-            
-                SizedBox(height: 8,),
-            
-                //todo: dashboard summary details.
-                Scrollbar(
-                  controller: _cardsScrollController,
-                  scrollbarOrientation: ScrollbarOrientation.bottom,
-                  thumbVisibility: true, //throws error when set to false because scrollbar track cannot be drawn without a thumb
-                  trackVisibility: false,
-                  interactive: true,
-                  thickness: 8,
-                  radius: Radius.circular(12),
+            child: SingleChildScrollView(
 
-                  child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+
+                children: [
+
+                  //welcome container
+                  Container(
+                    margin: EdgeInsets.only(top: 8),
+                    padding: EdgeInsets.all(12),
+                    child: buildUserWelcomeWidget(context),
+                  ),
+
+                  SizedBox(height: 8,),
+
+                  //todo: dashboard summary details.
+                  Scrollbar(
                     controller: _cardsScrollController,
-                    scrollDirection: Axis.horizontal,
-                    child: Row(  
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                              
-                      children: [
-                        //show some summary
-                  
-                        buildSummaryCard(  
-                          icon: CupertinoIcons.calendar,
-                          name: 'Current Semester',
-                          detail: Provider.of<SelcProvider>(context).generalStat.currentSemester.toString(), //TODO: fix the problem later.
-                          backgroundColor: Colors.grey.shade600
-                        ),
-                              
-                        buildSummaryCard(
-                          icon: CupertinoIcons.person,
-                          name: 'Lecturers',
-                          detail: Provider.of<SelcProvider>(context).generalStat.lecturersCount.toString()
-                        ),
-                              
-                              
-                        buildSummaryCard(
-                          icon: CupertinoIcons.book,
-                          name: 'Number of Courses',
-                          detail: Provider.of<SelcProvider>(context).generalStat.coursesCount.toString(),
-                          backgroundColor: Colors.yellow.shade700
-                        ),
-                              
-                              
-                        buildSummaryCard(
-                          icon: CupertinoIcons.chat_bubble_2,
-                          name: 'Number of Questions',
-                          detail: Provider.of<SelcProvider>(context).generalStat.questionsCount.toString(),
-                          backgroundColor: Colors.blue.shade400
-                        ),
-                              
-                        buildSummaryCard(
-                          icon: CupertinoIcons.question,
-                          name: 'Evaluations Submitted',
-                          detail: Provider.of<SelcProvider>(context).generalStat.evaluationsCount.toString(),
-                          backgroundColor: Colors.red.shade400
-                        ),
-                              
-                              
-                        buildSummaryCard(
-                          icon: CupertinoIcons.chat_bubble,
-                          name: 'Suggestions Made',
-                          detail: Provider.of<SelcProvider>(context).generalStat.evalSuggestionsCount.toString(),
-                          backgroundColor: Colors.purple.shade400
-                        ),
-                              
-                              
-                      ],
-                    ),
-                  ),
-                ),
-            
+                    scrollbarOrientation: ScrollbarOrientation.bottom,
+                    thumbVisibility: true, //throws error when set to false because scrollbar track cannot be drawn without a thumb
+                    trackVisibility: false,
+                    interactive: true,
+                    thickness: 8,
+                    radius: Radius.circular(12),
 
-
-                const SizedBox(height: 12,),
-
-
-                Row(  
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded( 
-                      flex: 2, 
-                      child: Column(  
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    child: SingleChildScrollView(
+                      controller: _cardsScrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
 
                         children: [
+                          //show some summary
 
-                          // CustomBarChart(
-                          //   width: double.infinity,
-                          //   height: MediaQuery.of(context).size.height * 0.6,
-                          //   chartTitle: 'Recent Evaluations',
-                          //   groups: List<CustomBarGroup>.generate(  
-                          //     10, 
-                          //     (int index) => CustomBarGroup(
-                          //       x: index+1,
-                          //       rods: List<Rod>.generate(  
-                          //         1,
-                          //         (int _) => Rod(y: Random().nextDouble() * 20)
-                          //       )
-                          //     )
-                          //   ),
-                          // ),
+                          buildSummaryCard(
+                            icon: CupertinoIcons.calendar,
+                            name: 'Current Semester',
+                            detail: Provider.of<SelcProvider>(context).generalStat.currentSemester.toString(), //TODO: fix the problem later.
+                            backgroundColor: Colors.grey.shade600
+                          ),
 
-                          const SizedBox(height: 12),
-
-                          buildLecturerRatingsTable(context),
-
-                          const SizedBox(height: 12),
-
-                          buildCourseRatingsTable(context),
-
-                        ],
-                      ),  
-                    ),
+                          buildSummaryCard(
+                            icon: CupertinoIcons.person,
+                            name: 'Lecturers',
+                            detail: Provider.of<SelcProvider>(context).generalStat.lecturersCount.toString()
+                          ),
 
 
-
-                    const SizedBox(width: 8),
-
-
-                    Expanded(  
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-
-                        children: [
-
-                          buildRecentEvaluations(),
-
-                          const SizedBox(height: 12,),
-
-                          buildRecentAction(context),
+                          buildSummaryCard(
+                            icon: CupertinoIcons.book,
+                            name: 'Number of Courses',
+                            detail: Provider.of<SelcProvider>(context).generalStat.coursesCount.toString(),
+                            backgroundColor: Colors.yellow.shade700
+                          ),
 
 
-                          const SizedBox(height: 12),
+                          buildSummaryCard(
+                            icon: CupertinoIcons.question,
+                            name: 'Number of Questions',
+                            detail: Provider.of<SelcProvider>(context).generalStat.questionsCount.toString(),
+                            backgroundColor: Colors.blue.shade400
+                          ),
+
+                          buildSummaryCard(
+                            icon: CupertinoIcons.chat_bubble,
+                            name: 'Evaluations Submitted',
+                            detail: Provider.of<SelcProvider>(context).generalStat.evaluationsCount.toString(),
+                            backgroundColor: Colors.red.shade400
+                          ),
 
 
-                          // CustomPieChart(
-                          //   width: 100,
-                          //   height: 100,
-                          //   pieSections: List.generate(5, (index) => CustomPieSection(title: index.toString(), value: Random().nextDouble() * 20),),
-                          // )
+                          buildSummaryCard(
+                            icon: CupertinoIcons.chat_bubble_2,
+                            name: 'Suggestions Made',
+                            detail: Provider.of<SelcProvider>(context).generalStat.evalSuggestionsCount.toString(),
+                            backgroundColor: Colors.purple.shade400
+                          ),
+
 
                         ],
                       ),
-                    )
-                  ],
-                ),
-                
-            
-              ],
+                    ),
+                  ),
+
+
+
+                  const SizedBox(height: 12,),
+
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+
+                      //todo: ratings tables section
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+
+                          children: [
+
+                            // CustomBarChart(
+                            //   width: double.infinity,
+                            //   height: MediaQuery.of(context).size.height * 0.6,
+                            //   chartTitle: 'Recent Evaluations',
+                            //   groups: List<CustomBarGroup>.generate(
+                            //     10,
+                            //     (int index) => CustomBarGroup(
+                            //       x: index+1,
+                            //       rods: List<Rod>.generate(
+                            //         1,
+                            //         (int _) => Rod(y: Random().nextDouble() * 20)
+                            //       )
+                            //     )
+                            //   ),
+                            // ),
+
+                            const SizedBox(height: 12),
+
+                            buildLecturerRatingsTable(context),
+
+                            const SizedBox(height: 12),
+
+                            buildCourseRatingsTable(context),
+
+                          ],
+                        ),
+                      ),
+
+
+
+                      const SizedBox(width: 12),
+
+
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+
+                            buildRecentEvaluations(),
+
+                            const SizedBox(height: 12,),
+
+                            buildRecentAction(context),
+
+
+                            const SizedBox(height: 12),
+
+
+                            // CustomPieChart(
+                            //   width: 100,
+                            //   height: 100,
+                            //   pieSections: List.generate(5, (index) => CustomPieSection(title: index.toString(), value: Random().nextDouble() * 20),),
+                            // )
+
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+
+
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -505,7 +514,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget buildRecentEvaluations(){
 
     return Container(
-      width: 400,
+      //width: 400,
       padding: const EdgeInsets.all(8),
 
       decoration: BoxDecoration(  
@@ -583,8 +592,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return Container(  
       padding: const EdgeInsets.all(8),
-
-      width: 400,
+      //width: 400,
       height: MediaQuery.of(context).size.height * 0.35,
 
       // constraints: BoxConstraints(
@@ -760,13 +768,13 @@ class _DashboardPageState extends State<DashboardPage> {
                       SizedBox(
                         width: 120,
                         child: CustomText(  
-                          (index+1).toString()
+                         '${index+1}'
                         ),
                       ),
           
                       Expanded(
                         child: CustomText(  
-                          courseRating.course.courseCode!
+                          courseRating.course.courseCode
                         ),
                       ),
           
@@ -774,7 +782,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Expanded(  
                         flex: 2,
                         child: CustomText(
-                          courseRating.course.title!,
+                          courseRating.course.title,
                           maxLines: 1,
                           softwrap: false,
                         ),
@@ -856,6 +864,7 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 8,),
 
           //todo: build the table rows.
+
           Container(  
             width: double.infinity,
             padding: const EdgeInsets.all(8),
@@ -887,7 +896,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
                 Expanded(  
                   child: CustomText(
-                    'Courses'
+                    'Courses',
+                    textAlignment: TextAlign.center,
                   ),
                 ),
 
@@ -964,7 +974,8 @@ class _DashboardPageState extends State<DashboardPage> {
                     
                         Expanded(  
                           child: CustomText(
-                            lRating.numberOfCourses.toString()
+                            lRating.numberOfCourses.toString(),
+                            textAlignment: TextAlign.center
                           ),
                         ),
                     

@@ -152,7 +152,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                 if(isSuperuser) CustomButton.withIcon(
                   'Add Category',
                   icon: CupertinoIcons.add, 
-                  width: 143, 
+                  //width: 143,
                   forceIconLeading: true,
                   backgroundColor: Colors.blue.shade400,
                   onPressed: () => handleCategoryModalSheet(),
@@ -164,7 +164,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                 if(isSuperuser) CustomButton.withIcon(
                   'Add Question',
                   icon: CupertinoIcons.add, 
-                  width: 140, 
+                  //width: 140,
                   forceIconLeading: true,
                   onPressed: () => handleQuestionModalSheet(),
                 )
@@ -240,7 +240,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                                 return CategoryCell(
                                   category: category,
                                   onEditPressed: () => handleCategoryModalSheet(category: category, inEditMode: true),
-                                  onDeletePressed: (){}
+                                  onDeletePressed: (){} //todo: implement the onDelete function
                                 );
                               }
                             ),
@@ -587,6 +587,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
   }
 
 
+  //todo: implement this later.
   void handleUpdateQuestion() async {
 
   }

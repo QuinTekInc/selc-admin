@@ -219,13 +219,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   const SizedBox(height: 8,),
 
                   Slider(
-                    value: Provider.of<PreferencesProvider>(context).preferences.fontScale.toDouble(), 
+                    value: Provider.of<PreferencesProvider>(context).preferences.fontScale / 0.5,
                     thumbColor: Colors.green.shade400,
                     activeColor: Colors.green.shade300,
                     min: 0,
                     max: 5,
                     divisions: 5,
-                    onChanged: (newValue) => preferencesProvider.setFontScale(newValue.toInt())
+                    onChanged: (newValue) => preferencesProvider.setFontScale(newValue.toInt() * 0.5)
                   ),
 
                   const SizedBox(height: 8),
@@ -302,7 +302,7 @@ class _SettingsPageState extends State<SettingsPage> {
           
               children: [
                 TextSpan(
-                  text: 'C:\\Users\\Documents\\SELC',
+                  text: Provider.of<PreferencesProvider>(context).preferences.defaultDownloadDirectory,
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontStyle: FontStyle.italic,
@@ -426,7 +426,12 @@ class _SettingsPageState extends State<SettingsPage> {
   void handleChangeDestinationPressed() async {
 
 
-    final directory = await FilePicker.platform;
+    final directory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Directory', lockParentWindow: true);
+
+    if(directory == null) return;
+
+    //todo: update the default file directory
+    Provider.of<PreferencesProvider>(context, listen: false).setDefaultDownloadPath(directory);
 
   }
 }

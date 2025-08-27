@@ -8,15 +8,17 @@ class Preferences {
 
   static const String _PREF_SHARED_KEY = "preferences";
 
-  int fontScale;
+  double fontScale;
   bool darkMode;
-  Preferences({this.fontScale=0, this.darkMode=false});
+  String? defaultDownloadDirectory;
+  Preferences({this.fontScale=0, this.darkMode=false, this.defaultDownloadDirectory});
 
 
   factory Preferences.fromJson(Map<String, dynamic> jsonMap){
     return Preferences(
-      fontScale: jsonMap['font_scale'],
-      darkMode: jsonMap['dark_mode']
+      fontScale: jsonMap['font_scale'].toDouble(),
+      darkMode: jsonMap['dark_mode'],
+      defaultDownloadDirectory: jsonMap['default_download_directory']
     );
   }
 
@@ -24,7 +26,8 @@ class Preferences {
 
   Map<String, dynamic> toMap() =>{
     'font_scale': fontScale,
-    'dark_mode': darkMode
+    'dark_mode': darkMode,
+    'default_download_directory': defaultDownloadDirectory
   };
 
 
@@ -40,9 +43,7 @@ class Preferences {
 
     final prefString = sharedPreferences.getString(_PREF_SHARED_KEY);
 
-
     Map<String, dynamic> jsonMap = jsonDecode(prefString!);
-
 
     return Preferences.fromJson(jsonMap);
   }
@@ -52,7 +53,6 @@ class Preferences {
 
   void save() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
     sharedPreferences.setString(_PREF_SHARED_KEY, jsonEncode(this.toMap()));
   }
 
