@@ -15,9 +15,20 @@ class CustomPieChart extends StatelessWidget {
   final double height;
   final double width;
   final double centerSpaceRadius;
+  final Color? backgroundColor;
 
 
-  CustomPieChart({super.key, this.chartTitle, this.titleStyle, this.sectionTitleStyle,  this.pieSections = const [], this.height=400, this.width=400, this.centerSpaceRadius=10});
+  CustomPieChart({
+    super.key,
+    this.chartTitle,
+    this.titleStyle,
+    this.sectionTitleStyle,
+    this.pieSections = const [],
+    this.height=400,
+    this.width=400,
+    this.centerSpaceRadius=10,
+    this.backgroundColor
+  });
 
 
   final List<Color> availableColors = [
@@ -47,7 +58,7 @@ class CustomPieChart extends StatelessWidget {
 
 
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: backgroundColor ?? Colors.grey.shade200,
         borderRadius: BorderRadius.circular(12),
       ),
 

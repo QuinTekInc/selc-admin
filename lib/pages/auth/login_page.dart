@@ -10,6 +10,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/pages/auth/auth_pages_background.dart';
 import 'package:selc_admin/pages/auth/forgot_password_page.dart';
 import 'package:selc_admin/pages/homepage.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 
@@ -28,14 +29,18 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return AuthPagesBackground(      
       body: Card(
         elevation: 12,
+
+
         child: Container(
           width: 470,
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.grey.shade300,
+            //Colors.grey.shade300
+            color: PreferencesProvider.getColor(context, 'side-bar-color'),
             borderRadius: BorderRadius.circular(12),
           ),
         

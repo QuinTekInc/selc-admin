@@ -10,6 +10,7 @@ import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/evaluations/suggestions_table.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 import '../../components/cells.dart';
@@ -149,7 +150,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
                       padding: const EdgeInsets.all(8),
                       width: MediaQuery.of(context).size.width * 0.2,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
                         borderRadius: BorderRadius.circular(12)
                       ),
 
@@ -177,9 +178,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
                     Container(  
                       padding: const EdgeInsets.all(8),
                       width: MediaQuery.of(context).size.width * 0.2,
+
                       decoration: BoxDecoration(  
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.grey.shade200
+                        color: PreferencesProvider.getColor(context, 'alt-primary-color')
                       ),
 
                       child: Column(  
@@ -308,7 +310,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: Colors.grey.shade200
+          color: PreferencesProvider.getColor(context, 'alt-primary-color')
         ),
 
 
@@ -505,7 +507,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
       padding: const EdgeInsets.all(8),
     
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12)
       ),
     
@@ -529,7 +531,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
             padding: const EdgeInsets.all(8),
                             
             decoration: BoxDecoration(  
-              color: Colors.grey.shade300,
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
               borderRadius: BorderRadius.circular(12)
             ),
                             
@@ -728,6 +730,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
               //width: 90,
               height: 250,
               pieSections: pieSections,
+              backgroundColor: Colors.transparent
             ),
           )
 

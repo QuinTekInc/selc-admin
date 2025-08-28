@@ -26,6 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
   PreferencesProvider? _preferencesProvider;
   PreferencesProvider get preferencesProvider => _preferencesProvider!;
 
+
  //just don't mind this instanciation
   final semesterController = DropdownController<int>();
 
@@ -77,9 +78,9 @@ class _SettingsPageState extends State<SettingsPage> {
             padding: EdgeInsets.all(16),
 
             decoration: BoxDecoration( 
-              color: Colors.white,
+              color: PreferencesProvider.getColor(context, 'table-background-color'),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300)
+              // border: Border.all(color: Colors.grey.shade300)
             ),
 
 
@@ -297,7 +298,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
-                color: Colors.black54
+                color: PreferencesProvider.getColor(context, 'text-color')
               ),
           
               children: [
@@ -424,7 +425,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
 
   void handleChangeDestinationPressed() async {
-
 
     final directory = await FilePicker.platform.getDirectoryPath(dialogTitle: 'Select Directory', lockParentWindow: true);
 

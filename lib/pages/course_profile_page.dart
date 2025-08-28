@@ -15,6 +15,7 @@ import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/evaluations/eval_page.dart';
 import 'package:selc_admin/pages/lecturer_info_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 
@@ -142,6 +143,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                           )
                         )
                         else CustomLineChart(
+                          containerBackgroundColor:  PreferencesProvider.getColor(context, 'alt-primary-color'),
                           width: double.infinity,
                           height: MediaQuery.of(context).size.height * 0.5,
                           maxY: 5,
@@ -197,6 +199,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
     );
   }
 
+
   Container buildChartPlaceholderContainer({required Widget child}) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.5,
@@ -220,8 +223,10 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
         width: MediaQuery.of(context).size.width * 0.25,
         height: double.infinity,
         padding: const EdgeInsets.all(8),
+
         decoration: BoxDecoration(  
-          color: Colors.white
+          color:  PreferencesProvider.getColor(context, 'alt-primary-color'),
+          borderRadius: BorderRadius.circular(12)
         ),
 
         child: Column(  
@@ -329,8 +334,9 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
     return Container(  
       width: MediaQuery.of(context).size.width * 0.25,
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color:  PreferencesProvider.getColor(context, 'alt-primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
     
@@ -338,6 +344,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
+        spacing: 8,
         children: [
     
           CircleAvatar(
@@ -345,22 +352,22 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
             radius: 65,
             child: const Icon(Icons.school, color: Colors.white, size: 70,),
           ),
-    
-          const SizedBox(height: 12,),
+
+
+          const SizedBox(height: 12),
+
     
           DetailContainer(title: 'Course Code', detail: widget.course.courseCode!),
     
-          const SizedBox(height: 12,),
+
     
           DetailContainer(title: 'Course Title', detail: widget.course.title!),
 
 
-          const SizedBox(height: 12,),
     
           DetailContainer(title: 'Mean Score / Rating', detail: widget.course.meanScore!.toStringAsFixed(2)),
 
 
-          const SizedBox(height: 12,),
     
           DetailContainer(title: 'Remark', detail: widget.course.remark!)
     
@@ -384,7 +391,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
       ),
 
       decoration: BoxDecoration(
-        color: Colors.white,
+        color:  PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -406,9 +413,9 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
             padding: const EdgeInsets.all(8),
             width: double.infinity,
 
-            decoration: BoxDecoration(  
+            decoration: BoxDecoration(
+              color:  PreferencesProvider.getColor(context, 'alt-primary-color'),
               borderRadius: BorderRadius.circular(12),
-              color: Colors.grey.shade200
             ),
 
             child: Row(  

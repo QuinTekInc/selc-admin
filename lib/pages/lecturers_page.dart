@@ -50,123 +50,122 @@ class _LecturersPageState extends State<LecturersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
 
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
+      children: [
 
 
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,  
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+
+
+            children: [
+
+              HeaderText(
+                'Lecturers',
+                fontSize: 25,
+              ),
+
+
+              Spacer(),
+
+              //todo: refresh button.
+              IconButton(
+
+                onPressed: () => loadLecturersData(),
+                icon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.green.shade400,),
+
+                    const SizedBox(width: 8,),
+
+                    CustomText(
+                      'Refresh',
+                      fontWeight: FontWeight.w600,
+                      textColor: Colors.green.shade400,
+                    )
+                  ],
+                )
+              )
+
+
+            ],
+
+          ),
+        ),
+
+
+        Container(
+          width: MediaQuery.of(context).size.width * 0.45,
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.symmetric(vertical: 8),
+          child: CustomTextField(
+            controller: searchController,
+            leadingIcon: CupertinoIcons.search,
+            useLabel: false,
+            hintText: 'Search by name or dept....',
+            onChanged: (String newValue) => setState(() {
+
+              if(newValue.isEmpty) {
+                filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers;
+                return;
+              }
+
+
+              filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers.where((lecturer){
+                return lecturer.name!.toLowerCase().contains(newValue.toLowerCase()) ||
+                        lecturer.department!.toLowerCase().contains(newValue.toLowerCase());
+              }).toList();
+
+            })
+          ),
+        ),
+
+
+
+        if(isLoading) const Expanded(
+          child: Center(child: CircularProgressIndicator(),),
+        ),
+
+
+        if(filteredLecturer.isEmpty && !isLoading) Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-            
-            
+              mainAxisSize: MainAxisSize.min,
+
               children: [
-            
-                HeaderText(
-                  'Lecturers',
-                  fontSize: 25,
+
+                CustomText(
+                  'No Lecturer Data',
+                  fontWeight: FontWeight.bold,
+                  textAlignment: TextAlign.center,
                 ),
 
-
-                Spacer(),
-
-                //todo: refresh button.
-                IconButton(
-                  
-                  onPressed: () => loadLecturersData(), 
-                  icon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-
-                      Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.green.shade400,),
-
-                      const SizedBox(width: 8,),
-
-                      CustomText(
-                        'Refresh',
-                        fontWeight: FontWeight.w600,
-                        textColor: Colors.green.shade400,
-                      )
-                    ],
-                  )
+                CustomText(
+                  'The list of lecturers appear here.',
+                  textAlignment: TextAlign.center,
                 )
-
-            
-              ],
-            
+              ]
             ),
           ),
+        )else Expanded(
+          child: buildLecturersGridView(context, filteredLecturer),
+        ),
 
-
-          Container(
-            width: MediaQuery.of(context).size.width * 0.45,
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: CustomTextField(
-              controller: searchController,
-              leadingIcon: CupertinoIcons.search,
-              useLabel: false,
-              hintText: 'Search by name or dept....',
-              onChanged: (String newValue) => setState(() {
-                
-                if(newValue.isEmpty) {
-                  filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers;
-                  return;
-                }
-
-
-                filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers.where((lecturer){
-                  return lecturer.name!.toLowerCase().contains(newValue.toLowerCase()) || 
-                          lecturer.department!.toLowerCase().contains(newValue.toLowerCase());
-                }).toList();
-
-              })
-            ),
-          ),
-
-
-
-          if(isLoading) const Expanded(   
-            child: Center(child: CircularProgressIndicator(),),
-          ),
-
-
-          if(filteredLecturer.isEmpty && !isLoading) Expanded(  
-            child: Center(  
-              child: Column(  
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-
-                children: [
-
-                  CustomText(
-                    'No Lecturer Data',
-                    fontWeight: FontWeight.bold,
-                    textAlignment: TextAlign.center,
-                  ),
-
-                  CustomText(  
-                    'The list of lecturers appear here.',
-                    textAlignment: TextAlign.center,
-                  )
-                ]
-              ),
-            ),
-          )else Expanded(  
-            child: buildLecturersGridView(context, filteredLecturer),
-          ),
-
-        ],
-      ),
+      ],
     );
   }
+
+
 
   Widget buildLecturersGridView(BuildContext context, List<Lecturer> lecturers) {
 

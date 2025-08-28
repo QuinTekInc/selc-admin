@@ -10,6 +10,7 @@ import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 
@@ -46,7 +47,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
         children: [
 
-          HeaderText('${widget.user.username}\'s Profile'),
+          HeaderText('${widget.user.username}\'s Profile', fontSize: 25,),
 
           NavigationTextButtons(),
 
@@ -72,7 +73,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       padding: EdgeInsets.all(16),
                       width: MediaQuery.of(context).size.width * 0.4,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
                         borderRadius: BorderRadius.circular(12),
                       ),
 
@@ -134,8 +135,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     Container(  
                       padding: EdgeInsets.all(16),
                       width: MediaQuery.of(context).size.width * 0.4,
+
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
                         borderRadius: BorderRadius.circular(12),
                       ),
 
@@ -183,8 +185,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Container(  
       width: MediaQuery.of(context).size.width * 0.4,
       padding: EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 16),
+
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -358,7 +361,7 @@ class _ChangeUserRoleSheetState extends State<ChangeUserRoleSheet> {
       margin: const EdgeInsets.only(bottom: 16, right: 16),
 
       decoration: BoxDecoration(  
-        color: Colors.grey.shade100,
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 

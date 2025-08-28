@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 
 class ReportView extends StatelessWidget {
 
@@ -28,10 +29,13 @@ class ReportView extends StatelessWidget {
           alignment: Alignment.center,
           padding: const EdgeInsets.all(8),
           width: MediaQuery.of(context).size.width * 0.5,
+
+
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade300),
-            color: Colors.grey.shade200
+            color: PreferencesProvider.getColor(context, 'alt-primary-color')
           ),
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,

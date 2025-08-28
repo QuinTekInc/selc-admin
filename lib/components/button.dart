@@ -203,7 +203,7 @@ class _NavigationTextButtonsState extends State<NavigationTextButtons> {
 
               setState(() {
                 hoverList[index] = true;
-                hoverColor = Colors.green.shade50;
+                hoverColor = Theme.of(context).brightness == Brightness.dark ? Colors.green.shade300 : Colors.green.shade50;
               });
             },
 
@@ -230,7 +230,7 @@ class _NavigationTextButtonsState extends State<NavigationTextButtons> {
               child: CustomText(
                 '$bullet ${pageProvider.pageNames[index]}',
                 fontSize: 12,
-                textColor: isLast ? Colors.green.shade300 : Colors.black38,
+                textColor: isLast ? Colors.green.shade300 : null,
                 fontWeight: FontWeight.w600,
                 textAlignment: TextAlign.left,
               ),

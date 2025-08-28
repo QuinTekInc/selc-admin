@@ -90,7 +90,7 @@ class HeaderText extends StatelessWidget {
 class CustomText extends StatelessWidget {
 
   final String text;
-  final Color textColor;
+  final Color? textColor;
   final double fontSize;
   final EdgeInsets padding;
   final TextAlign textAlignment;
@@ -102,7 +102,7 @@ class CustomText extends StatelessWidget {
 
   const CustomText(this.text, {
     super.key,
-    this.textColor = Colors.black87,
+    this.textColor,
     this.fontSize = 14,
     this.padding = const EdgeInsets.symmetric(horizontal: 8),
     this.textAlignment = TextAlign.left,
@@ -123,8 +123,9 @@ class CustomText extends StatelessWidget {
         softWrap: softwrap, 
         textAlign: textAlignment,
         overflow: overflow,
-        style: TextStyle(  
-          color: textColor,
+        style: TextStyle(
+          //text-color: Colors.black87
+          color: textColor ?? PreferencesProvider.getColor(context, 'text-color'),
           fontSize: fontSize + Provider.of<PreferencesProvider>(context).preferences.fontScale,
           fontWeight: fontWeight,
           fontStyle: fontStyle,
@@ -192,7 +193,7 @@ class CustomTextField extends StatelessWidget {
         ),
 
 
-        cursorColor: Colors.black45,
+        cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.green.shade300 : Colors.black45,
 
         decoration: InputDecoration(
 
@@ -231,19 +232,19 @@ class CustomTextField extends StatelessWidget {
           ),
 
           hintText: hintText,
-          hintStyle: const TextStyle(
+          hintStyle: TextStyle(
             fontFamily: "Poppins",
             fontWeight: FontWeight.w500,
-            color: Colors.black38
+            color:  PreferencesProvider.getColor(context, 'placeholder-text-color')
           ),
 
           filled: true,
-          fillColor: fillColor ?? Colors.grey.shade200,
+          fillColor: fillColor ?? PreferencesProvider.getColor(context, 'alt-primary-color'),
 
           prefixIcon: leadingIcon == null ? null : Icon(leadingIcon),
           suffix: suffix,
           
-          label: (!useLabel || hintText == null) ? null : CustomText(hintText!, fontSize: 15, textColor: Colors.black38,)
+          label: (!useLabel || hintText == null) ? null : CustomText(hintText!, fontSize: 15, textColor:  PreferencesProvider.getColor(context, 'placeholder-text-color'),)
         ),
 
         inputFormatters: inputFormatters,
@@ -296,7 +297,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
         obscureText = !obscureText;
       });
     }, 
-    child: Icon(obscureText ? CupertinoIcons.eye : CupertinoIcons.eye, color: Colors.green, size: 20,)
+    child: Icon(obscureText ?  CupertinoIcons.eye: CupertinoIcons.eye_slash, color: Colors.green, size: 20,)
   );
 }
 
@@ -415,7 +416,7 @@ class _CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>> {
 
       decoration: BoxDecoration(
 
-        color: widget.backgroundColor ?? Colors.grey.shade200,
+        color: widget.backgroundColor ?? PreferencesProvider.getColor(context, 'alt-primary-color'),
         borderRadius: BorderRadius.circular(12),
 
         border: Border.all(
@@ -455,7 +456,8 @@ class _CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>> {
 
 
         borderRadius: BorderRadius.circular(12),
-        dropdownColor: Colors.grey.shade100,
+        //Colors.grey.shade200
+        dropdownColor: PreferencesProvider.getColor(context, 'primary-color'),
         focusColor: Colors.green.shade100,
 
         onChanged: (newValue) {

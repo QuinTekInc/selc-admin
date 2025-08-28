@@ -14,28 +14,25 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Padding(
+      padding: const EdgeInsets.all(16),
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-        
-          children: [
-            //todo: the heading text.
-            HeaderText(
-              'Notifications',
-              fontSize: 25,
-            ),
-        
-            //todo: navigation text buttons
-            NavigationTextButtons()
-        
-          ],
-        
-        ),
+        children: [
+          //todo: the heading text.
+          HeaderText(
+            'Notifications',
+            fontSize: 25,
+          ),
+
+          //todo: navigation text buttons
+          NavigationTextButtons()
+
+        ],
+
       ),
     );
   }

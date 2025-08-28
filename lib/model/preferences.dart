@@ -51,9 +51,9 @@ class Preferences {
 
 
 
-  void save() async {
+  static void save(Preferences preferences) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setString(_PREF_SHARED_KEY, jsonEncode(this.toMap()));
+    sharedPreferences.setString(_PREF_SHARED_KEY, jsonEncode(preferences.toMap()));
   }
 
 }

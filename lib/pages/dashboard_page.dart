@@ -15,6 +15,7 @@ import 'package:selc_admin/pages/auth/login_page.dart';
 import 'package:selc_admin/pages/notifications_page.dart';
 import 'package:selc_admin/pages/user_profile_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -517,8 +518,9 @@ class _DashboardPageState extends State<DashboardPage> {
       //width: 400,
       padding: const EdgeInsets.all(8),
 
-      decoration: BoxDecoration(  
-        color: Colors.white,
+      decoration: BoxDecoration(
+        //Colors.white
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -599,8 +601,9 @@ class _DashboardPageState extends State<DashboardPage> {
       //   minHeight: MediaQuery.of(context).size.height * 0.35,
       // ),
 
-      decoration: BoxDecoration(  
-        color: Colors.white,
+      decoration: BoxDecoration(
+        //Colors.white
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -642,7 +645,8 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
 
       decoration: BoxDecoration(
-        color: Colors.white,
+        //Colors.white
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -656,6 +660,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
           Row(
             children: [
+
               HeaderText(
                 'Course Ratings',
                 fontSize: 15,
@@ -670,6 +675,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+
                     CustomText(  
                       'See more',
                       textColor: Colors.green.shade400,
@@ -695,7 +701,8 @@ class _DashboardPageState extends State<DashboardPage> {
             padding: const EdgeInsets.all(8),
 
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              //Colors.grey.shade200
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
               borderRadius: BorderRadius.circular(12)
             ),
 
@@ -819,7 +826,8 @@ class _DashboardPageState extends State<DashboardPage> {
       height: MediaQuery.of(context).size.height * 0.5,
 
       decoration: BoxDecoration(
-        color: Colors.white,
+        //Colors.white
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -870,7 +878,8 @@ class _DashboardPageState extends State<DashboardPage> {
             padding: const EdgeInsets.all(8),
 
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              //Colors.grey.shade200
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
               borderRadius: BorderRadius.circular(12)
             ),
 
@@ -1000,7 +1009,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
 
   }
-
 
 
 

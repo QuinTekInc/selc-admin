@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 
 class AuthPagesBackground extends StatelessWidget {
   final Widget body;
@@ -10,7 +11,7 @@ class AuthPagesBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: PreferencesProvider.getColor(context, 'primary-color'),
 
       body: Container(  
         margin: EdgeInsets.symmetric(vertical: 12),

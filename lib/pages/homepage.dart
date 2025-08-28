@@ -11,6 +11,7 @@ import 'package:selc_admin/pages/questions_page.dart';
 import 'package:selc_admin/pages/settings_page.dart';
 import 'package:selc_admin/pages/user_management/users_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 class Homepage extends StatefulWidget {
@@ -68,8 +69,9 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     
-    return Scaffold(  
-      backgroundColor: Colors.grey.shade50,
+    return Scaffold(
+      //Colors.grey.shade100
+      backgroundColor: PreferencesProvider.getColor(context, 'primary-color'),
 
       body: Row(  
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +142,9 @@ class _SideBarState extends State<SideBar> {
     return Card(
       margin: EdgeInsets.all(12),
       elevation: 12,
-      color: Colors.grey.shade300,
+
+      //color: Colors.grey.shade300
+      color: PreferencesProvider.getColor(context, 'alt-primary-color'),
 
       child: Container(
         //width: 129,
@@ -212,11 +216,12 @@ class _NavigatorItemState extends State<NavigatorItem> {
   @override
   Widget build(BuildContext context) {
 
-    Color iconColor = isHovered || widget.selected ? Colors.white : Colors.green.shade500;
+    Color iconColor = (isHovered || widget.selected) ? Colors.white :
+      Theme.of(context).brightness == Brightness.dark ? Colors.white38 : Colors.green.shade500;
 
-    Color tileBackgroundColor = isHovered? Colors.green.shade200 : Colors.white;
+    Color tileBackgroundColor = isHovered ? Colors.green.shade200 : PreferencesProvider.getColor(context, 'table-background-color');
 
-    Color? textColor = Colors.black54;
+    Color? textColor;
 
     if(widget.selected){
       tileBackgroundColor = Colors.green.shade500;

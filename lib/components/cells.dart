@@ -6,6 +6,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/course_profile_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 //todo: the question category cell.
@@ -22,10 +23,10 @@ class CategoryCell extends StatelessWidget {
     return Container(
 
       padding: EdgeInsets.all(8),
-      margin: EdgeInsets.only(bottom: 12),
 
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        //Colors.grey.shade200
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(8)
       ),
 
@@ -117,7 +118,7 @@ class QuestionCell extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8),
                       
       decoration: BoxDecoration(  
-        color: Colors.white54,
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(8)
       ),
                       
@@ -155,7 +156,7 @@ class QuestionCell extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                color: Colors.green.shade100
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.green.shade400 : Colors.green.shade100
               ),
 
               child: CustomText(  
@@ -240,14 +241,13 @@ class CourseCell extends StatelessWidget {
               const SizedBox(height: 4,),
         
               CustomText(
-                course.courseCode!,
+                course.courseCode,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                textColor: Colors.black54,
               ),
         
               CustomText(
-                course.title!,
+                course.title,
                 softwrap: true,
                 maxLines: 2,
               )
@@ -283,7 +283,8 @@ class DetailContainer extends StatelessWidget {
       padding: const EdgeInsets.all(8),
 
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        //Colors.grey.shade100
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.black38)
       ),
@@ -334,7 +335,8 @@ class ClickableMenuItem extends StatelessWidget {
     return DecoratedBox(
 
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        //Colors.grey.shade200
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(8)
       ),
 
@@ -344,7 +346,7 @@ class ClickableMenuItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(8)
         ),
 
-        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
         leading: Container(
           width: 40,
@@ -406,7 +408,7 @@ class RatingStars extends StatelessWidget {
       padding: zeroPadding ? EdgeInsets.zero : const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
 
       decoration: BoxDecoration(  
-        color: transparentBackground ? Colors.transparent : Colors.grey.shade100,
+        color: transparentBackground ? Colors.transparent : PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 

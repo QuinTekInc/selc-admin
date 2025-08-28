@@ -8,6 +8,7 @@ import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:provider/provider.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 import  'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/components/utils.dart' show generatePassword;
@@ -79,8 +80,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 width: MediaQuery.of(context).size.width * 0.45,
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(16),
+
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: PreferencesProvider.getColor(context, 'table-background-color'),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.black26)
                 ),

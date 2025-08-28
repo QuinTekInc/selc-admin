@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/pages/auth/auth_pages_background.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 
 
 class ForgotPasswordPage extends StatelessWidget {
@@ -20,7 +21,7 @@ class ForgotPasswordPage extends StatelessWidget {
           padding: EdgeInsets.all(16),
       
           decoration: BoxDecoration(
-            color: Colors.grey.shade300,
+            color:  PreferencesProvider.getColor(context, 'side-bar-color'),
             borderRadius: BorderRadius.circular(12),
           ),
         
@@ -131,7 +132,7 @@ class ConfirmationCodeEntryPage extends StatelessWidget {
           padding: EdgeInsets.all(16),
 
           decoration: BoxDecoration(
-            color: Colors.grey.shade300,
+            color: PreferencesProvider.getColor(context, 'side-bar-color'),
             borderRadius: BorderRadius.circular(12),
           ),
         
@@ -252,7 +253,7 @@ class NewPasswordPage extends StatelessWidget {
           padding: EdgeInsets.all(16),
       
           decoration: BoxDecoration(
-            color: Colors.grey.shade300,
+            color: PreferencesProvider.getColor(context, 'side-bar-color'),
             borderRadius: BorderRadius.circular(12),
           ),
         

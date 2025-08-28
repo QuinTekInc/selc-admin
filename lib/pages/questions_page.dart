@@ -9,6 +9,7 @@ import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 import 'package:selc_admin/model/models.dart';
 
@@ -79,256 +80,255 @@ class _QuestionsPageState extends State<QuestionsPage> {
     bool isFilteredCategoriesEmpty = filteredCategories.isEmpty;
 
 
-    return Scaffold(
+    return Container(
+      padding: const EdgeInsets.all(16),
 
-      body: Container(
-        padding: const EdgeInsets.all(16),
+      child: Column(
 
-        child: Column(  
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
 
-          children: [
+          //title of the current page.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
 
-            //title of the current page.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                HeaderText(
-                  'Question Categories and Questionnaires',
-                  fontSize: 25,
-                ),
-
-
-
-                TextButton(
-                  onPressed: () => loadData(), 
-                  child: Row(  
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.green.shade300,),
-                      const SizedBox(width: 8,),
-
-                      CustomText(
-                        'Refresh',
-                        fontWeight: FontWeight.w600,
-                        textColor: Colors.green.shade300,
-                      )
-                    ],
-                  )
-                )
-              ],
-            ),
-
-
-            const SizedBox(height: 16,),
-
-
-            //todo: search text field
-            Row(
-              children: [
-
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.45,
-                  height: 40,
-                
-                  child: CustomTextField(
-                    controller: searchController,
-                    hintText: 'Search Questions And Categories', 
-                    leadingIcon: CupertinoIcons.search, 
-
-                    onChanged: handleSearch
-                  ),
-                ),
-
-                Spacer(),
-
-
-
-                //todo: add category button
-                if(isSuperuser) CustomButton.withIcon(
-                  'Add Category',
-                  icon: CupertinoIcons.add, 
-                  //width: 143,
-                  forceIconLeading: true,
-                  backgroundColor: Colors.blue.shade400,
-                  onPressed: () => handleCategoryModalSheet(),
-                ),
-
-
-                
-                //todo: add question button
-                if(isSuperuser) CustomButton.withIcon(
-                  'Add Question',
-                  icon: CupertinoIcons.add, 
-                  //width: 140,
-                  forceIconLeading: true,
-                  onPressed: () => handleQuestionModalSheet(),
-                )
-              ],
-            ),
-
-
-            const SizedBox(height: 16,),
-
-
-            if(isLoading) Expanded(
-
-              child: Center(
-                child: CircularProgressIndicator(),
+              HeaderText(
+                'Question Categories and Questionnaires',
+                fontSize: 25,
               ),
 
-            )else Expanded(
-
-              child: Row(  
-
-                children: [
-
-                  //todo: the half showing the categories
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      height: double.infinity,
-                      padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
-
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8)
-                      ),
 
 
-                      child: Column(
+              TextButton(
+                onPressed: () => loadData(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.green.shade300,),
+                    const SizedBox(width: 8,),
 
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-
-                        children: [
-
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: HeaderText(
-                              'Categories',
-                              textAlignment: TextAlign.left,
-                            ),
-                          ),
-
-                          const SizedBox(height: 8,),
-
-
-                          if(isCategoriesEmpty) Expanded(
-                            child: CollectionPlaceholder(  
-                              title: 'No Data',
-                              detail: 'Questionnaire Categories appear here.',
-                            ),
-                          )
-                          else if(isFilteredCategoriesEmpty && !isCategoriesEmpty) Expanded(
-                            child: CollectionPlaceholder(
-                              title: 'No Match',
-                              detail: 'Could not find any category the matches \'${searchController.text}\''
-                            )
-                          )
-                          else Expanded(
-                            flex: 2,
-                            child: ListView.builder(
-                              itemCount: filteredCategories.length,
-                              itemBuilder: (_, index){
-                                Category category = filteredCategories[index];
-                            
-                                return CategoryCell(
-                                  category: category,
-                                  onEditPressed: () => handleCategoryModalSheet(category: category, inEditMode: true),
-                                  onDeletePressed: (){} //todo: implement the onDelete function
-                                );
-                              }
-                            ),
-                          )     
-
-                        ],
-
-                      ),
+                    CustomText(
+                      'Refresh',
+                      fontWeight: FontWeight.w600,
+                      textColor: Colors.green.shade300,
+                    )
+                  ],
+                )
+              )
+            ],
+          ),
 
 
-                    ),
-                  ),
+          const SizedBox(height: 16,),
 
 
-                  const SizedBox(width: 16,),
+          //todo: search text field
+          Row(
+            children: [
 
-                  //todo: part the showing th questions  for showing the questions.
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.45,
+                height: 40,
 
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      width: double.infinity,
-                      height: double.infinity,
+                child: CustomTextField(
+                  controller: searchController,
+                  hintText: 'Search Questions And Categories',
+                  leadingIcon: CupertinoIcons.search,
 
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8)
-                      ),
-                      
-                      padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
-
-                      child: Column(
-                      
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                      
-                        children: [
-
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: HeaderText('Questions'),
-                          ),
-                      
-                          const SizedBox(height: 12,),
-
-
-                          //show a placeholder when the questions are empty
-                          if(isQuestionsEmpty) Expanded(
-                            child: CollectionPlaceholder(
-                              title: 'No Data',
-                              detail: 'There are no questions. Press on the add button to add some to the database'
-                            ),
-                          )
-                          else if(isFilteredQuestionsEmpty && !isQuestionsEmpty) Expanded(
-                            child: CollectionPlaceholder(
-                              title: 'No Match Found',
-                              detail: 'Could not find any questions by the name category or phrase, "${searchController.text}"',
-                            )
-                          )
-                          else Expanded(
-
-                            child: ListView.builder(
-                              itemCount: filteredQuestions.length,
-                              itemBuilder: (_, index){
-                                                  
-                                Question question = filteredQuestions[index];
-                                                  
-                                return QuestionCell(
-                                  question: question, 
-                                  onEditPressed: () => handleQuestionModalSheet(question: question),
-                                  onDeletePressed: (){},
-                                );
-                              }
-                            ),
-                          ) 
-                      
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                  onChanged: handleSearch
+                ),
               ),
-            )
 
-          ],
-        ),
+              Spacer(),
+
+
+
+              //todo: add category button
+              if(isSuperuser) CustomButton.withIcon(
+                'Add Category',
+                icon: CupertinoIcons.add,
+                //width: 143,
+                forceIconLeading: true,
+                backgroundColor: Colors.blue.shade400,
+                onPressed: () => handleCategoryModalSheet(),
+              ),
+
+
+
+              //todo: add question button
+              if(isSuperuser) CustomButton.withIcon(
+                'Add Question',
+                icon: CupertinoIcons.add,
+                //width: 140,
+                forceIconLeading: true,
+                onPressed: () => handleQuestionModalSheet(),
+              )
+            ],
+          ),
+
+
+          const SizedBox(height: 16,),
+
+
+          if(isLoading) Expanded(
+
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+
+          )else Expanded(
+
+            child: Row(
+
+              children: [
+
+                //todo: the half showing the categories
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    height: double.infinity,
+                    padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
+
+                    decoration: BoxDecoration(
+                      //Colors.white
+                      color: PreferencesProvider.getColor(context, 'table-background-color'),
+                      borderRadius: BorderRadius.circular(8)
+                    ),
+
+
+                    child: Column(
+
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+
+                      children: [
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: HeaderText(
+                            'Categories',
+                            textAlignment: TextAlign.left,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8,),
+
+
+                        if(isCategoriesEmpty) Expanded(
+                          child: CollectionPlaceholder(
+                            title: 'No Data',
+                            detail: 'Questionnaire Categories appear here.',
+                          ),
+                        )
+                        else if(isFilteredCategoriesEmpty && !isCategoriesEmpty) Expanded(
+                          child: CollectionPlaceholder(
+                            title: 'No Match',
+                            detail: 'Could not find any category the matches \'${searchController.text}\''
+                          )
+                        )
+                        else Expanded(
+                          flex: 2,
+                          child: ListView.separated(
+                            itemCount: filteredCategories.length,
+                            separatorBuilder: (_, __) => SizedBox(height: 8,),
+                            itemBuilder: (_, index){
+                              Category category = filteredCategories[index];
+
+                              return CategoryCell(
+                                category: category,
+                                onEditPressed: () => handleCategoryModalSheet(category: category, inEditMode: true),
+                                onDeletePressed: (){} //todo: implement the onDelete function
+                              );
+                            }
+                          ),
+                        )
+
+                      ],
+
+                    ),
+
+
+                  ),
+                ),
+
+
+                const SizedBox(width: 16,),
+
+                //todo: part the showing th questions  for showing the questions.
+
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+
+                    decoration: BoxDecoration(
+                      //Colors.white
+                      color: PreferencesProvider.getColor(context, 'table-background-color'),
+                      borderRadius: BorderRadius.circular(8)
+                    ),
+
+                    padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
+
+                    child: Column(
+
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+
+                      children: [
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: HeaderText('Questions'),
+                        ),
+
+                        const SizedBox(height: 12,),
+
+
+                        //show a placeholder when the questions are empty
+                        if(isQuestionsEmpty) Expanded(
+                          child: CollectionPlaceholder(
+                            title: 'No Data',
+                            detail: 'There are no questions. Press on the add button to add some to the database'
+                          ),
+                        )
+                        else if(isFilteredQuestionsEmpty && !isQuestionsEmpty) Expanded(
+                          child: CollectionPlaceholder(
+                            title: 'No Match Found',
+                            detail: 'Could not find any questions by the name category or phrase, "${searchController.text}"',
+                          )
+                        )
+                        else Expanded(
+
+                          child: ListView.builder(
+                            itemCount: filteredQuestions.length,
+                            itemBuilder: (_, index){
+
+                              Question question = filteredQuestions[index];
+
+                              return QuestionCell(
+                                question: question,
+                                onEditPressed: () => handleQuestionModalSheet(question: question),
+                                onDeletePressed: (){},
+                              );
+                            }
+                          ),
+                        )
+
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+
+        ],
       ),
-
     );
   }
 
@@ -437,7 +437,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
       padding: EdgeInsets.all(16),
       
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: Colors.green.shade200,
@@ -653,7 +653,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       padding: EdgeInsets.all(16),
       
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: Colors.green.shade200,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 
 import '../../components/text.dart';
 
@@ -21,7 +22,7 @@ class SuggestionsTable extends StatelessWidget {
       width: double.infinity,
 
       decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: PreferencesProvider.getColor(context, 'table-background-color'),
           borderRadius: BorderRadius.circular(12)
       ),
 
@@ -56,7 +57,7 @@ class SuggestionsTable extends StatelessWidget {
 
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: Colors.grey.shade100
+                    color: PreferencesProvider.getColor(context, 'primary-color')
                 ),
 
                 child: Column(

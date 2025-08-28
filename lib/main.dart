@@ -11,7 +11,6 @@ void main(){
 
   WidgetsFlutterBinding.ensureInitialized();
 
-
   runApp(
 
     MultiProvider(
@@ -21,17 +20,20 @@ void main(){
           create: (_) => SelcProvider(),
         ),
 
+
         ChangeNotifierProvider(
           create: (_) => PageProvider(),
         ),
 
+
         ChangeNotifierProvider(
-          create: (_){
+          create: (_) {
             PreferencesProvider prefProvider = PreferencesProvider();
             prefProvider.loadPreferences();
             return prefProvider;
           }
-        )
+        ),
+
       ],
 
       child: const SelcAdminApp()
@@ -49,6 +51,9 @@ class SelcAdminApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          brightness: Provider.of<PreferencesProvider>(context,).brightness
+      ),
       home: LoginPage()
     );
   }
@@ -56,5 +61,4 @@ class SelcAdminApp extends StatelessWidget {
 }
 
 
-//now we need to study the excel file.
 

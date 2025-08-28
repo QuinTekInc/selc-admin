@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 
 
 class CategoryRemarksTable extends StatelessWidget {
@@ -18,8 +19,8 @@ class CategoryRemarksTable extends StatelessWidget {
       height: double.infinity,
 
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.grey.shade200
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
+        borderRadius: BorderRadius.circular(12),
       ),
 
       child: Column(
@@ -43,7 +44,7 @@ class CategoryRemarksTable extends StatelessWidget {
             width: double.infinity,
 
             decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: PreferencesProvider.getColor(context, 'alt-primary-color'),
                 borderRadius: BorderRadius.circular(12)
             ),
 

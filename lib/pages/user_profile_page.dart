@@ -8,6 +8,7 @@ import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 
@@ -16,206 +17,205 @@ class UserProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Padding(
+      padding: const EdgeInsets.all(16),
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
 
-        child: Column(  
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+        children: [
 
-          children: [
+          HeaderText('My Profile', fontSize: 25,),
 
-            HeaderText('My Profile', fontSize: 25,),
-
-            NavigationTextButtons(),
+          NavigationTextButtons(),
 
 
-            const SizedBox(height: 12,),
+          const SizedBox(height: 12,),
 
-            Expanded(
-              child: SingleChildScrollView(
-                child: Center(
+          Expanded(
+            child: SingleChildScrollView(
+              child: Center(
 
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                  
-                    children: [
-                      //showing some personal information of the current user.
-                  
-                      Container(
-                                        
-                        padding: EdgeInsets.only(top: 16, left: 12, right: 12, bottom: 12),
-                        width: MediaQuery.of(context).size.width * 0.4,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
 
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(12)
-                        ),
-                                        
-                                        
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            
-                      
-                            Center(
-                              child: CircleAvatar(
-                                backgroundColor: Colors.green.shade400,
-                                radius: 80,
-                                child: Icon(CupertinoIcons.person, color: Colors.white, size: 80,),
-                              ),
-                            ),
-                                        
-                                        
-                            const SizedBox(height: 24,),
-                                        
-                            DetailContainer(
-                              title: 'Full Name', 
-                              detail: Provider.of<SelcProvider>(context).user.fullName()
-                            ),
-                                        
-                            const SizedBox(height: 12,),        
-                            
-                            DetailContainer(
-                              title: 'Username',
-                              detail: Provider.of<SelcProvider>(context).user.username!
-                            ),
-                                        
-                            const SizedBox(height: 12,), 
+                  children: [
+                    //showing some personal information of the current user.
 
-                            DetailContainer(
-                              title: 'Email',
-                              detail: Provider.of<SelcProvider>(context).user.email!
-                            ),
-                                        
+                    Container(
 
-                            const SizedBox(height: 12,),           
-                                        
-                            DetailContainer(
-                              title: 'Role',
-                              detail: Provider.of<SelcProvider>(context).user.isSuperuser ? "Superuser" : "Admin"
-                            ),
-                          
-                          ],
-                        ),
-                      ),
-                  
-                  
-                      const SizedBox(height: 12,),
-                  
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        padding: const EdgeInsets.all(12),
-                      
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(12)
-                        ),
-                                  
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                                  
-                          children: [
-                                  
-                            HeaderText(
-                              'Edit Personal Information',
-                              fontSize: 16,
-                              textColor: Colors.black38,
-                            ),
-                                  
-                                  
-                            const SizedBox(height: 16,),
-                                  
-                            ClickableMenuItem(
-                              title: 'Edit Full Name',
-                              icon: CupertinoIcons.person,
-                              onPressed: () => showCustomModalBottomSheet(context: context, child: EditNameSheet())
-                            ),
-                                  
-                            const SizedBox(height: 8,),
-                                  
-                                  
-                            ClickableMenuItem(
-                              title: 'Change E-mail',
-                              icon: CupertinoIcons.envelope_badge,
-                              iconBackgroundColor: Colors.deepOrangeAccent,
-                              onPressed: () => showCustomModalBottomSheet(context: context, child: EditEmailSheet())
-                            ),
-                                  
-                                  
-                            const SizedBox(height: 8,),
-                                  
-                                  
-                            ClickableMenuItem(
-                              title: 'Change Password',
-                              icon: CupertinoIcons.lock,
-                              iconBackgroundColor: Colors.deepPurpleAccent,
-                              onPressed: () => showCustomModalBottomSheet(context: context, child: ChangePasswordSheet())
-                            ),
-                                         
-                                  
-                          ],
-                        ),
+                      padding: EdgeInsets.only(top: 16, left: 12, right: 12, bottom: 12),
+                      width: MediaQuery.of(context).size.width * 0.4,
+
+                      decoration: BoxDecoration(
+                        //Colors.grey.shade200
+                        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                        borderRadius: BorderRadius.circular(12)
                       ),
 
 
-                      const SizedBox(height: 12,),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
 
 
-
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        padding: const EdgeInsets.all(12),
-                      
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(12)
-                        ),
-                                  
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                                  
-                          children: [
-                                  
-                            HeaderText(
-                              'Logout',
-                              fontSize: 16,
-                              textColor: Colors.black38,
+                          Center(
+                            child: CircleAvatar(
+                              backgroundColor: Colors.green.shade400,
+                              radius: 80,
+                              child: Icon(CupertinoIcons.person, color: Colors.white, size: 80,),
                             ),
-                                  
-                                  
-                            const SizedBox(height: 16,),
-                                  
-                            ClickableMenuItem(
-                              title: 'Logout',
-                              icon: Icons.power_settings_new,
-                              iconBackgroundColor: Colors.red.shade400,
-                              onPressed: () => handleLogout(context)
-                            ),           
-                                  
-                          ],
-                        ),
-                      )
-                  
-                  
-                    ],
-                  ),
+                          ),
+
+
+                          const SizedBox(height: 24,),
+
+                          DetailContainer(
+                            title: 'Full Name',
+                            detail: Provider.of<SelcProvider>(context).user.fullName()
+                          ),
+
+                          const SizedBox(height: 12,),
+
+                          DetailContainer(
+                            title: 'Username',
+                            detail: Provider.of<SelcProvider>(context).user.username!
+                          ),
+
+                          const SizedBox(height: 12,),
+
+                          DetailContainer(
+                            title: 'Email',
+                            detail: Provider.of<SelcProvider>(context).user.email!
+                          ),
+
+
+                          const SizedBox(height: 12,),
+
+                          DetailContainer(
+                            title: 'Role',
+                            detail: Provider.of<SelcProvider>(context).user.isSuperuser ? "Superuser" : "Admin"
+                          ),
+
+                        ],
+                      ),
+                    ),
+
+
+                    const SizedBox(height: 12,),
+
+                    //todo: stuff to contain information
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      padding: const EdgeInsets.all(12),
+
+                      decoration: BoxDecoration(
+                        //Colors.grey.shade200
+                        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                        borderRadius: BorderRadius.circular(12)
+                      ),
+
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+
+                        children: [
+
+                          HeaderText(
+                            'Edit Personal Information',
+                            fontSize: 16,
+                          ),
+
+
+                          const SizedBox(height: 16,),
+
+                          ClickableMenuItem(
+                            title: 'Edit Full Name',
+                            icon: CupertinoIcons.person,
+                            onPressed: () => showCustomModalBottomSheet(context: context, child: EditNameSheet())
+                          ),
+
+                          const SizedBox(height: 8,),
+
+
+                          ClickableMenuItem(
+                            title: 'Change E-mail',
+                            icon: CupertinoIcons.envelope_badge,
+                            iconBackgroundColor: Colors.deepOrangeAccent,
+                            onPressed: () => showCustomModalBottomSheet(context: context, child: EditEmailSheet())
+                          ),
+
+
+                          const SizedBox(height: 8,),
+
+
+                          ClickableMenuItem(
+                            title: 'Change Password',
+                            icon: CupertinoIcons.lock,
+                            iconBackgroundColor: Colors.deepPurpleAccent,
+                            onPressed: () => showCustomModalBottomSheet(context: context, child: ChangePasswordSheet())
+                          ),
+
+
+                        ],
+                      ),
+                    ),
+
+
+                    const SizedBox(height: 12,),
+
+
+
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      padding: const EdgeInsets.all(12),
+
+                      decoration: BoxDecoration(
+                        //Colors.grey.shade200
+                        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                        borderRadius: BorderRadius.circular(12)
+                      ),
+
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+
+                        children: [
+
+                          HeaderText(
+                            'Logout',
+                            fontSize: 16,
+                          ),
+
+
+                          const SizedBox(height: 16,),
+
+                          ClickableMenuItem(
+                            title: 'Logout',
+                            icon: Icons.power_settings_new,
+                            iconBackgroundColor: Colors.red.shade400,
+                            onPressed: () => handleLogout(context)
+                          ),
+
+                        ],
+                      ),
+                    )
+
+
+                  ],
                 ),
               ),
-            )
+            ),
+          )
 
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -230,6 +230,8 @@ class UserProfilePage extends StatelessWidget {
 
 
 }
+
+
 
 
 
@@ -266,7 +268,7 @@ class _EditNameSheetState extends State<EditNameSheet> {
       width: 470,
       margin: const EdgeInsets.only(bottom: 12, right: 12),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -380,9 +382,6 @@ class _EditNameSheetState extends State<EditNameSheet> {
 
 
 
-
-
-
 class EditEmailSheet extends StatefulWidget {
   const EditEmailSheet({super.key});
 
@@ -412,7 +411,7 @@ class _EditEmailSheetState extends State<EditEmailSheet> {
       width: 470,
       margin: const EdgeInsets.only(bottom: 12, right: 12),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -549,7 +548,7 @@ class _ChangePasswordSheetState extends State<ChangePasswordSheet> {
       width: 470,
       margin: const EdgeInsets.only(bottom: 12, right: 12),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: PreferencesProvider.getColor(context, 'primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 

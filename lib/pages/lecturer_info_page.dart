@@ -13,6 +13,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/evaluations/eval_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 
@@ -76,110 +77,105 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-        
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-        
-        
-          children: [
-        
-            HeaderText(
-              '${widget.lecturer.name}\'s profile',
-              fontSize: 25,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+
+
+        children: [
+
+          HeaderText(
+            '${widget.lecturer.name}\'s profile',
+            fontSize: 25,
+          ),
+
+          //todo: navigator buttons.
+          NavigationTextButtons(),
+
+
+          const SizedBox(height: 8,),
+
+          Expanded(
+
+            child: Row(
+
+              crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: [
+
+                //todo: top banner displaying the lectuer's name, email and department.
+                buildLecturerInfoSection(),
+
+
+                const SizedBox(width: 12),
+
+
+                if(isLoading) Expanded(
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.symmetric(vertical: 150),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+                else if(!isLoading && cummulativeClassCourses.isEmpty) Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 150),
+                    alignment: Alignment.center,
+
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+
+                      children: [
+
+                        CustomText(
+                          'No Data',
+                          textAlignment: TextAlign.center,
+                          fontWeight: FontWeight.w700,
+                        ),
+
+
+                        CustomText('Lecturer may not have any courses yet'),
+
+                        const SizedBox(height: 8,),
+
+
+                       CustomButton.withText('Click to reload', onPressed: () => loadData())
+
+                      ],
+                    ),
+                  ),
+                )
+
+                else Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+
+                      children: [
+
+                        buildCurrentCourseTable(),
+
+                        const SizedBox(height: 12),
+
+                        buildCummulativeCourseTable(),
+                      ],
+                    ),
+                  ),
+                )
+
+              ],
             ),
-
-            //todo: navigator buttons.
-            NavigationTextButtons(),
-
-
-            const SizedBox(height: 8,),
-        
-            Expanded(
-        
-              child: Row(
-                            
-                crossAxisAlignment: CrossAxisAlignment.start,
-                            
-                children: [
-              
-                  //todo: top banner displaying the lectuer's name, email and department.     
-                  buildLecturerInfoSection(),
-              
-              
-                  const SizedBox(width: 12),
-              
-              
-                  if(isLoading) Expanded(
-                    child: Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.symmetric(vertical: 150),
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                  else if(!isLoading && cummulativeClassCourses.isEmpty) Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 150),
-                      alignment: Alignment.center,
-                                  
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                                  
-                        children: [
-                                  
-                          CustomText(
-                            'No Data',
-                            textAlignment: TextAlign.center,
-                            fontWeight: FontWeight.w700,
-                          ),
-                                  
-                                  
-                          CustomText('Lecturer may not have any courses yet'),
-                                  
-                          const SizedBox(height: 8,),
-                                  
-                                  
-                         CustomButton.withText('Click to reload', onPressed: () => loadData())
-                                  
-                        ],
-                      ),
-                    ),
-                  )
-
-                  else Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        
-                        children: [
-                                    
-                          buildCurrentCourseTable(),
-                          
-                          const SizedBox(height: 12),
-                          
-                          buildCummulativeCourseTable(),
-                        ],
-                      ),
-                    ),
-                  )
-                            
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-
     );
   }
 
@@ -189,7 +185,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
       padding: EdgeInsets.all(16),
 
       decoration: BoxDecoration(  
-        color: Colors.grey.shade200,
+        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -230,7 +226,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
           DetailContainer(title: 'Rating', detail: widget.lecturer.rating!.toStringAsFixed(2)),
 
         ],
-      ),
+      )
     );
   }
 
@@ -294,13 +290,15 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
 
 
+
+
   Widget buildCardDetailCol(IconData icon, String value, {Color? iconColor}) {
-    return Column(  
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
-          icon, 
-          color: iconColor, 
+          icon,
+          color: iconColor,
           size: 30,
         ),
 
@@ -314,8 +312,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
 
 
-
-  //todo: table showing the curren courses handle by the lecturer 
+  //todo: table showing the current courses handle by the lecturer
   Widget buildCurrentCourseTable(){
 
     return Container(
@@ -327,19 +324,19 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
       ),
 
       decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.shade200
       ),
 
 
-      child: Column(  
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
 
 
-          CustomText(  
+          CustomText(
             'Current Courses',
             fontWeight: FontWeight.w600,
           ),
@@ -348,31 +345,31 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
           const SizedBox(height: 8),
 
           //todo: table column headers.
-          Container(  
+          Container(
             padding: const EdgeInsets.all(8),
             width: double.infinity,
 
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
               borderRadius: BorderRadius.circular(12)
             ),
 
-            child: Row(  
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
 
               children: [
 
-                Expanded(  
-                  child: CustomText(  
+                Expanded(
+                  child: CustomText(
                     'Course Code'
                   ),
                 ),
 
 
-                Expanded( 
-                  flex: 2, 
-                  child: CustomText(  
+                Expanded(
+                  flex: 2,
+                  child: CustomText(
                     'Course Title'
                   ),
                 ),
@@ -380,8 +377,8 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
                 //TODO: fix this code later.
 
-                // Expanded(  
-                //   child: CustomText(  
+                // Expanded(
+                //   child: CustomText(
                 //     'Class'
                 //   )
                 // )
@@ -392,7 +389,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
 
 
-          if(currentClassCourses.isEmpty) Container(  
+          if(currentClassCourses.isEmpty) Container(
             alignment: Alignment.center,
             padding: EdgeInsets.symmetric(vertical: 24),
             child: CollectionPlaceholder(
@@ -400,11 +397,11 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
               detail: 'Courses handled by lecturer in this academic year appear here.',
             )
           )
-          else Column(  
+          else Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
-            children: List<Widget>.generate(  
+            children: List<Widget>.generate(
               currentClassCourses.length,
               (int index) => currentCourseCell(currentClassCourses[index])
             ),
@@ -472,8 +469,8 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
         minHeight: MediaQuery.of(context).size.height * 0.4
       ),
 
-      decoration: BoxDecoration(  
-        color: Colors.grey.shade200,
+      decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -497,7 +494,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
 
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
               borderRadius: BorderRadius.circular(12)
             ),
 

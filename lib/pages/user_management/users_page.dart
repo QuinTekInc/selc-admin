@@ -12,6 +12,7 @@ import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/user_management/add_user_page.dart';
 import 'package:selc_admin/pages/user_management/user_profile_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 
@@ -107,7 +108,7 @@ class _UsersPageState extends State<UsersPage> {
           ),
 
 
-          const SizedBox(height: 8,),
+          const SizedBox(height: 12,),
 
 
           Expanded(
@@ -115,9 +116,11 @@ class _UsersPageState extends State<UsersPage> {
               width: double.infinity,
               height: double.infinity,
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(  
+
+
+              decoration: BoxDecoration(
+                color: PreferencesProvider.getColor(context, 'table-background-color'),
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.white
               ),
 
 
@@ -161,9 +164,9 @@ class _UsersPageState extends State<UsersPage> {
     return Container(  
       padding: const EdgeInsets.all(8),
       width: double.infinity,
-      decoration: BoxDecoration(  
+      decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.shade300
       ),
 
       child: Row( 
@@ -278,10 +281,11 @@ class _UserManagementRowState extends State<UserManagementRow> {
   Widget build(BuildContext context) {
     return MouseRegion(
 
-      onHover: (mouseEvent) => setState(() => backgroundColor = Colors.green.shade100),
+      onHover: (mouseEvent) => setState(() => backgroundColor = Theme.of(context).brightness == Brightness.dark ? Colors.green.shade300 :  Colors.green.shade100),
       onExit: (mouseEvent) => setState(() => backgroundColor = Colors.transparent),
 
       child: GestureDetector(
+
         onTap: () => isCurrentUser ? null : Provider.of<PageProvider>(context, listen:false).pushPage(UserProfilePage(user: widget.user), 'User Profile'),
 
         child: Container(
