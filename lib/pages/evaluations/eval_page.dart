@@ -225,37 +225,61 @@ class _EvaluationPageState extends State<EvaluationPage> {
                       children: [
                         
                         //todo: tab bar for handling switch 
-                        TabBar(
-                          indicatorColor: Colors.green.shade200,
-                          indicatorPadding: const EdgeInsets.all(8),
-                          labelPadding: const EdgeInsets.all(8),
-                          dividerColor: Colors.black26,
-                          indicatorAnimation: TabIndicatorAnimation.elastic,
-                          onTap: (newValue) => setState(() => selectedTab = newValue),
-                          tabs: [
+                        Container(
+                          height: 50,
+                          width: MediaQuery.of(context).size.width * 0.33,
 
-                            CustomText(
-                              'Questionnaire Answer Analysis',
-                              fontWeight: FontWeight.w600,
-                              textColor: selectedTab == 0 ? Colors.green.shade300 : Colors.black87,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade400)
+                          ),
+
+                          child: TabBar(
+
+                            indicatorColor: Colors.green.shade200,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            dividerColor: Colors.transparent,
+                            indicatorPadding: EdgeInsets.zero,
+
+                            indicator: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: Colors.green.shade400,
                             ),
-                        
-                        
-                            CustomText(
-                              'Category Remarks',
-                              fontWeight: FontWeight.w600,
-                              textColor: selectedTab == 1 ? Colors.green.shade300 : Colors.black87
-                            ),
+
+                            padding: const EdgeInsets.all(4),
+                            labelPadding: const EdgeInsets.all(8),
+                            indicatorAnimation: TabIndicatorAnimation.elastic,
+                            labelColor: Colors.white,
+
+                              labelStyle: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w600
+                              ),
+                              unselectedLabelStyle: TextStyle(
+                                  fontFamily: 'Poppins'
+                              ),
+
+
+                              onTap: (newValue) => setState(() => selectedTab = newValue),
+                            tabs: [
+
+                              Tab(
+                                text: 'Questionnaire Answer Analysis',
+                              ),
+
+
+                              Tab(
+                                text: 'Category Remarks',
+                              ),
 
 
 
-                            CustomText(
-                              'Suggestions',
-                              fontWeight: FontWeight.w600,
-                              textColor: selectedTab == 2 ? Colors.green.shade300 : Colors.black87
-                            )
-                        
-                          ]
+                              Tab(
+                                text: 'Suggestions',
+                              )
+
+                            ]
+                          ),
                         ), 
 
 
@@ -582,9 +606,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
     
             child: loading? Center(child: CircularProgressIndicator(),) : ListView.builder(
               itemCount: evalSummary.length,
-
-              //separatorBuilder: (_, index) => Divider(),
-
               itemBuilder: (_, index) => buildQuestionnaireTableRow(index)
             ),
           ),                         
@@ -663,78 +684,82 @@ class _EvaluationPageState extends State<EvaluationPage> {
     //
     // }
 
+    Color dividerColor = PreferencesProvider.getColor(context, 'placeholder-text-color');
+
+
+    final divider = VerticalDivider(thickness: 1.5, width: 0, color: dividerColor);
+
     return Container(
 
       decoration: BoxDecoration(
         border: Border(
-          left: BorderSide.none,
-          top: BorderSide.none,
-          right: BorderSide.none,
           bottom: BorderSide(
-              color: Colors.black38,
-              width: 1
+              color: dividerColor,
+              width: 1.5
           )
         )
       ),
 
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
 
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: CustomText(
-                  summary.question
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: CustomText(
+                    summary.question
+                ),
               ),
             ),
-          ),
 
 
-          CustomVerticalDivider(color: Colors.black38),
+            divider,
 
 
-          Expanded(
-            child: Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: CustomText(
-                    answerType.typeString
+            Expanded(
+              child: Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: CustomText(
+                      answerType.typeString
+                  )
+              ),
+            ),
+
+
+            divider,
+
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: statRows
                 )
+              ),
             ),
-          ),
 
 
-          CustomVerticalDivider(color: Colors.black38),
+            divider,
 
 
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: statRows
-              )
-            ),
-          ),
+            Expanded(
+              child: CustomPieChart(
+                //width: 90,
+                height: 250,
+                pieSections: pieSections,
+                backgroundColor: Colors.transparent
+              ),
+            )
 
-
-          CustomVerticalDivider(color: Colors.black38,),
-
-
-          Expanded(
-            child: CustomPieChart(
-              //width: 90,
-              height: 250,
-              pieSections: pieSections,
-              backgroundColor: Colors.transparent
-            ),
-          )
-
-        ],
+          ],
+        ),
       ),
     );
 

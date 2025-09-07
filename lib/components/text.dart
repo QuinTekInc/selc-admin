@@ -426,13 +426,14 @@ class _CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>> {
       ),
 
       child: DropdownButton<T>(
-
         value: widget.controller.value,
+
         icon: Icon(
           widget.icon ?? Icons.arrow_drop_down, 
           color: Colors.green.shade400, 
           size: widget.icon == null ? 28 : null,
         ),
+
         isExpanded: true,
         isDense: true,
 
@@ -441,7 +442,7 @@ class _CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>> {
         hint: widget.hint != null ? CustomText(
           widget.hint!,
           fontWeight: FontWeight.w600,
-          textColor: Colors.black38,
+          textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
         ) : null,
 
         items: List<DropdownMenuItem<T>>.generate(  

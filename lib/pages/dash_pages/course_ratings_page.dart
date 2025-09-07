@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 
@@ -110,7 +111,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
 
                       decoration: BoxDecoration( 
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.white
+                        color: PreferencesProvider.getColor(context, 'alt-primary-color')
                       ),
               
                       child: Column(  
@@ -271,7 +272,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
               
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.white
+                        color: PreferencesProvider.getColor(context, 'table-background-color')
                       ),
               
                       child: Column(  
@@ -286,7 +287,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                             width: double.infinity,
               
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
+                              color: PreferencesProvider.getColor(context, 'table-header-color'),
                               borderRadius: BorderRadius.circular(12)
                             ),
               

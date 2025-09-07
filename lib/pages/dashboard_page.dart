@@ -702,7 +702,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
             decoration: BoxDecoration(
               //Colors.grey.shade200
-              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+              color: PreferencesProvider.getColor(context, 'table-header-color'),
               borderRadius: BorderRadius.circular(12)
             ),
 
