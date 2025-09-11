@@ -34,13 +34,6 @@ class SuggestionsTable extends StatelessWidget {
 
         children: [
 
-          HeaderText(
-            'Evaluation suggestions',
-            fontSize: 18,
-          ),
-
-          const SizedBox(height: 8),
-
 
           if(suggestions.isEmpty)Expanded(
             child: CollectionPlaceholder(

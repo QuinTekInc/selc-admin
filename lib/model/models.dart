@@ -363,8 +363,8 @@ class CourseEvaluationSummary{
     return CourseEvaluationSummary(
       question: jsonMap['question'],
       answerType: answerType,
-      averageScore: jsonMap['average_score'],
-      percentageScore: jsonMap['percentage_score'],
+      averageScore: jsonMap['average_score'].toDouble(),
+      percentageScore: jsonMap['percentage_score'].toDouble(),
       answerSummary: answerSummary,
       remark: jsonMap['remark']
     );

@@ -8,8 +8,13 @@ import 'package:selc_admin/providers/pref_provider.dart';
 class CategoryRemarksTable extends StatelessWidget {
 
   final List<CategoryRemark> categoryRemarks;
+  final BorderRadius? borderRadius;
 
-  const CategoryRemarksTable({super.key, required this.categoryRemarks});
+  const CategoryRemarksTable({
+    super.key,
+    required this.categoryRemarks,
+    this.borderRadius
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +25,7 @@ class CategoryRemarksTable extends StatelessWidget {
 
       decoration: BoxDecoration(
         color: PreferencesProvider.getColor(context, 'table-background-color'),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: borderRadius ?? BorderRadius.circular(12),
       ),
 
       child: Column(
@@ -30,10 +35,10 @@ class CategoryRemarksTable extends StatelessWidget {
 
         children: [
 
-          HeaderText(
-              'Category Remarks',
-              fontSize: 15
-          ),
+          // HeaderText(
+          //     'Category Remarks',
+          //     fontSize: 15
+          // ),
 
 
           const SizedBox(height: 8,),

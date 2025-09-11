@@ -9,6 +9,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/pages/evaluations/questionnaire_eval_table.dart';
 import 'package:selc_admin/pages/evaluations/suggestions_table.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
@@ -133,6 +134,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
             flex: 2,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 12,
               children: [
 
 
@@ -141,10 +143,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
+                  spacing: 12,
                   children: [
 
                     buildClassCourseInfoSection(),
-                    const SizedBox(height: 12,),
 
                     Container(  
                       padding: const EdgeInsets.all(8),
@@ -168,12 +170,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
                         ],
                       )
                     ),
-
-
-
-                    const SizedBox(height: 12),
-
-
 
                     Container(  
                       padding: const EdgeInsets.all(8),
@@ -210,103 +206,108 @@ class _EvaluationPageState extends State<EvaluationPage> {
                   ],
                 ),
             
-                
-            
-            
-                const SizedBox(width: 12,),
+
             
                 //todo: the side that actually shows the data in real time.
                 Expanded(
                   flex: 2,
-                  child: DefaultTabController(
-                    initialIndex: 0,
-                    length: 3,
-                    child: Column(
-                      children: [
-                        
-                        //todo: tab bar for handling switch 
-                        Container(
-                          height: 50,
-                          width: MediaQuery.of(context).size.width * 0.33,
 
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey.shade400)
-                          ),
-
-                          child: TabBar(
-
-                            indicatorColor: Colors.green.shade200,
-                            indicatorSize: TabBarIndicatorSize.tab,
-                            dividerColor: Colors.transparent,
-                            indicatorPadding: EdgeInsets.zero,
-
-                            indicator: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                              color: Colors.green.shade400,
-                            ),
-
-                            padding: const EdgeInsets.all(4),
-                            labelPadding: const EdgeInsets.all(8),
-                            indicatorAnimation: TabIndicatorAnimation.elastic,
-                            labelColor: Colors.white,
-
-                              labelStyle: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600
-                              ),
-                              unselectedLabelStyle: TextStyle(
-                                  fontFamily: 'Poppins'
-                              ),
-
-
-                              onTap: (newValue) => setState(() => selectedTab = newValue),
-                            tabs: [
-
-                              Tab(
-                                text: 'Questionnaire Answer Analysis',
-                              ),
-
-
-                              Tab(
-                                text: 'Category Remarks',
-                              ),
-
-
-
-                              Tab(
-                                text: 'Suggestions',
-                              )
-
-                            ]
-                          ),
-                        ), 
-
-
-                        const SizedBox(height: 8,),
-
-
-                        Expanded(
-                          child: PageTransitionSwitcher(
-
-                            duration: Duration(milliseconds: 200),
-
-                            transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
-                              animation: animation,
-                              secondaryAnimation: secondaryAnimation,
-                              child: child,
-                            ),
-
-                            child: selectedTab == 0 ? buildQuestionnaireTable() :
-                                    selectedTab == 1 ? CategoryRemarksTable(categoryRemarks: categoryRemarks) :
-                                    SuggestionsTable(suggestions: evaluationSuggestions)
-                          ),
-                        )
-
-                        
-                      ],
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: PreferencesProvider.getColor(context, 'table-background-color'),
+                      borderRadius: BorderRadius.circular(12)
                     ),
-                    
+
+                    child: DefaultTabController(
+                      initialIndex: 0,
+                      length: 3,
+
+                      child: Column(
+                        children: [
+
+                          //todo: tab bar for handling switch
+                          Container(
+                            margin: const EdgeInsets.only(top: 12),
+                            height: 50,
+                            width: MediaQuery.of(context).size.width * 0.33,
+
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey.shade400)
+                            ),
+
+                            child: TabBar(
+
+                              indicatorColor: Colors.green.shade200,
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              dividerColor: Colors.transparent,
+                              indicatorPadding: EdgeInsets.zero,
+
+                              indicator: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: Colors.green.shade400,
+                              ),
+
+                              padding: const EdgeInsets.all(4),
+                              labelPadding: const EdgeInsets.all(8),
+                              indicatorAnimation: TabIndicatorAnimation.elastic,
+                              labelColor: Colors.white,
+
+                                labelStyle: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600
+                                ),
+                                unselectedLabelStyle: TextStyle(
+                                    fontFamily: 'Poppins'
+                                ),
+
+
+                                onTap: (newValue) => setState(() => selectedTab = newValue),
+                                tabs: [
+
+                                  Tab(
+                                    text: 'Questionnaire Answer Analysis',
+                                  ),
+
+
+                                  Tab(
+                                    text: 'Category Remarks',
+                                  ),
+
+
+                                  Tab(
+                                    text: 'Suggestions',
+                                  )
+
+                                ]
+                            ),
+                          ),
+
+
+                          const SizedBox(height: 8,),
+
+
+                          Expanded(
+                            child: PageTransitionSwitcher(
+
+                              duration: Duration(milliseconds: 500),
+
+                              transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
+                                animation: animation,
+                                secondaryAnimation: secondaryAnimation,
+                                fillColor: Colors.transparent,
+                                child: child,
+                              ),
+
+                              child: buildSelectedWidget()
+                            ),
+                          )
+
+
+                        ],
+                      ),
+
+                    ),
                   ),
                 )
             
@@ -317,6 +318,26 @@ class _EvaluationPageState extends State<EvaluationPage> {
         ],
       ),
     );
+  }
+
+
+  Widget buildSelectedWidget(){
+
+    if(selectedTab == 0){
+      return QuestionnaireEvalTable(
+        evaluationSummaries: evalSummary,
+        borderRadius: BorderRadius.zero,
+      );
+    }
+
+    else if(selectedTab == 1){
+      return CategoryRemarksTable(
+        categoryRemarks: categoryRemarks,
+        borderRadius: BorderRadius.zero,
+      );
+    }
+
+    return SuggestionsTable(suggestions: evaluationSuggestions);
   }
 
 
@@ -332,6 +353,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
       child: Container(  
         width: MediaQuery.of(context).size.width * 0.2,
         padding: const EdgeInsets.all(8),
+
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: PreferencesProvider.getColor(context, 'alt-primary-color')
@@ -516,253 +538,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
         ),
       ),
     );
-  }
-
-
-
-
-
-  //todo: questionnaire analysis table. 
-  Container buildQuestionnaireTable() {
-    return Container(  
-      width: double.infinity,
-      height: double.infinity,
-    
-      padding: const EdgeInsets.all(8),
-    
-      decoration: BoxDecoration(
-        color: PreferencesProvider.getColor(context, 'table-background-color'),
-        borderRadius: BorderRadius.circular(12)
-      ),
-    
-    
-      child: Column( 
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start, 
-        children: [
-                  
-          HeaderText(
-            'Questionnaire Answer Ananlysis',
-            fontSize: 15,
-          ),
-
-
-          const SizedBox(height: 8),
-          
-          //todo:table column headers for the question evaluations.
-          Container(
-            width: double.infinity,  
-            padding: const EdgeInsets.all(8),
-                            
-            decoration: BoxDecoration(  
-              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-              borderRadius: BorderRadius.circular(12)
-            ),
-                            
-                            
-            child: Row( 
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center, 
-              children: [
-                            
-                Expanded(  
-                  flex: 2,
-                  child: CustomText(  
-                    'Question',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-
-                Expanded(  
-                  child: CustomText(
-                    'Answer Type',
-                    fontWeight: FontWeight.w600
-                  ),
-                ),
-                            
-                Expanded(
-                  child: CustomText(
-                    'Answer Variations',
-                    fontWeight: FontWeight.w600
-                  ),
-                ), 
-                            
-                Expanded(  
-                  child: CustomText(
-                    'Visualization',
-                    textAlignment: TextAlign.center, 
-                    fontWeight: FontWeight.w600,
-                  ),
-                )
-              ],
-            ),
-          ),
-                  
-                  
-          //todo: question analysis table rows
-          Expanded(
-            flex: 2,
-    
-            child: loading? Center(child: CircularProgressIndicator(),) : ListView.builder(
-              itemCount: evalSummary.length,
-              itemBuilder: (_, index) => buildQuestionnaireTableRow(index)
-            ),
-          ),                         
-          
-        ],
-      ),
-    );
-  }
-
-
-
-
-
-  Widget buildQuestionnaireTableRow(int index){
-
-    CourseEvaluationSummary summary = evalSummary[index];
-
-    QuestionAnswerType answerType = summary.answerType;
-
-    //but actually is Map<String, int>
-    Map<String, dynamic> answerSummary = summary.answerSummary!;
-
-    List<CustomPieSection> pieSections = [];
-
-    List<Row> statRows = [];
-
-
-
-    for(String answer in answerSummary.keys){
-
-      int answerCount = answerSummary[answer];
-
-
-      statRows.add(
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CustomText(answer),
-            Spacer(),
-            CustomText(answerCount.toString())
-          ]
-        )
-      );
-
-      //todo: create a piechart section
-      final pieSection = CustomPieSection(title:answer, value: answerCount.toDouble(),);
-      pieSections.add(pieSection);
-
-    }
-
-
-    // if(answerSummary.containsKey("No Answer")){
-    //
-    //   statRows.add(
-    //       Row(
-    //         mainAxisSize: MainAxisSize.min,
-    //         mainAxisAlignment: MainAxisAlignment.start,
-    //         crossAxisAlignment: CrossAxisAlignment.center,
-    //
-    //         children: [
-    //           CustomText("No Answer"),
-    //           Spacer(),
-    //           CustomText(answerSummary['No Answer'].toString())
-    //         ],
-    //
-    //       )
-    //   );
-    //
-    //
-    //   pieSections.add(
-    //       CustomPieSection(
-    //           title: "No Answer", value: answerSummary["No Answer"].toDouble())
-    //   );
-    //
-    // }
-
-    Color dividerColor = PreferencesProvider.getColor(context, 'placeholder-text-color');
-
-
-    final divider = VerticalDivider(thickness: 1.5, width: 0, color: dividerColor);
-
-    return Container(
-
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-              color: dividerColor,
-              width: 1.5
-          )
-        )
-      ),
-
-      child: IntrinsicHeight(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: CustomText(
-                    summary.question
-                ),
-              ),
-            ),
-
-
-            divider,
-
-
-            Expanded(
-              child: Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: CustomText(
-                      answerType.typeString
-                  )
-              ),
-            ),
-
-
-            divider,
-
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: statRows
-                )
-              ),
-            ),
-
-
-            divider,
-
-
-            Expanded(
-              child: CustomPieChart(
-                //width: 90,
-                height: 250,
-                pieSections: pieSections,
-                backgroundColor: Colors.transparent
-              ),
-            )
-
-          ],
-        ),
-      ),
-    );
-
   }
 
 
