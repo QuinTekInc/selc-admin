@@ -17,16 +17,8 @@ class SuggestionsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(8),
-      width: double.infinity,
-
-      decoration: BoxDecoration(
-          color: PreferencesProvider.getColor(context, 'table-background-color'),
-          borderRadius: BorderRadius.circular(12)
-      ),
-
-
 
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

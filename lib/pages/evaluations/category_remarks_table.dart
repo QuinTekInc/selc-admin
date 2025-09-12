@@ -18,15 +18,8 @@ class CategoryRemarksTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(8),
-      width: double.infinity,
-      height: double.infinity,
-
-      decoration: BoxDecoration(
-        color: PreferencesProvider.getColor(context, 'table-background-color'),
-        borderRadius: borderRadius ?? BorderRadius.circular(12),
-      ),
 
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

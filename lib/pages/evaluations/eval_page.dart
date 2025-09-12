@@ -98,7 +98,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
                     Icon(Icons.download, color: Colors.green.shade400,),
                     const SizedBox(width: 8,),
                     CustomText(
-                      'Export XML',
+                      'Export Excel(.xlsx)',
                       textColor: Colors.green.shade400,
                     )
                   ],
@@ -220,7 +220,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                     child: DefaultTabController(
                       initialIndex: 0,
-                      length: 3,
+                      length: 4,
 
                       child: Column(
                         children: [
@@ -229,7 +229,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
                           Container(
                             margin: const EdgeInsets.only(top: 12),
                             height: 50,
-                            width: MediaQuery.of(context).size.width * 0.33,
+                            width: MediaQuery.of(context).size.width * 0.4,
 
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
@@ -267,6 +267,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                                   Tab(
                                     text: 'Questionnaire Answer Analysis',
+                                  ),
+
+                                  Tab(
+                                    text: 'Visualisations'
                                   ),
 
 
@@ -330,12 +334,18 @@ class _EvaluationPageState extends State<EvaluationPage> {
       );
     }
 
-    else if(selectedTab == 1){
+
+    else if(selectedTab == 1) {
+      return QuestionnaireVisualSection(evaluationSummaries: evalSummary);
+    }
+
+    else if(selectedTab == 2){
       return CategoryRemarksTable(
         categoryRemarks: categoryRemarks,
         borderRadius: BorderRadius.zero,
       );
     }
+
 
     return SuggestionsTable(suggestions: evaluationSuggestions);
   }
@@ -407,8 +417,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
       ),
     );
   }
-
-
 
 
 

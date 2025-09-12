@@ -36,8 +36,8 @@ class QuestionnaireEvalTable extends StatelessWidget {
             padding: const EdgeInsets.all(8),
 
             decoration: BoxDecoration(
-                color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-                borderRadius: BorderRadius.circular(12)
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+              borderRadius: BorderRadius.circular(12)
             ),
 
 
@@ -287,13 +287,11 @@ class QuestionnaireVisualSection extends StatelessWidget {
 
   final List<CourseEvaluationSummary> evaluationSummaries;
 
-
-
   const QuestionnaireVisualSection({super.key, required this.evaluationSummaries});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView();
+    return QuestionnaireVisualisationCell(questionnaireNumber: 1, summary: evaluationSummaries[0]);
   }
 }
 
@@ -303,8 +301,9 @@ class QuestionnaireVisualSection extends StatelessWidget {
 class QuestionnaireVisualisationCell extends StatefulWidget {
 
   final CourseEvaluationSummary summary;
+  final int questionnaireNumber;
 
-  const QuestionnaireVisualisationCell({super.key, required this.summary});
+  const QuestionnaireVisualisationCell({super.key, required this.summary, required this.questionnaireNumber});
 
   @override
   State<QuestionnaireVisualisationCell> createState() => _QuestionnaireVisualisationCellState();
@@ -312,15 +311,21 @@ class QuestionnaireVisualisationCell extends StatefulWidget {
 
 class _QuestionnaireVisualisationCellState extends State<QuestionnaireVisualisationCell> {
 
+  final chartTypeController = DropdownController<String>();
 
   final List<CustomPieSection> pieSections = [];
   final List<CustomBarGroup> customBarGroups = [];
+
+
+  final List<String> chartTypes = ['Text Stat', 'Pie Chart', 'Bar Chart'];
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    chartTypeController.value = chartTypes[1];
 
 
     Map<String, dynamic> answerSummary = widget.summary.answerSummary!;
@@ -337,6 +342,7 @@ class _QuestionnaireVisualisationCellState extends State<QuestionnaireVisualisat
       pieSections.add(pieSection);
 
       final barGroup = CustomBarGroup(label: answer, x: i, rods: [Rod(y: answerCount.toDouble())]);
+      customBarGroups.add(barGroup);
 
     }
 
@@ -352,25 +358,186 @@ class _QuestionnaireVisualisationCellState extends State<QuestionnaireVisualisat
         padding: const EdgeInsets.all(12),
 
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: PreferencesProvider.getColor(context, 'alt-primary-color'),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: Colors.grey.shade300, width: 1.5)
         ),
 
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
           children: [
 
-            CustomPieChart(
-              //width: 90,
-              height: 250,
-              pieSections: pieSections,
-              backgroundColor: Colors.transparent
+            Row(
+              spacing: 8,
+              children: [
+
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: PreferencesProvider.getColor(context, 'table-background-color'),
+                    borderRadius: BorderRadius.circular(12)
+                  ),
+                  child: CustomText(
+                    widget.questionnaireNumber.toString(),
+                    textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+
+
+                Expanded(
+                  child: CustomText(
+                    widget.summary.question,
+                    fontSize: 15
+                  )
+                ),
+
+                SizedBox(
+                  height: 45,
+                  child: VerticalDivider(
+                    width: 0,
+                    thickness: 1.5,
+                    color: PreferencesProvider.getColor(context, 'table-background-color'),
+                  ),
+                ),
+
+
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomText(
+                      'Answer type',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+
+                    CustomText(
+                      widget.summary.answerType.typeString,
+                      fontSize: 13,
+                      textColor: Colors.green.shade400,
+                    )
+                  ],
+                )
+              ]
             ),
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: 0.4,
+                child: CustomDropdownButton(
+                  controller: chartTypeController,
+                  hint: 'Select Chart Type',
+                  items: chartTypes,
+                  onChanged: (newValue) => setState((){})
+                ),
+              )
+            ),
+
+
+            //todo: chart
+            buildCellChartSection(),
+
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: 0.4,
+
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    buildQuestionnaireField(
+                      title: 'Mean Score',
+                      detail: widget.summary.averageScore.toStringAsFixed(4)
+                    ),
+
+                    buildQuestionnaireField(
+                        title: 'Percentage Score(%)',
+                        detail: widget.summary.averageScore.toStringAsFixed(4)
+                    ),
+
+
+                    buildQuestionnaireField(
+                      title: 'Remark',
+                      detail: widget.summary.remark,
+                      detailWeight: FontWeight.w600
+                    ),
+
+                  ]
+                ),
+              ),
+            )
           ]
 
         )
 
       )
+    );
+  }
+
+
+
+  Widget buildCellChartSection(){
+
+    if(chartTypeController.value == chartTypes[0]){
+      return Container(
+        height: 250,
+        width: double.infinity,
+        alignment: Alignment.center
+      );
+    }
+
+    else if(chartTypeController.value == chartTypes[1]){
+      return CustomPieChart(
+        //width: 90,
+          height: 300,
+          pieSections: pieSections,
+          backgroundColor: Colors.transparent
+      );
+    }
+
+
+    return CustomBarChart(
+      containerBackgroundColor: Colors.transparent,
+      width: double.infinity,
+      height: 300,
+      leftAxisTitle: 'Frequency',
+      bottomAxisTitle: 'Answer Variations',
+      axisNameStyle: TextStyle(color: PreferencesProvider.getColor(context, 'text-color')),
+      axisLabelStyle: TextStyle(color: PreferencesProvider.getColor(context, 'placeholder-text-color')),
+      groups: customBarGroups,
+    );
+
+  }
+
+
+
+  Widget buildQuestionnaireField({required String title, required String detail, FontWeight detailWeight = FontWeight.normal}){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+
+        Expanded(
+          flex: 2,
+          child: CustomText(title, fontWeight: FontWeight.w600, fontSize: 13,)
+        ),
+
+        Expanded(
+          child: CustomText(detail, fontWeight: detailWeight, fontSize: 13,)
+        )
+
+      ],
     );
   }
 }
