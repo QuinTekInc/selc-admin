@@ -283,7 +283,7 @@ class SelcProvider with ChangeNotifier{
 
 
 
-  Future<List<EvaluationSuggestion>> getEvaluationSuggestions(int classCourseId) async {
+  Future<SuggestionSummaryReport> getEvaluationSuggestions(int classCourseId) async {
 
 
     final response =  await connector.getRequest(endPoint: 'eval-suggestions/$classCourseId');
@@ -294,12 +294,16 @@ class SelcProvider with ChangeNotifier{
 
     List<dynamic> responseBody = jsonDecode(response.body);
 
-    List<EvaluationSuggestion> suggestions = responseBody.map(
-        (jsonMap) => EvaluationSuggestion.fromJson(jsonMap)
-    ).toList();
+    SuggestionSummaryReport suggestionsReport = responseBody.map(
+        (jsonMap) => SuggestionSummaryReport.fromJson(jsonMap)
+    ).toList().first;
     
-    return suggestions;
+    return suggestionsReport;
   }
+
+
+
+
 
 
 

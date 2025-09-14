@@ -4,19 +4,20 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:selc_admin/components/charts/pie_chart.dart';
+import 'package:selc_admin/components/excel_convert.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/evaluations/questionnaire_eval_table.dart';
 import 'package:selc_admin/pages/evaluations/suggestions_table.dart';
+import 'package:selc_admin/pages/evaluations/visualization_section.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
-import '../../components/cells.dart';
+import 'package:selc_admin/components/cells.dart';
+import 'package:selc_admin/providers/page_provider.dart';
 import '../../components/report_view.dart';
-import '../../providers/page_provider.dart';
 import 'category_remarks_table.dart';
 
 
@@ -39,8 +40,9 @@ class _EvaluationPageState extends State<EvaluationPage> {
   List<CourseEvaluationSummary> evalSummary = [];
   List<CategoryRemark> categoryRemarks = [];
   List<EvaluationSuggestion> evaluationSuggestions = [];
+  List<SuggestionSentimentSummary> sentimentSummaries = [];
 
-  bool loading = false;
+  bool isLoading = false;
 
   Course? course;
 
@@ -49,7 +51,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
     // TODO: implement initState
 
     course = widget.classCourse.course;
-    
     loadEvalSummary();
     super.initState();
   }
@@ -58,13 +59,18 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
   void loadEvalSummary() async{
 
-    setState(() => loading = true);
+    setState(() => isLoading = true);
 
-    evalSummary = await Provider.of<SelcProvider>(context, listen: false).getClassCourseEvaluation(widget.classCourse.classCourseId!);
-    categoryRemarks = await Provider.of<SelcProvider>(context, listen: false).getCourseEvalCategoryRemark(widget.classCourse.classCourseId!);
-    evaluationSuggestions = await Provider.of<SelcProvider>(context, listen: false).getEvaluationSuggestions(widget.classCourse.classCourseId!);
+    evalSummary = await Provider.of<SelcProvider>(context, listen: false).getClassCourseEvaluation(widget.classCourse.classCourseId);
+    categoryRemarks = await Provider.of<SelcProvider>(context, listen: false).getCourseEvalCategoryRemark(widget.classCourse.classCourseId);
 
-    setState(() => loading = false);
+    SuggestionSummaryReport suggestionSummaryReport =  await Provider.of<SelcProvider>(context, listen: false).getEvaluationSuggestions(widget.classCourse.classCourseId);
+
+
+    sentimentSummaries = suggestionSummaryReport.sentimentSummaries;
+    evaluationSuggestions = suggestionSummaryReport.suggestions;
+
+    setState(() => isLoading = false);
   }
 
 
@@ -91,7 +97,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
               //todo: implement exporting current data to xml or csv for manual analysis in excel.
               TextButton(
-                onPressed: handleXMLExport, 
+                onPressed: handleExcelExport, 
                 child: Row(  
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -209,7 +215,13 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
             
                 //todo: the side that actually shows the data in real time.
-                Expanded(
+                if(isLoading) Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: CircularProgressIndicator()
+                  ),
+                )
+                else Expanded(
                   flex: 2,
 
                   child: DecoratedBox(
@@ -422,31 +434,31 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
 
-  //todo: the section that handles the user filtering 
+  //todo: the section that handles the user filtering
   //you can also call it filter console.
   Widget buildFilterSection(BuildContext context) {
     return Card(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.2,
         padding: const EdgeInsets.all(8),
-    
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-    
+
           children: [
-    
-    
+
+
             HeaderText(
               'Filter',
               fontSize: 15,
             ),
-    
+
             const SizedBox(height: 12,),
 
 
-            CustomCheckBox(  
+            CustomCheckBox(
               value: true,
               text: 'Show All',
             ),
@@ -454,7 +466,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
             const SizedBox(height: 8,),
 
             CustomCheckBox(
-              value: false, 
+              value: false,
               text: 'Custom Filter'
             ),
 
@@ -469,10 +481,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
             CustomDropdownButton<String>(
               hint: 'Select Academic Year',
-              controller: DropdownController<String>(), 
+              controller: DropdownController<String>(),
               items: List<String>.generate(10, (index) {
                 return '${2011 + index} / ${2011 + index+1}';
-              }), 
+              }),
               onChanged: (newValue){}
             ),
 
@@ -490,8 +502,8 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
             CustomDropdownButton<int>(
               hint: 'Select Semester',
-              controller: DropdownController<int>(), 
-              items: <int>[1, 2], 
+              controller: DropdownController<int>(),
+              items: <int>[1, 2],
               onChanged: (newValue){}
             ),
 
@@ -509,8 +521,8 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
             CustomDropdownButton<String>(
               hint: 'Select Lecturer',
-              controller: DropdownController<String>(), 
-              items: List<String>.generate(10, (index) => 'Lecturer ${index+1}'), 
+              controller: DropdownController<String>(),
+              items: List<String>.generate(10, (index) => 'Lecturer ${index+1}'),
               onChanged: (newValue){}
             ),
 
@@ -528,20 +540,20 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
             CustomDropdownButton<String>(
               hint: 'Select the class',
-              controller: DropdownController<String>(), 
-              items: ['Bsc. Computer Science Level 200', 'Bsc. Computer Science Level 100', 'Hospitality Management'], 
+              controller: DropdownController<String>(),
+              items: ['Bsc. Computer Science Level 200', 'Bsc. Computer Science Level 100', 'Hospitality Management'],
               onChanged: (newValue){}
             ),
 
 
             Divider(),
 
-            CustomButton.withText(  
+            CustomButton.withText(
               'Clear',
               width: double.infinity,
               onPressed: (){},
             )
-    
+
           ],
         ),
       ),
@@ -553,7 +565,18 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
   //TODO: implement exporting to various formats.
-  void handleXMLExport() async {
+  void handleExcelExport() async {
+
+    ExcelExporter excelExporter = ExcelExporter(
+      classCourse: widget.classCourse,
+      questionnaireData: evalSummary,
+      categoryData: [],
+      ratingSummary: [],
+      sentimentSummary: sentimentSummaries
+    );
+
+
+    excelExporter.save();
 
   }
 

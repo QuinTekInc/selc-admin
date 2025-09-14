@@ -407,7 +407,7 @@ class ReportView extends StatelessWidget {
                   width: 120,
                   child: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: CustomText(evaluationSummaries[i].averageScore.toString())
+                    child: CustomText(evaluationSummaries[i].meanScore.toString())
                   )
                 ),
 
@@ -538,7 +538,7 @@ class ReportView extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CustomText(
-                            categoryRemark.averageScore.toString(),
+                            categoryRemark.meanScore.toString(),
                           textAlignment: TextAlign.center,
                         ),
                       ),

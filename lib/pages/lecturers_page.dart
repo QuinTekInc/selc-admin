@@ -120,13 +120,17 @@ class _LecturersPageState extends State<LecturersPage> {
 
 
               filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers.where((lecturer){
-                return lecturer.name!.toLowerCase().contains(newValue.toLowerCase()) ||
-                        lecturer.department!.toLowerCase().contains(newValue.toLowerCase());
+                return lecturer.name.toLowerCase().contains(newValue.toLowerCase()) ||
+                        lecturer.department.toLowerCase().contains(newValue.toLowerCase());
               }).toList();
 
             })
           ),
         ),
+
+
+
+        const SizedBox(height: 8),
 
 
 

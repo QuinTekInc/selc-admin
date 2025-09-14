@@ -9,10 +9,10 @@ import 'package:selc_admin/model/models.dart';
 class ExcelExporter{
 
   final ClassCourse classCourse;
-  final List<Map<String, dynamic>> questionnaireData;
+  final List<CourseEvaluationSummary> questionnaireData;
   final List<Map<String, dynamic>> categoryData;
   final List<LecturerRating> ratingSummary;
-  final List<EvaluationSuggestion> sentimentSummary;
+  final List<SuggestionSentimentSummary> sentimentSummary;
 
   late final Excel _excel;
 
@@ -29,6 +29,7 @@ class ExcelExporter{
 
     _populateQuestionnaireSheet();
     _populateCategorySheet();
+    _populateSuggestionSentimentSummary();
   }
 
 
@@ -87,9 +88,9 @@ class ExcelExporter{
 
     int rowIndex = 1; // Because row 0 is headers
 
-    for (var entry in questionnaireData) {
+    for (var questionEval in questionnaireData) {
 
-      final options = entry['answer_summary'] as Map<String, dynamic>;
+      final options = questionEval.answerSummary as Map<String, dynamic>;
       final numOptions = options.length;
 
       int startRow = rowIndex;
@@ -118,7 +119,7 @@ class ExcelExporter{
       //populate the merged rows with the actual question
       sheet
           .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: startRow))
-          .value = TextCellValue(entry['question'].toString());
+          .value = TextCellValue(questionEval.question.toString());
 
 
       //todo: Merge and fill Answer Type
@@ -129,7 +130,7 @@ class ExcelExporter{
       //populate the answer type
       sheet
           .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: startRow))
-          .value = TextCellValue(entry['answer_type'].toString());
+          .value = TextCellValue(questionEval.answerType.typeString);
 
       //todo: Merge and fill Average Score
       sheet.merge(
@@ -138,7 +139,7 @@ class ExcelExporter{
 
       sheet
           .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: startRow))
-          .value = DoubleCellValue((entry['average_score'] as num).toDouble());
+          .value = DoubleCellValue((questionEval.meanScore as num).toDouble());
 
       //todo: Merge and fill Percentage Score
       sheet.merge(
@@ -148,7 +149,7 @@ class ExcelExporter{
       //fill with the percentage score
       sheet
           .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: startRow))
-          .value = DoubleCellValue((entry['percentage_score'] as num).toDouble());
+          .value = DoubleCellValue((questionEval.percentageScore as num).toDouble());
 
       //todo: Merge and fill Remark
       sheet.merge(
@@ -158,7 +159,7 @@ class ExcelExporter{
       //fill with the remark
       sheet
           .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: startRow))
-          .value = TextCellValue(entry['remark'].toString());
+          .value = TextCellValue(questionEval.remark);
     }
 
 
@@ -266,11 +267,28 @@ class ExcelExporter{
 
 
 
+
+  void _populateSuggestionSentimentSummary(){
+
+    final sheet = _excel['suggestion_summary'];
+
+  }
+
+
+
   void save(){
     // Save file
     final fileBytes = _excel.save();
 
-    File("survey_results.xlsx")
+    int academicYear = classCourse.year;
+    int semester = classCourse.semester;
+    String lecturerName = classCourse.lecturer.name;
+    String courseCode = classCourse.course.courseCode;
+
+
+    final fileName = '${academicYear}_${semester}_${lecturerName}_$courseCode.xlsx';
+
+    File(fileName)
       ..createSync(recursive: true)
       ..writeAsBytesSync(fileBytes!);
 

@@ -5,8 +5,9 @@ import 'dart:async';
 
 import 'package:selc_admin/components/preferences_util.dart';
 
-//const String base_url = 'http://127.0.0.1:8000';
-const String base_url = 'selc-backend.onrender.com';
+
+const String base_url = 'http://127.0.0.1:8000';
+//const String base_url = 'https://selc-backend.onrender.com';
 
 
 String concat(String other){

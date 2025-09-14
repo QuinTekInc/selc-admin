@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../text.dart';
+
 
 
 class CustomPieChart extends StatelessWidget {
@@ -18,6 +20,9 @@ class CustomPieChart extends StatelessWidget {
   final Color? backgroundColor;
 
 
+  final bool showKeys;
+
+
   CustomPieChart({
     super.key,
     this.chartTitle,
@@ -27,7 +32,8 @@ class CustomPieChart extends StatelessWidget {
     this.height=400,
     this.width=400,
     this.centerSpaceRadius=10,
-    this.backgroundColor
+    this.backgroundColor,
+    this.showKeys = false
   });
 
 
@@ -62,65 +68,126 @@ class CustomPieChart extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
 
-      child: Column(
+      child: LayoutBuilder(
+        builder: (_, __){
 
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-
-        children: [
+          if(!showKeys) return buildPieChart();
 
 
-          if(chartTitle != null) Text(
-            chartTitle!,
-            style: titleStyle ?? TextStyle(
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 12,
+            children: [
+
+             Expanded(
+               flex: 2,
+               child: buildPieChart()
+             ),
+
+              buildChartKeySection()
+            ]
+          );
+
+        }
+      ),
+    );
+  }
+
+
+
+
+  Widget buildPieChart(){
+    return Column(
+
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+
+      children: [
+
+
+        if(chartTitle != null) Text(
+          chartTitle!,
+          style: titleStyle ?? TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 16
-            ),
           ),
+        ),
 
-          const SizedBox(height: 12,),
+        const SizedBox(height: 12,),
 
+        Expanded(
+          flex: 2,
+          child: PieChart(
+            PieChartData(
 
-          Expanded(  
-            flex: 2,
-
-            child: PieChart(
-              PieChartData(
-
-                sections: List.generate(
-                  pieSections.length, 
+              sections: List.generate(
+                pieSections.length,
                   (int index) => PieChartSectionData(
 
-                    value: pieSections[index].value,
-                    title: pieSections[index].title ?? '',
-                    showTitle: true,
+                  value: pieSections[index].value,
+                  title: pieSections[index].title ?? '',
+                  showTitle: true,
 
-                    color: availableColors[index % availableColors.length],
-                    radius: 100,
+                  color: availableColors[index % availableColors.length],
+                  radius: 100,
 
-                    titleStyle: sectionTitleStyle ?? TextStyle(  
+                  titleStyle: sectionTitleStyle ?? TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold
-                    )
                   )
-                ),
+                )
+              ),
 
 
-                borderData: FlBorderData(
+              borderData: FlBorderData(
                   show: false
-                ),
+              ),
 
-                sectionsSpace: 0,
-                centerSpaceRadius: centerSpaceRadius
-              )
+              sectionsSpace: 0,
+              centerSpaceRadius: centerSpaceRadius
+            )
 
-            ),
-          )
-        
-        ],
-      ),
+          ),
+        )
+
+      ],
+    );
+  }
+
+
+
+
+  Widget buildChartKeySection(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: 8,
+
+      children: List<Widget>.generate(
+        pieSections.length,
+            (index){
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            spacing: 12,
+            children: [
+
+              Container(
+                height: 20,
+                width: 20,
+                color: availableColors[index],
+              ),
+
+
+              CustomText(pieSections[index].title ?? '')
+            ],
+          );
+        }
+      )
     );
   }
 }

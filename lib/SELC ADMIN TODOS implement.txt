@@ -1,0 +1,21 @@
+SELC_ADMIN TODOS:
+	implement excel file export and saving
+	implement pdf file report file export and saving
+	implement files section on the dashboad.
+	implement actual files page (in the dash pages folder)
+	implement showing sentiment chart (bar chart and pie chart) on the suggestions section of the evaluation page.
+	implement showing the ratings summary on the visualization page.
+	implement lecturer's rating over time.(by year and semester)
+	
+	
+	implement account recovery mechanisms (vcode generation and email sending)
+	
+	
+	replace all icons with svg icons
+	
+	
+
+SELC LECTURER TODOS:
+	implement account recovery
+	implement lecturer ratings summary chart over time(by year and semester or for a specific course)
+	

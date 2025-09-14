@@ -297,8 +297,11 @@ class ClassCourse{
   Lecturer lecturer;
   Course course;
   double grandMeanScore;
+  double grandPercentageScore;
   double lecturerRating;
   String? remark;
+  int registeredStudentsCount;
+  int evaluatedStudentsCount;
 
   ClassCourse({
     required this.classCourseId,
@@ -308,23 +311,29 @@ class ClassCourse{
     required this.course,
     required this.lecturer,
     this.grandMeanScore = 0,
+    this.grandPercentageScore = 0,
     this.lecturerRating = 0,
     this.remark,
+    this.registeredStudentsCount = 0,
+    this.evaluatedStudentsCount = 0
   });
 
 
   factory ClassCourse.fromJson(Map<String, dynamic> jsonMap){
 
     return ClassCourse(
-        classCourseId: jsonMap['cc_id'],
-        semester: jsonMap['semester'],
-        year: jsonMap['year'],
-        klass: jsonMap['class'] ?? 'A',
-        course: Course.fromJson(jsonMap['course']),
-        lecturer: Lecturer.fromJson(jsonMap['lecturer']),
-        grandMeanScore: jsonMap['grand_mean_score'].toDouble() ?? 0,
-        remark: jsonMap['remark'],
-        lecturerRating: jsonMap['lecturer_course_rating'].toDouble() ?? 0
+      classCourseId: jsonMap['cc_id'],
+      semester: jsonMap['semester'],
+      year: jsonMap['year'],
+      klass: jsonMap['class'] ?? 'A',
+      course: Course.fromJson(jsonMap['course']),
+      lecturer: Lecturer.fromJson(jsonMap['lecturer']),
+      grandMeanScore: jsonMap['grand_mean_score'].toDouble() ?? 0,
+      grandPercentageScore: jsonMap['grand_percentage'].toDouble() ?? 0,
+      remark: jsonMap['remark'],
+      lecturerRating: jsonMap['lecturer_course_rating'].toDouble() ?? 0,
+      registeredStudentsCount: jsonMap['number_of_registered_students'],
+      evaluatedStudentsCount: jsonMap['number_of_evaluated_students']
     );
   }
 
@@ -339,7 +348,7 @@ class CourseEvaluationSummary{
   QuestionAnswerType answerType;
   Map<String, dynamic>? answerSummary;
   double percentageScore; //note: this value is in percentages
-  double averageScore;
+  double meanScore;
   String remark;
 
   CourseEvaluationSummary({
@@ -347,7 +356,7 @@ class CourseEvaluationSummary{
     required this.answerType,
     this.answerSummary,
     this.percentageScore = 0,
-    this.averageScore = 0,
+    this.meanScore = 0,
     this.remark = ''
   });
 
@@ -363,7 +372,7 @@ class CourseEvaluationSummary{
     return CourseEvaluationSummary(
       question: jsonMap['question'],
       answerType: answerType,
-      averageScore: jsonMap['average_score'].toDouble(),
+      meanScore: jsonMap['average_score'].toDouble(),
       percentageScore: jsonMap['percentage_score'].toDouble(),
       answerSummary: answerSummary,
       remark: jsonMap['remark']
@@ -406,13 +415,13 @@ class CategoryRemark{
 
   final String categoryName;
   final double percentageScore;
-  final double averageScore;
+  final double meanScore;
   final String remark;
 
   CategoryRemark({
     required this.categoryName,
     this.percentageScore = 0,
-    required this.averageScore,
+    required this.meanScore,
     required this.remark,
   });
 
@@ -421,7 +430,7 @@ class CategoryRemark{
     return CategoryRemark(
         categoryName: jsonMap['category'],
         percentageScore: jsonMap['percentage_score'].toDouble() ?? 0,
-        averageScore: jsonMap['average_score'].toDouble() ?? 0,
+        meanScore: jsonMap['average_score'].toDouble() ?? 0,
         remark: jsonMap['remark']
     );
   }
@@ -473,6 +482,50 @@ class EvaluationSuggestion{
     );
   }
 
+}
+
+
+
+class SuggestionSentimentSummary{
+
+  final String sentiment;
+  final int sentimentCount;
+  final double sentimentPercent;
+
+  SuggestionSentimentSummary({required this.sentiment, required this.sentimentCount, required this.sentimentPercent});
+
+
+  factory SuggestionSentimentSummary.fromJson(Map<String, dynamic> jsonMap){
+    return SuggestionSentimentSummary(
+      sentiment: jsonMap['sentiment'],
+      sentimentCount: jsonMap['sentiment_count'],
+      sentimentPercent: jsonMap['sentiment_percent'].toDouble())
+    ;
+  }
+  
+}
+
+
+
+
+class SuggestionSummaryReport{
+
+  final List<SuggestionSentimentSummary> sentimentSummaries;
+  final List<EvaluationSuggestion> suggestions;
+
+  SuggestionSummaryReport({required this.sentimentSummaries, required this.suggestions});
+
+  factory SuggestionSummaryReport.fromJson(Map<String, dynamic> jsonMap){
+    return SuggestionSummaryReport(
+      sentimentSummaries: List<Map<String, dynamic>>.from(jsonMap['sentiment_summary']).map(
+        (jsonMap) => SuggestionSentimentSummary.fromJson(jsonMap)
+      ).toList(),
+
+      suggestions: List<Map<String, dynamic>>.from(jsonMap['suggestions']).map(
+        (jsonMap) => EvaluationSuggestion.fromJson(jsonMap)
+      ).toList()
+    );
+  }
 }
 
 

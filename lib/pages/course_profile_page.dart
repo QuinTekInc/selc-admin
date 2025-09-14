@@ -162,11 +162,13 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                           axisNameStyle: TextStyle(  
                             fontSize: 14, 
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87
+                            color: PreferencesProvider.getColor(context, 'text-color'),
+                            fontFamily: 'Poppins'
                           ),
                           axisLabelStyle: TextStyle(  
                             fontSize: 14, 
-                            color: Colors.black87
+                            color: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                            fontFamily: 'Poppins'
                           ),
                           
                           spotData: List<CustomLineChartSpotData>.generate(
@@ -206,7 +208,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
       width: double.infinity,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
         borderRadius: BorderRadius.circular(12)
       ),
 
@@ -284,7 +286,8 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                     trailing: Container(
                       //padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        //Colors.grey.shade200
+                        color: PreferencesProvider.getColor(context, 'table-background-color'),
                         borderRadius: BorderRadius.circular(12)
                       ),
                       child: Row(  

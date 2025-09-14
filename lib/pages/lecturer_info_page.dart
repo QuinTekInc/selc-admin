@@ -549,7 +549,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: List<Widget>.generate(
               cummulativeClassCourses.length,
-              (int index) => cummulativeCourseCell(cummulativeClassCourses[index])
+              (int index) => LCummulativeCourseCell(classCourse: cummulativeClassCourses[index])
             ),
           )
 
@@ -557,49 +557,83 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
       ),
     );
   }
-
-
-
-
-  //todo: cummulative course cell.
-  Widget cummulativeCourseCell(ClassCourse classCourse) => GestureDetector(
-    onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(EvaluationPage(classCourse: classCourse), 'Course Evaluation'),
-    child: Container(
-      padding: EdgeInsets.all(8),
-      margin: const EdgeInsets.only(top: 8),
-      child: Row(  
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(  
-            child: CustomText(   
-              classCourse.year.toString()
-            ),
-          ),
-    
-    
-          Expanded(  
-            child: CustomText(  
-              classCourse.semester.toString()
-            ),
-          ),
-    
-    
-          Expanded(
-            child: CustomText(  
-              classCourse.course!.courseCode!
-            ),
-          ),
-    
-    
-          Expanded(
-            flex: 2,
-            child: CustomText(
-              classCourse.course!.title!
-            ),
-          )
-        ],
-      ),
-    ),
-  );
+  
 
 }
+
+
+
+
+class LCummulativeCourseCell extends StatefulWidget {
+  
+  final ClassCourse classCourse;
+  
+  const LCummulativeCourseCell({super.key, required this.classCourse});
+
+  @override
+  State<LCummulativeCourseCell> createState() => _LCummulativeCourseCellState();
+}
+
+
+class _LCummulativeCourseCellState extends State<LCummulativeCourseCell> {
+
+  Color backgroundColor = Colors.transparent;
+  
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onHover: (mouseEvent ) => setState(() => backgroundColor = Colors.green.shade300),
+      onExit: (mouseEvent) => setState(() => backgroundColor = Colors.transparent),
+
+      child: GestureDetector(
+        onTap: () => Provider.of<PageProvider>(context, listen: false)
+            .pushPage(EvaluationPage(classCourse: widget.classCourse), 'Course Evaluation'),
+
+        child: Container(
+          padding: EdgeInsets.all(8),
+          margin: const EdgeInsets.only(top: 8),
+          
+          decoration: BoxDecoration(  
+            borderRadius: BorderRadius.circular(12),
+            color: backgroundColor
+          ),
+          
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              
+              Expanded(
+                child: CustomText(
+                    widget.classCourse.year.toString()
+                ),
+              ),
+
+
+              Expanded(
+                child: CustomText(
+                    widget.classCourse.semester.toString()
+                ),
+              ),
+
+
+              Expanded(
+                child: CustomText(
+                    widget.classCourse.course.courseCode
+                ),
+              ),
+
+
+              Expanded(
+                flex: 2,
+                child: CustomText(
+                    widget.classCourse.course.title
+                ),
+              )
+            ],
+          ),
+        ),
+      )
+    );
+  }
+}
+

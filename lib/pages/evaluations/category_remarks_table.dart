@@ -141,7 +141,7 @@ class CategoryRemarksTable extends StatelessWidget {
 
           Expanded(
             child: CustomText(
-              categoryRemark.averageScore.toString(),
+              categoryRemark.meanScore.toString(),
               textAlignment: TextAlign.center,
             ),
           ),

@@ -335,7 +335,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
                       //todo: ratings tables section
                       Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,9 +531,37 @@ class _DashboardPageState extends State<DashboardPage> {
       
         children: [
       
-          HeaderText(
-            'Recent Evaluations',
-            fontSize: 15,
+          Row(
+            children: [
+              HeaderText(
+                'Recent Files',
+                fontSize: 15,
+              ),
+
+              Spacer(),
+
+
+              //todo: do something here
+              TextButton(
+                onPressed: (){},
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomText(
+                      'See more',
+                      textColor: Colors.green.shade400,
+                    ),
+
+                    const SizedBox(width: 3,),
+
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.green.shade200,
+                    )
+                  ],
+                )
+              )
+            ],
           ),
       
           SizedBox(height: 8,),
@@ -543,7 +571,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: 7,
+            itemCount: 5,
             
             itemBuilder: (_, index) => ListTile(
               leading: Container(
@@ -565,7 +593,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
               //todo replace with the course name
               title: CustomText(
-                'Programming with C++[COMP152]',
+                'Programming with C++[COMP152] evaluation.xlsx',
                 fontWeight: FontWeight.w600,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -634,9 +662,216 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
 
+
+  //todo: lecturer ratings table.
+  Widget buildLecturerRatingsTable(BuildContext context){
+
+    return Container(
+      padding: const EdgeInsets.all(8),
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.5,
+
+      decoration: BoxDecoration(
+        //Colors.white
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
+        borderRadius: BorderRadius.circular(12)
+      ),
+
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+
+          Row(
+            children: [
+
+              Row(
+                spacing: 8,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  HeaderText(
+                    'Lecturer Ratings',
+                    fontSize: 15,
+                  ),
+
+                  CustomText('[For the current semester]', textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),)
+                ],
+              ),
+
+              Spacer(),
+
+              TextButton(
+                onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(const LecturerRatingsPage(), 'Lecturer Ratings'),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomText(
+                      'See more',
+                      textColor: Colors.green.shade400,
+                    ),
+
+                    const SizedBox(width: 3,),
+
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.green.shade200,
+                    )
+                  ],
+                )
+              )
+            ],
+          ),
+
+          const SizedBox(height: 8,),
+
+          //todo: build the table rows.
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(8),
+
+            decoration: BoxDecoration(
+              //Colors.grey.shade200
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+              borderRadius: BorderRadius.circular(12)
+            ),
+
+
+            child: Row(
+              children: [
+
+                SizedBox(
+                  width: 120,
+                  child: CustomText(
+                    'No.'
+                  ),
+                ),
+
+
+                Expanded(
+                  flex: 2,
+                  child: CustomText(
+                    'Lecturer'
+                  ),
+                ),
+
+
+                Expanded(
+                  child: CustomText(
+                    'Courses',
+                    textAlignment: TextAlign.center,
+                  ),
+                ),
+
+
+
+                SizedBox(
+                  width: 120,
+                  child: CustomText(
+                    'Rate'
+                  ),
+                )
+              ],
+            )
+          ),
+
+
+          //todo: table contents
+
+          if(isLRatingsLoading) Expanded(
+            child: Center(
+              child: CircularProgressIndicator()
+            ),
+          )
+          else if(!isLRatingsLoading && Provider.of<SelcProvider>(context).lecturersRatings.isEmpty) Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomText(
+                    'No Lecturer Ratings',
+                    fontWeight: FontWeight.w600,
+                  ),
+
+                  CustomText(
+                    'The first ten rows of lecturer rating appear here.'
+                  )
+                ],
+              ),
+            ),
+          )else Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: List<Widget>.generate(
+                Provider.of<SelcProvider>(context).lecturersRatings.length >= 5 ? 5 : Provider.of<SelcProvider>(context).lecturersRatings.length,
+                (int index){
+                  LecturerRating lRating = Provider.of<SelcProvider>(context, listen: false).lecturersRatings[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+
+                        SizedBox(
+                          width: 120,
+                          child: CustomText(
+                            (index+1).toString()
+                          ),
+                        ),
+
+
+                        Expanded(
+                          flex: 2,
+                          child: CustomText(
+                            lRating.lecturer.name
+                          ),
+                        ),
+
+
+                        Expanded(
+                          child: CustomText(
+                            lRating.numberOfCourses.toString(),
+                            textAlignment: TextAlign.center
+                          ),
+                        ),
+
+
+
+                        SizedBox(
+                          width: 120,
+                          child: CustomText(
+                            lRating.parameterRating.toStringAsFixed(2)
+                          ),
+                        )
+
+                      ],
+                    ),
+                  );
+                }
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+
+  }
+
+
+
+
   //todo: sample course ratings table.
   Widget buildCourseRatingsTable(BuildContext context){
-    return Container(  
+    return Container(
       padding: const EdgeInsets.all(8),
       width: double.infinity,
 
@@ -651,7 +886,7 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
 
 
-      child: Column(  
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -661,22 +896,31 @@ class _DashboardPageState extends State<DashboardPage> {
           Row(
             children: [
 
-              HeaderText(
-                'Course Ratings',
-                fontSize: 15,
+              Row(
+                spacing: 8,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  HeaderText(
+                    'Course Ratings',
+                    fontSize: 15,
+                  ),
+
+                  CustomText('[For the current semester]', textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),)
+                ],
               ),
 
               Spacer(),
 
 
               TextButton(
-                onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(CourseRatingsPage(), 'Course Ratings'), 
+                onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(CourseRatingsPage(), 'Course Ratings'),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
 
-                    CustomText(  
+                    CustomText(
                       'See more',
                       textColor: Colors.green.shade400,
                     ),
@@ -696,7 +940,7 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 8,),
 
 
-          Container(  
+          Container(
             width: double.infinity,
             padding: const EdgeInsets.all(8),
 
@@ -707,7 +951,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
 
 
-            child: Row(  
+            child: Row(
               children: [
 
                 const SizedBox(
@@ -716,13 +960,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
 
                 Expanded(
-                  child: CustomText(  
+                  child: CustomText(
                     'Course Code'
                   ),
                 ),
 
 
-                Expanded(  
+                Expanded(
                   flex: 2,
                   child: CustomText(
                     'Title'
@@ -732,9 +976,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
                 SizedBox(
-                  width: 100,  
-                  child: CustomText(  
-                    'Rate'
+                  width: 120,
+                  child: CustomText(
+                    'Mean Score'
                   ),
                 )
               ],
@@ -757,36 +1001,36 @@ class _DashboardPageState extends State<DashboardPage> {
               detail: 'The first ten rows on the course rating appears here.',
             ),
           )
-          else Column(  
+          else Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: List<Widget>.generate(  
+            children: List<Widget>.generate(
               Provider.of<SelcProvider>(context, listen: false).coursesRatings.length >= 10 ? 10: Provider.of<SelcProvider>(context, listen: false).coursesRatings.length,
               (int index){
                 CourseRating courseRating = Provider.of<SelcProvider>(context, listen: false).coursesRatings[index];
                 return Padding(
                   padding: EdgeInsets.all(8),
-                  child: Row(  
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-          
+
                       SizedBox(
                         width: 120,
-                        child: CustomText(  
+                        child: CustomText(
                          '${index+1}'
                         ),
                       ),
-          
+
                       Expanded(
-                        child: CustomText(  
+                        child: CustomText(
                           courseRating.course.courseCode
                         ),
                       ),
-          
-          
-                      Expanded(  
+
+
+                      Expanded(
                         flex: 2,
                         child: CustomText(
                           courseRating.course.title,
@@ -794,16 +1038,16 @@ class _DashboardPageState extends State<DashboardPage> {
                           softwrap: false,
                         ),
                       ),
-          
-          
-          
+
+
+
                       SizedBox(
-                        width: 100,  
-                        child: CustomText(  
+                        width: 120,
+                        child: CustomText(
                           courseRating.parameterRating.toStringAsFixed(2)
                         ),
                       )
-          
+
                     ],
                   ),
                 );
@@ -816,199 +1060,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
 
-
-  //todo: lecturer ratings table.
-  Widget buildLecturerRatingsTable(BuildContext context){
-
-    return Container(  
-      padding: const EdgeInsets.all(8),
-      width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.5,
-
-      decoration: BoxDecoration(
-        //Colors.white
-        color: PreferencesProvider.getColor(context, 'table-background-color'),
-        borderRadius: BorderRadius.circular(12)
-      ),
-
-
-      child: Column(  
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-
-          Row(
-            children: [
-              HeaderText(
-                'Lecturer Ratings',
-                fontSize: 15,
-              ),
-
-              Spacer(),
-
-              TextButton(
-                onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(const LecturerRatingsPage(), 'Lecturer Ratings'), 
-                child: Row(  
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CustomText(  
-                      'See more', 
-                      textColor: Colors.green.shade400,
-                    ),
-
-                    const SizedBox(width: 3,),
-
-                    Icon( 
-                      Icons.arrow_forward_ios,
-                      color: Colors.green.shade200,
-                    )
-                  ],
-                )
-              )
-            ],
-          ),
-
-          const SizedBox(height: 8,),
-
-          //todo: build the table rows.
-
-          Container(  
-            width: double.infinity,
-            padding: const EdgeInsets.all(8),
-
-            decoration: BoxDecoration(
-              //Colors.grey.shade200
-              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-              borderRadius: BorderRadius.circular(12)
-            ),
-
-
-            child: Row(  
-              children: [
-
-                SizedBox(
-                  width: 120,
-                  child: CustomText(  
-                    'No.'
-                  ),
-                ),
-
-
-                Expanded(  
-                  flex: 2,
-                  child: CustomText(
-                    'Lecturer'
-                  ),
-                ),
-
-
-                Expanded(  
-                  child: CustomText(
-                    'Courses',
-                    textAlignment: TextAlign.center,
-                  ),
-                ),
-
-
-
-                SizedBox(
-                  width: 100,  
-                  child: CustomText(  
-                    'Rate'
-                  ),
-                )
-              ],
-            )
-          ),
-
-
-          //todo: table contents
-
-          if(isLRatingsLoading) Expanded(
-            child: Center(  
-              child: CircularProgressIndicator()
-            ),
-          )
-          else if(!isLRatingsLoading && Provider.of<SelcProvider>(context).lecturersRatings.isEmpty) Expanded(
-            child: Center(
-              child: Column(  
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CustomText(  
-                    'No Lecturer Ratings',
-                    fontWeight: FontWeight.w600,
-                  ),
-              
-                  CustomText(
-                    'The first ten rows of lecturer rating appear here.'
-                  )
-                ],
-              ),
-            ),
-          )else Expanded(
-            child: Column(  
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-              children: List<Widget>.generate(
-                Provider.of<SelcProvider>(context).lecturersRatings.length >= 5 ? 5 : Provider.of<SelcProvider>(context).lecturersRatings.length,
-                (int index){
-                  LecturerRating lRating = Provider.of<SelcProvider>(context, listen: false).lecturersRatings[index];
-
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(  
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                    
-                        SizedBox(  
-                          width: 120,
-                          child: CustomText(  
-                            (index+1).toString()
-                          ),
-                        ),
-                    
-                    
-                        Expanded(  
-                          flex: 2,
-                          child: CustomText(  
-                            lRating.lecturer.name!
-                          ),
-                        ),
-                    
-                    
-                        Expanded(  
-                          child: CustomText(
-                            lRating.numberOfCourses.toString(),
-                            textAlignment: TextAlign.center
-                          ),
-                        ),
-                    
-                    
-                    
-                        SizedBox(
-                          width: 100,  
-                          child: CustomText(  
-                            lRating.parameterRating.toStringAsFixed(2)
-                          ),
-                        )
-                    
-                      ],
-                    ),
-                  );
-                }
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-
-  }
 
 
 
