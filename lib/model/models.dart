@@ -180,7 +180,7 @@ class Category extends Equatable{
 
 
   Map<String, dynamic> toMap() => {
-    'category_name': categoryName!
+    'category_name': categoryName
   };
 
 

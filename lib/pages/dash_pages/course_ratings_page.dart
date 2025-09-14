@@ -404,7 +404,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
 
                                       Expanded(
                                         child: CustomText(  
-                                          cRating.course.courseCode!
+                                          cRating.course.courseCode
                                         ),
                                       ),
 
@@ -412,7 +412,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                                       Expanded(
                                         flex: 2,
                                         child: CustomText(  
-                                          cRating.course.title!
+                                          cRating.course.title
                                         ),
                                       ),
 
@@ -456,8 +456,8 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
 
 
   List<CourseRating> applySearchFilter(String searchText, List<CourseRating> ratings){
-    return ratings.where((rating) => rating.course.title!.toLowerCase().contains(searchText.toLowerCase()) ||
-          rating.course.courseCode!.toLowerCase().contains(searchText.toLowerCase())).toList();
+    return ratings.where((rating) => rating.course.title.toLowerCase().contains(searchText.toLowerCase()) ||
+          rating.course.courseCode.toLowerCase().contains(searchText.toLowerCase())).toList();
   }
 
   void onDropdownValueChange(){

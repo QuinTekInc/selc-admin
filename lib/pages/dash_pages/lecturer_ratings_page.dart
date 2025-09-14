@@ -451,7 +451,7 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
           Expanded(
             flex: 3,
             child: CustomText(
-              lecturerRating.lecturer.name!,
+              lecturerRating.lecturer.name,
               textAlignment: TextAlign.left
             ),
           ),
@@ -461,7 +461,7 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
           Expanded(
             flex: 3,
             child: CustomText(
-              lecturerRating.lecturer.department!,
+              lecturerRating.lecturer.department,
               textAlignment: TextAlign.left
             ),
           ),

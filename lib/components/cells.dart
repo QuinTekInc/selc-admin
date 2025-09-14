@@ -33,7 +33,7 @@ class CategoryCell extends StatelessWidget {
       child: ListTile(
         leading: Icon(CupertinoIcons.cube, size: 30, color: Colors.green.shade400,),
         title: CustomText(
-          category.categoryName!,
+          category.categoryName,
           fontSize: 16,
         ),
 
@@ -44,8 +44,8 @@ class CategoryCell extends StatelessWidget {
 
             switch(value){
               case 'edit':
-               //todo: handle the categories here.
-               onEditPressed();
+                //todo: handle the categories here.
+                onEditPressed();
                 return;
 
               case 'delete':

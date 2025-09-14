@@ -352,11 +352,11 @@ class _QuestionsPageState extends State<QuestionsPage> {
     setState(() {
 
       filteredQuestions = selcProvider!.questions.where((question) {
-        return question.question.contains(searchController.text) || question.category.categoryName!.contains(searchController.text);
+        return question.question.contains(searchController.text) || question.category.categoryName.contains(searchController.text);
       }).toList();
 
       filteredCategories = selcProvider!.categories.where(
-        (category) => category.categoryName!.contains(searchController.text))
+        (category) => category.categoryName.contains(searchController.text))
         .toList();
     });
 
@@ -638,7 +638,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
     if(widget.inEditMode) {
       titleText = 'Update Category';
       buttonText = 'update';
-      catNameController.text = widget.category!.categoryName!;
+      catNameController.text = widget.category!.categoryName;
     }
     super.initState();
   }

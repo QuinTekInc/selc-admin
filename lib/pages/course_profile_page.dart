@@ -54,7 +54,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
     try{
 
       //first get all the data and store it in the cummulativeClassCourses
-      cummulativeClassCourses = await Provider.of<SelcProvider>(context, listen: false).getCourseInformation(widget.course.courseCode!);
+      cummulativeClassCourses = await Provider.of<SelcProvider>(context, listen: false).getCourseInformation(widget.course.courseCode);
 
       currentCourses = cummulativeClassCourses.where(
         (classCourse) => classCourse.year == DateTime.now().year
@@ -175,7 +175,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                             cummulativeClassCourses.length,
                             (index) => CustomLineChartSpotData(
                               label: cummulativeClassCourses[index].year.toString(), 
-                              x: cummulativeClassCourses[index].year!.toDouble(), 
+                              x: cummulativeClassCourses[index].year.toDouble(), 
                               y: cummulativeClassCourses[index].grandMeanScore
                             )
                           ),
@@ -275,13 +275,13 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                 itemBuilder: (_, index) {
 
                   ClassCourse classCourse = currentCourses[index];
-                  Lecturer lecturer = classCourse.lecturer!;
+                  Lecturer lecturer = classCourse.lecturer;
 
                   
                   return ListTile(  
                     leading: Icon(CupertinoIcons.person, color: Colors.green.shade400,),
-                    title: CustomText(lecturer.name!, fontWeight: FontWeight.w600),
-                    subtitle: CustomText(lecturer.department!),
+                    title: CustomText(lecturer.name, fontWeight: FontWeight.w600),
+                    subtitle: CustomText(lecturer.department),
 
                     trailing: Container(
                       //padding: const EdgeInsets.all(8),
@@ -360,11 +360,11 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
           const SizedBox(height: 12),
 
     
-          DetailContainer(title: 'Course Code', detail: widget.course.courseCode!),
+          DetailContainer(title: 'Course Code', detail: widget.course.courseCode),
     
 
     
-          DetailContainer(title: 'Course Title', detail: widget.course.title!),
+          DetailContainer(title: 'Course Title', detail: widget.course.title),
 
 
     
@@ -514,12 +514,12 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
           //flex 2
           Expanded(  
             flex: 2,
-            child: CustomText(classCourse.lecturer!.name!),
+            child: CustomText(classCourse.lecturer.name),
           ),
 
           //flex 1
           Expanded(  
-            child: CustomText(classCourse.lecturer!.department!),
+            child: CustomText(classCourse.lecturer.department),
           ),
 
           //150

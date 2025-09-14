@@ -1,7 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:selc_admin/components/charts/bar_chart.dart';
-import 'package:selc_admin/components/charts/pie_chart.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 

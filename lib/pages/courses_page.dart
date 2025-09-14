@@ -221,7 +221,7 @@ class _CoursesPageState extends State<CoursesPage> {
 
 
     filteredCourses = selcProvider!.courses.where(
-      (course) => course.courseCode!.toLowerCase().contains(newValue) || course.title!.toLowerCase().contains(newValue)).toList();
+      (course) => course.courseCode.toLowerCase().contains(newValue) || course.title.toLowerCase().contains(newValue)).toList();
 
     setState((){});
 

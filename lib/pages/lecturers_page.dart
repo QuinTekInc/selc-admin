@@ -237,7 +237,7 @@ class _LecturersPageState extends State<LecturersPage> {
                           children: [
           
                             CustomText(
-                              lecturer.name!, 
+                              lecturer.name, 
                               fontSize: 16, 
                               fontWeight: FontWeight.w600,
                               softwrap: true,
@@ -246,7 +246,7 @@ class _LecturersPageState extends State<LecturersPage> {
                             
                             Expanded(
                               child: CustomText(
-                                lecturer.department!, 
+                                lecturer.department, 
                                 fontSize: 14, 
                                 fontWeight: FontWeight.w500,
                                 softwrap: true,
