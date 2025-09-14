@@ -292,18 +292,28 @@ class SelcProvider with ChangeNotifier{
       throw Error();
     }
 
-    List<dynamic> responseBody = jsonDecode(response.body);
+    Map<String, dynamic> responseBody = jsonDecode(response.body);
 
-    SuggestionSummaryReport suggestionsReport = responseBody.map(
-        (jsonMap) => SuggestionSummaryReport.fromJson(jsonMap)
-    ).toList().first;
+    SuggestionSummaryReport suggestionsReport = SuggestionSummaryReport.fromJson(responseBody);
     
     return suggestionsReport;
   }
 
 
 
+  Future<List<EvalLecturerRatingSummary>> getEvalLecturerRatingSummary(int classCourseId) async {
 
+    final response = await connector.getRequest(endPoint: 'eval-lrating-summary/$classCourseId');
+
+    if(response.statusCode != 200){
+      throw Error();
+    }
+
+    List<dynamic> responseBody = jsonDecode(response.body);
+
+    return responseBody.map((jsonMap) => EvalLecturerRatingSummary.fromJson(jsonMap)).toList();
+
+  }
 
 
 
@@ -358,7 +368,7 @@ class SelcProvider with ChangeNotifier{
   Future<void> updateCategory(Category category) async {
 
     final response = await connector.postRequest(
-      endpoint: 'update-category/${category.categoryId!}', body: jsonEncode({'category_name': category.categoryName})
+      endpoint: 'update-category/${category.categoryId}', body: jsonEncode({'category_name': category.categoryName})
     );
 
     if(response.statusCode != 200){
@@ -366,7 +376,7 @@ class SelcProvider with ChangeNotifier{
     }
 
     categories.where(
-      (cat) => cat.categoryId == category.categoryId).toList()[0].categoryName = category.categoryName!;
+      (cat) => cat.categoryId == category.categoryId).toList()[0].categoryName = category.categoryName;
 
     notifyListeners();
   }

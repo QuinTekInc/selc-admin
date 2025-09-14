@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
@@ -63,7 +64,7 @@ class CategoryRemarksTable extends StatelessWidget {
 
                 Expanded(
                   child: CustomText(
-                    'Percentage Score(%)',
+                    'Avg. Score',
                     fontWeight: FontWeight.w600,
                     textAlignment: TextAlign.center,
                   ),
@@ -73,7 +74,7 @@ class CategoryRemarksTable extends StatelessWidget {
 
                 Expanded(
                   child: CustomText(
-                    'Avg. Score',
+                    'Percentage Score(%)',
                     fontWeight: FontWeight.w600,
                     textAlignment: TextAlign.center,
                   ),
@@ -122,28 +123,30 @@ class CategoryRemarksTable extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-
+          
           Expanded(
             flex: 2,
             child: CustomText(
-                categoryRemark.categoryName
+              categoryRemark.categoryName
             ),
           ),
 
 
+
+          //todo: average or mean score
           Expanded(
             child: CustomText(
-              categoryRemark.percentageScore.toString(),
+              formatDecimal(categoryRemark.meanScore),
+              textAlignment: TextAlign.center,
+            ),
+          ),
+
+          //todo: percentage score
+          Expanded(
+            child: CustomText(
+              formatDecimal(categoryRemark.percentageScore),
               textAlignment: TextAlign.center,
             )
-          ),
-
-
-          Expanded(
-            child: CustomText(
-              categoryRemark.meanScore.toString(),
-              textAlignment: TextAlign.center,
-            ),
           ),
 
 

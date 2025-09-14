@@ -184,11 +184,11 @@ class Category extends Equatable{
   };
 
 
-  @override List<Object> get props => [categoryId!, categoryName!];
+  @override List<Object> get props => [categoryId, categoryName];
 
   @override
   String toString() {
-    return categoryName ?? '';
+    return categoryName;
   }
 
 }
@@ -524,6 +524,26 @@ class SuggestionSummaryReport{
       suggestions: List<Map<String, dynamic>>.from(jsonMap['suggestions']).map(
         (jsonMap) => EvaluationSuggestion.fromJson(jsonMap)
       ).toList()
+    );
+  }
+}
+
+
+
+
+
+class EvalLecturerRatingSummary{
+  final int rating;
+  final int ratingCount;
+  final double percentage;
+
+  EvalLecturerRatingSummary({required this.rating, required this.ratingCount, required this.percentage});
+
+  factory EvalLecturerRatingSummary.fromJson(Map<String, dynamic> jsonMap){
+    return EvalLecturerRatingSummary(
+      rating: jsonMap['rating'],
+      ratingCount: jsonMap['rating_count'],
+      percentage: jsonMap['percentage'].toDouble()
     );
   }
 }

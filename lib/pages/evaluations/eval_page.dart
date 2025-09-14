@@ -42,6 +42,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
   List<EvaluationSuggestion> evaluationSuggestions = [];
   List<SuggestionSentimentSummary> sentimentSummaries = [];
 
+  late SuggestionSummaryReport suggestionSummaryReport;
+
+  List<EvalLecturerRatingSummary> evalLecturerRatingSummaries = [];
+
   bool isLoading = false;
 
   Course? course;
@@ -64,11 +68,12 @@ class _EvaluationPageState extends State<EvaluationPage> {
     evalSummary = await Provider.of<SelcProvider>(context, listen: false).getClassCourseEvaluation(widget.classCourse.classCourseId);
     categoryRemarks = await Provider.of<SelcProvider>(context, listen: false).getCourseEvalCategoryRemark(widget.classCourse.classCourseId);
 
-    SuggestionSummaryReport suggestionSummaryReport =  await Provider.of<SelcProvider>(context, listen: false).getEvaluationSuggestions(widget.classCourse.classCourseId);
+    suggestionSummaryReport =  await Provider.of<SelcProvider>(context, listen: false).getEvaluationSuggestions(widget.classCourse.classCourseId);
 
+    evalLecturerRatingSummaries = await Provider.of<SelcProvider>(context, listen: false).getEvalLecturerRatingSummary(widget.classCourse.classCourseId);
 
-    sentimentSummaries = suggestionSummaryReport.sentimentSummaries;
-    evaluationSuggestions = suggestionSummaryReport.suggestions;
+    // sentimentSummaries = suggestionSummaryReport.sentimentSummaries;
+    // evaluationSuggestions = suggestionSummaryReport.suggestions;
 
     setState(() => isLoading = false);
   }
@@ -359,7 +364,11 @@ class _EvaluationPageState extends State<EvaluationPage> {
     }
 
 
-    return SuggestionsTable(suggestions: evaluationSuggestions);
+    return SuggestionsTable(
+      summaryReport: suggestionSummaryReport, 
+      lecturerRating: evalLecturerRatingSummaries,
+      courseLRating: widget.classCourse.lecturerRating,
+    );
   }
 
 
@@ -400,11 +409,11 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
             const SizedBox(height: 8,), 
 
-            DetailContainer(title: 'Lecturer', detail: widget.classCourse.lecturer!.name!),
+            DetailContainer(title: 'Lecturer', detail: widget.classCourse.lecturer.name),
 
             const SizedBox(height: 8,),
 
-            DetailContainer(title: 'Department', detail: widget.classCourse.lecturer!.department!),
+            DetailContainer(title: 'Department', detail: widget.classCourse.lecturer.department),
 
             const SizedBox(height: 8,),
 
@@ -412,13 +421,13 @@ class _EvaluationPageState extends State<EvaluationPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
-                  child: DetailContainer(title: 'Year', detail: widget.classCourse.year!.toString()),
+                  child: DetailContainer(title: 'Year', detail: widget.classCourse.year.toString()),
                 ),
                 
                 const SizedBox(width: 8,),
 
                 Expanded(
-                  child: DetailContainer(title: 'Semester', detail: widget.classCourse.semester!.toString()),
+                  child: DetailContainer(title: 'Semester', detail: widget.classCourse.semester.toString()),
                 )
               ],
             )

@@ -145,7 +145,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                         const SizedBox(height: 8,),
 
 
-                       CustomButton.withText('Click to reload', onPressed: () => loadData())
+                        CustomButton.withText('Click to reload', onPressed: () => loadData())
 
                       ],
                     ),
@@ -206,24 +206,24 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
           ),
 
 
-          RatingStars(rating: widget.lecturer.rating!),
+          RatingStars(rating: widget.lecturer.rating),
 
           const SizedBox(height: 24,),
 
 
-          DetailContainer(title: 'Name', detail: widget.lecturer.name!),
+          DetailContainer(title: 'Name', detail: widget.lecturer.name),
 
           const SizedBox(height: 12,),
 
-          DetailContainer(title: 'E-mail', detail: widget.lecturer.email!),
+          DetailContainer(title: 'E-mail', detail: widget.lecturer.email),
 
           const SizedBox(height: 12,),
 
-          DetailContainer(title: 'Department', detail: widget.lecturer.department!),
+          DetailContainer(title: 'Department', detail: widget.lecturer.department),
 
           const SizedBox(height: 12,),
 
-          DetailContainer(title: 'Rating', detail: widget.lecturer.rating!.toStringAsFixed(2)),
+          DetailContainer(title: 'Rating', detail: widget.lecturer.rating.toStringAsFixed(2)),
 
         ],
       )
@@ -257,7 +257,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
               buildCardDetailCol(
                 CupertinoIcons.star_fill, 
-                widget.lecturer.rating! == 0 ? '0': widget.lecturer.rating!.toStringAsFixed(1), 
+                widget.lecturer.rating == 0 ? '0': widget.lecturer.rating.toStringAsFixed(1), 
                 iconColor: const Color.fromARGB(255, 236, 219, 67)
               ),
 
@@ -375,13 +375,20 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                 ),
 
 
-                //TODO: fix this code later.
+                SizedBox(  
+                  width: 120,
+                  child: CustomText(  
+                    'Reg. Students'
+                  ),
+                ),
 
-                // Expanded(
-                //   child: CustomText(
-                //     'Class'
-                //   )
-                // )
+
+                SizedBox(  
+                  width: 120,
+                  child: CustomText(  
+                    'Eval. Students'
+                  ),
+                ),
 
               ],
             ),
@@ -430,7 +437,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
           Expanded(  
             child: CustomText(  
-              classCourse.course!.courseCode!
+              classCourse.course.courseCode
             ),
           ),
 
@@ -438,17 +445,26 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
           Expanded(  
             flex: 2,
             child: CustomText(  
-              classCourse.course!.title!
+              classCourse.course.title
             ),
           ),
 
           //TODO: fix this commented code later.
           
-          // Expanded(  
-          //   child: CustomText(  
-          //     classCourse.klass!
-          //   ),
-          // ),
+          SizedBox(  
+            width: 120,
+            child: CustomText(  
+              classCourse.registeredStudentsCount.toString()
+            ),
+          ),
+
+
+          SizedBox(  
+            width: 120,
+            child: CustomText(  
+              classCourse.evaluatedStudentsCount.toString()
+            ),
+          ),
 
         ],
       ),
@@ -503,13 +519,15 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
               children: [
 
-                Expanded(
+                SizedBox(
+                  width: 120,
                   child: CustomText(  
                     'Year',
                   )
                 ),
 
-                Expanded(
+                const SizedBox(
+                  width: 100,
                   child: CustomText(  
                     'Semester',  
                   )
@@ -528,6 +546,19 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                   child: CustomText(  
                     'Course Title'
                   )
+                ),
+
+
+                SizedBox(
+                  width: 120,
+                  child: CustomText('Reg. Students')
+                ),
+
+
+
+                SizedBox(
+                  width: 120,
+                  child: CustomText('Eval. Students')
                 ),
 
               ],
@@ -602,33 +633,51 @@ class _LCummulativeCourseCellState extends State<LCummulativeCourseCell> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               
-              Expanded(
+              SizedBox(
+                width: 120,
                 child: CustomText(
-                    widget.classCourse.year.toString()
+                  widget.classCourse.year.toString()
                 ),
               ),
 
 
-              Expanded(
+              //todo: semester
+              SizedBox(
+                width: 100,
                 child: CustomText(
-                    widget.classCourse.semester.toString()
+                  widget.classCourse.semester.toString()
                 ),
               ),
 
-
+              //todo: course code
               Expanded(
                 child: CustomText(
-                    widget.classCourse.course.courseCode
+                  widget.classCourse.course.courseCode
                 ),
               ),
 
-
+              //todo: course title
               Expanded(
                 flex: 2,
                 child: CustomText(
-                    widget.classCourse.course.title
+                  widget.classCourse.course.title
                 ),
-              )
+              ),
+
+
+              SizedBox(
+                width: 120,
+                child: CustomText(widget.classCourse.registeredStudentsCount.toString())
+              ),
+
+
+
+              SizedBox(
+                width: 120,
+                child: CustomText(widget.classCourse.evaluatedStudentsCount.toString())
+              ),
+
+
             ],
           ),
         ),
