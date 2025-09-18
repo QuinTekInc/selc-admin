@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 
 class CustomBarChart extends StatelessWidget {
 
@@ -57,16 +58,16 @@ class CustomBarChart extends StatelessWidget {
   });
 
 
-
-  final defaultLabelStyle = TextStyle(
-    color: Colors.black45,
+  TextStyle defaultLabelStyle(BuildContext context) => TextStyle(
+    color: PreferencesProvider.getColor(context, 'placeholder-text-color'),
     fontWeight: FontWeight.w600,
     fontSize: 11
   );
 
 
-  final defaultAxisStyle = TextStyle(
-    color: Colors.black45,
+
+  TextStyle defaultAxisStyle(BuildContext context) => TextStyle(
+    color: PreferencesProvider.getColor(context, 'text-color'),
     fontWeight: FontWeight.w600,
     fontSize: 16
   );
@@ -130,7 +131,7 @@ class CustomBarChart extends StatelessWidget {
 
                 barGroups: groups != null ? List<BarChartGroupData>.generate(
                   groups!.length, 
-                  (index) => makeGroupedData(groups![index])
+                  (index) => makeGroupedData(context, groups![index])
                 ): [],
 
                 titlesData: FlTitlesData(
@@ -153,7 +154,7 @@ class CustomBarChart extends StatelessWidget {
 
                     axisNameWidget: leftAxisTitle != null ? Text(
                       leftAxisTitle!,
-                      style: axisNameStyle ?? defaultAxisStyle
+                      style: axisNameStyle ?? defaultAxisStyle(context)
                     ) : null,
 
                     sideTitles: SideTitles(
@@ -164,7 +165,7 @@ class CustomBarChart extends StatelessWidget {
                           meta: meta, 
                           child: Text(
                             value.toInt().toString(),
-                            style: axisLabelStyle ?? defaultLabelStyle,
+                            style: axisLabelStyle ?? defaultLabelStyle(context),
                           )
                         );
                       }
@@ -176,7 +177,7 @@ class CustomBarChart extends StatelessWidget {
 
                     axisNameWidget: bottomAxisTitle != null ? Text(
                       bottomAxisTitle!,
-                      style: axisNameStyle ?? defaultAxisStyle,
+                      style: axisNameStyle ?? defaultAxisStyle(context),
                     ) : null,
 
                     sideTitles: SideTitles(
@@ -195,7 +196,7 @@ class CustomBarChart extends StatelessWidget {
                           meta: meta,
                           child: Text(
                             label,
-                            style: axisLabelStyle ?? defaultLabelStyle,
+                            style: axisLabelStyle ?? defaultLabelStyle(context),
                           )
                         );
 
@@ -223,7 +224,7 @@ class CustomBarChart extends StatelessWidget {
 
 
   //todo: for the bar chart rod.
-  BarChartGroupData makeGroupedData(CustomBarGroup group){
+  BarChartGroupData makeGroupedData(BuildContext context, CustomBarGroup group){
 
     return BarChartGroupData(
       x: group.x, 
@@ -241,7 +242,8 @@ class CustomBarChart extends StatelessWidget {
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 20, //set the background y to the maximum y value of the entire graph,
-            color: Colors.grey.shade100
+            //Colors.grey.shade100
+            color: PreferencesProvider.getColor(context, 'table-background-color')
           )
         )
       )

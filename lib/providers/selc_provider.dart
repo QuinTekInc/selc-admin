@@ -300,6 +300,20 @@ class SelcProvider with ChangeNotifier{
   }
 
 
+  Future<List<EvalLecturerRatingSummary>> getOverallLecturerRatingSummary(String lecturerUsername) async {
+    
+    final response = await connector.getRequest(endPoint: 'overall-lrating-summary/$lecturerUsername');
+
+    if(response.statusCode != 200){
+      throw Error();
+    }
+
+    List<dynamic> responseBody = jsonDecode(response.body);
+
+    return responseBody.map((jsonMap) => EvalLecturerRatingSummary.fromJson(jsonMap)).toList();
+  }
+
+
 
   Future<List<EvalLecturerRatingSummary>> getEvalLecturerRatingSummary(int classCourseId) async {
 

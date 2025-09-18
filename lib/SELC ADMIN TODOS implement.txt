@@ -3,8 +3,6 @@ SELC_ADMIN TODOS:
 	implement pdf file report file export and saving
 	implement files section on the dashboad.
 	implement actual files page (in the dash pages folder)
-	implement showing sentiment chart (bar chart and pie chart) on the suggestions section of the evaluation page.
-	implement showing the ratings summary on the visualization page.
 	implement lecturer's rating over time.(by year and semester)
 	
 	

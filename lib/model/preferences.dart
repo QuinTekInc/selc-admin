@@ -11,14 +11,23 @@ class Preferences {
   double fontScale;
   bool darkMode;
   String? defaultDownloadDirectory;
-  Preferences({this.fontScale=0, this.darkMode=false, this.defaultDownloadDirectory});
+
+  List<String> savedFiles;
+
+  Preferences({
+    this.fontScale=0, 
+    this.darkMode=false, 
+    this.defaultDownloadDirectory, 
+    this.savedFiles = const []
+  });
 
 
   factory Preferences.fromJson(Map<String, dynamic> jsonMap){
     return Preferences(
       fontScale: jsonMap['font_scale'].toDouble(),
       darkMode: jsonMap['dark_mode'],
-      defaultDownloadDirectory: jsonMap['default_download_directory']
+      defaultDownloadDirectory: jsonMap['default_download_directory'],
+      savedFiles:  jsonMap['saved_files'] ?? []
     );
   }
 
@@ -27,7 +36,8 @@ class Preferences {
   Map<String, dynamic> toMap() =>{
     'font_scale': fontScale,
     'dark_mode': darkMode,
-    'default_download_directory': defaultDownloadDirectory
+    'default_download_directory': defaultDownloadDirectory,
+    'saved_files': savedFiles
   };
 
 

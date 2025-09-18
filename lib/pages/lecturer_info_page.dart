@@ -9,7 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
+import 'package:selc_admin/components/charts/bar_chart.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/components/utils.dart' show formatDecimal;
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/evaluations/eval_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
@@ -31,6 +33,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
   List<ClassCourse> cummulativeClassCourses = [];
   List<ClassCourse> currentClassCourses = [];
+  List<EvalLecturerRatingSummary> ratingSummary = [];
 
   bool isLoading = false;
 
@@ -47,6 +50,10 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
     setState(() => isLoading = true);
 
     try{
+
+      ratingSummary = await Provider.of<SelcProvider>(context, listen: false)
+                          .getOverallLecturerRatingSummary(widget.lecturer.username);
+
       cummulativeClassCourses = await Provider.of<SelcProvider>(context, listen: false).getLecturerInfo(widget.lecturer.username);
 
       currentClassCourses = cummulativeClassCourses.where((classCourse) => classCourse.year == DateTime.now().year).toList();
@@ -158,12 +165,45 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
+                      spacing: 12,
 
                       children: [
 
-                        buildCurrentCourseTable(),
+                        //todo: lecturer ratings bar chart
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 12,
+                          children: [
 
-                        const SizedBox(height: 12),
+
+                            Expanded(
+                              flex: 2,
+                              child: CustomBarChart(
+                                containerBackgroundColor: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                                width: double.infinity,
+                                chartTitle: 'Overall Rating Summary',
+                                leftAxisTitle: 'Frequency(number of students)',
+                                bottomAxisTitle: 'Stars',
+                                groups: List<CustomBarGroup>.generate(  
+                                  ratingSummary.length,
+                                  (int index) => CustomBarGroup(
+                                    x: index,
+                                    label: ratingSummary[index].rating.toString(),
+                                    rods: [Rod(y: ratingSummary[index].ratingCount.toDouble())]
+                                  )
+                                )
+                              )
+                            ),
+
+                            Expanded(  
+                              child: buildRatingSummarySection(context),
+                            )
+
+                          ],
+                        ),
+
+                        buildCurrentCourseTable(),
 
                         buildCummulativeCourseTable(),
                       ],
@@ -178,6 +218,78 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
       ),
     );
   }
+
+  Container buildRatingSummarySection(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      height: 400,
+      decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+        borderRadius: BorderRadius.circular(12)
+      ),
+      child: Column(  
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          HeaderText('Lecturer Ratings Summary'),
+          
+          const SizedBox(height: 12,),
+
+          //todo: the actual stars
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            spacing: 8,
+            children: List<Widget>.generate(
+              ratingSummary.length, (index){
+                        
+                return Row(  
+                  children: [
+                    Expanded(
+                      child: buildStars(ratingSummary[index].rating)
+                    ),
+                          
+                    SizedBox(
+                      width: 120,
+                      child:  CustomText(
+                        '${formatDecimal(ratingSummary[index].percentage)} %',
+                        fontSize: 15,
+                      ),
+                    ),
+                          
+                    SizedBox(
+                      width: 120,
+                      child:  CustomText(
+                          '${ratingSummary[index].ratingCount}',
+                        fontSize: 15,
+                      ),
+                    )
+                  ],
+                );
+              }
+            )
+          ),
+        ],
+      )
+    );
+  }
+
+
+
+
+  Widget buildStars(int n) => Row(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.start,
+    spacing: 3,
+    children: List<Widget>.generate(
+      n,
+      (index) => Icon(Icons.star_rounded, color: Colors.amber, size: 28,)
+    )
+  );
+
+
 
   Container buildLecturerInfoSection() {
     return Container(  
@@ -558,7 +670,13 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
                 SizedBox(
                   width: 120,
-                  child: CustomText('Eval. Students')
+                  child: CustomText('Score')
+                ),
+
+
+                SizedBox(
+                  width: 120,
+                  child: CustomText('Remarks')
                 ),
 
               ],
@@ -674,7 +792,13 @@ class _LCummulativeCourseCellState extends State<LCummulativeCourseCell> {
 
               SizedBox(
                 width: 120,
-                child: CustomText(widget.classCourse.evaluatedStudentsCount.toString())
+                child: CustomText(formatDecimal(widget.classCourse.grandMeanScore))
+              ),
+
+
+              SizedBox(
+                width: 120,
+                child: CustomText(widget.classCourse.remark!)
               ),
 
 

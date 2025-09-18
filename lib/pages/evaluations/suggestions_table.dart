@@ -255,7 +255,7 @@ class SuggestionsTable extends StatelessWidget {
                       );
                     }
                   )
-                ),
+                ), 
               ),
 
               SizedBox(

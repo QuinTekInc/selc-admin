@@ -2,7 +2,10 @@
 
 import 'dart:io';
 import 'package:excel/excel.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 
 
 
@@ -272,11 +275,13 @@ class ExcelExporter{
 
     final sheet = _excel['suggestion_summary'];
 
+    sheet.toString();
+
   }
 
 
 
-  void save(){
+  void save(BuildContext context){
     // Save file
     final fileBytes = _excel.save();
 
@@ -288,9 +293,19 @@ class ExcelExporter{
 
     final fileName = '${academicYear}_${semester}_${lecturerName}_$courseCode.xlsx';
 
-    File(fileName)
+    final downloadPath = Provider.of<PreferencesProvider>(context, listen: false).preferences.defaultDownloadDirectory;
+
+    final fullFilePath = '$downloadPath/$fileName';
+
+    File(fullFilePath)
       ..createSync(recursive: true)
       ..writeAsBytesSync(fileBytes!);
+
+
+    
+    //if the file is saved succesfully, 
+    Provider.of<PreferencesProvider>(context, listen: false).preferences.savedFiles.add(fullFilePath);
+    //it must be registered in the files section
 
 
   }

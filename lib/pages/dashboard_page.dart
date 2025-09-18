@@ -10,6 +10,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/dash_pages/course_ratings_page.dart';
+import 'package:selc_admin/pages/dash_pages/files_page.dart';
 import 'package:selc_admin/pages/dash_pages/lecturer_ratings_page.dart';
 import 'package:selc_admin/pages/auth/login_page.dart';
 import 'package:selc_admin/pages/notifications_page.dart';
@@ -514,9 +515,12 @@ class _DashboardPageState extends State<DashboardPage> {
   //todo: function to show recent evaluations
   Widget buildRecentEvaluations(){
 
+    int filesLength = Provider.of<PreferencesProvider>(context).preferences.savedFiles.length;
+
     return Container(
       //width: 400,
       padding: const EdgeInsets.all(8),
+      height: MediaQuery.of(context).size.height * 0.5,
 
       decoration: BoxDecoration(
         //Colors.white
@@ -543,7 +547,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
               //todo: do something here
               TextButton(
-                onPressed: (){},
+                onPressed: () => Provider.of<PageProvider>(context, listen:false).pushPage(FilesPage(), 'Files'),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -567,45 +571,52 @@ class _DashboardPageState extends State<DashboardPage> {
           SizedBox(height: 8,),
       
       
-          ListView.separated(
+          if(filesLength == 0) CollectionPlaceholder(title: 'No Files Yet', detail: 'All saved files appear here')
+          
+          else ListView.separated(
                 
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: 5,
+            itemCount: filesLength >= 5 ? 5 : filesLength,
             
-            itemBuilder: (_, index) => ListTile(
-              leading: Container(
-                height: 45,
-                width: 45,
-          
-                decoration: BoxDecoration(
-                  color: Colors.brown.shade100,
-                  borderRadius: BorderRadius.circular(8)
-                ),
-          
-          
-                child: Icon( 
-                  CupertinoIcons.book,
-                  color: Colors.white,
-                ),
-          
-              ),
+            itemBuilder: (_, index) {
 
-              //todo replace with the course name
-              title: CustomText(
-                'Programming with C++[COMP152] evaluation.xlsx',
-                fontWeight: FontWeight.w600,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-          
-              subtitle: CustomText(
-                concatDateTime(DateTime.now()),
-                maxLines: 1,
-                softwrap: false,
-              ),
-          
-            ), 
+              String fileName = Provider.of<PreferencesProvider>(context, listen:false).preferences.savedFiles[index];
+
+              return ListTile(
+                leading: Container(
+                  height: 45,
+                  width: 45,
+                        
+                  decoration: BoxDecoration(
+                    color: Colors.brown.shade100,
+                    borderRadius: BorderRadius.circular(8)
+                  ),
+                        
+                        
+                  child: Icon( 
+                    CupertinoIcons.book,
+                    color: Colors.white,
+                  ),
+                        
+                ),
+              
+                //todo replace with the course name
+                title: CustomText(
+                  fileName,
+                  fontWeight: FontWeight.w600,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                        
+                subtitle: CustomText(
+                  concatDateTime(DateTime.now()),
+                  maxLines: 1,
+                  softwrap: false,
+                ),
+                        
+              );
+            }, 
             separatorBuilder: (_, index) => SizedBox(height: 8,)
           )
       

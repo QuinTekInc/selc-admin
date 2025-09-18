@@ -531,7 +531,7 @@ class SuggestionSummaryReport{
 
 
 
-
+//todo: rename this class to "LecturerRatingSummary"
 class EvalLecturerRatingSummary{
   final int rating;
   final int ratingCount;
@@ -547,7 +547,6 @@ class EvalLecturerRatingSummary{
     );
   }
 }
-
 
 
 
