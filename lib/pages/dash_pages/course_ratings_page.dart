@@ -189,8 +189,33 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                             
                                 children: [
+
+                                  CustomText(
+                                    'Department',
+                                    textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  
+                                  const SizedBox(height: 8),
                                             
-                                  CustomText('Academic year'),
+                                            
+                                  //todo: fix this later with the list of all the departments 
+                                  CustomDropdownButton<Department>(  
+                                    controller: departmentController,
+                                    hint: 'Select department',
+                                    items: Provider.of<SelcProvider>(context).departments,
+                                    onChanged: (newValue) => onDropdownValueChange()
+                                  ),
+
+                                  const SizedBox(height: 8,),
+
+
+                                            
+                                  CustomText(
+                                    'Academic year',
+                                    textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                   
                                   const SizedBox(height: 8),
                                             
@@ -205,7 +230,11 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                                   const SizedBox(height: 8,),
                                             
                                             
-                                  CustomText('Semester'),
+                                  CustomText(
+                                    'Semester',
+                                    textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                   
                                   const SizedBox(height: 8),
                                             
@@ -219,20 +248,6 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                                             
                                             
                                   const SizedBox(height: 8,),
-                                            
-                                            
-                                  CustomText('Department'),
-                                  
-                                  const SizedBox(height: 8),
-                                            
-                                            
-                                  //todo: fix this later with the list of all the departments 
-                                  CustomDropdownButton<Department>(  
-                                    controller: departmentController,
-                                    hint: 'Select department',
-                                    items: Provider.of<SelcProvider>(context).departments,
-                                    onChanged: (newValue) => onDropdownValueChange()
-                                  ),
                                             
                                             
                                   Divider(),
@@ -353,9 +368,8 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                             child: Center(  
                               child: CircularProgressIndicator(),
                             ),
-                          ),
-
-                          if(!isLoading && coursesRatings.isEmpty) Expanded(
+                          )
+                          else if(!isLoading && coursesRatings.isEmpty) Expanded(
                             child: Center(  
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -465,7 +479,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
 
     Department? department = departmentController.value;
 
-    if(department != null) filterMap.addAll({'department': department.departmentId});
+    if(department != null) filterMap.addAll({'department_id': department.departmentId});
 
     int? year = academicYearController.value;
 

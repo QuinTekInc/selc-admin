@@ -13,11 +13,34 @@ class ExcelExporter{
 
   final ClassCourse classCourse;
   final List<CourseEvaluationSummary> questionnaireData;
-  final List<Map<String, dynamic>> categoryData;
-  final List<LecturerRating> ratingSummary;
+  final List<CategoryRemark> categoryData;
+  final List<EvalLecturerRatingSummary> ratingSummary;
   final List<SuggestionSentimentSummary> sentimentSummary;
 
   late final Excel _excel;
+
+
+  final headerCellStyle = CellStyle(
+    bold: true,
+    fontSize: 12,
+    horizontalAlign: HorizontalAlign.Center,
+    verticalAlign: VerticalAlign.Center,
+    textWrapping: TextWrapping.WrapText
+  );
+
+
+  final CellStyle textCellStyle = CellStyle(  
+    verticalAlign: VerticalAlign.Top,
+    horizontalAlign: HorizontalAlign.Left,
+    textWrapping: TextWrapping.WrapText
+  );
+
+
+  final CellStyle numberCellStyle = CellStyle(
+    verticalAlign: VerticalAlign.Top,
+    horizontalAlign: HorizontalAlign.Right,
+    textWrapping: TextWrapping.WrapText
+  );
 
 
   ExcelExporter({
@@ -32,8 +55,29 @@ class ExcelExporter{
 
     _populateQuestionnaireSheet();
     _populateCategorySheet();
+    _populateLecturerRatingSheet();
     _populateSuggestionSentimentSummary();
   }
+
+
+  void _buildWorkSheetHeader({required List<String>headers, required Sheet sheet}){
+
+    int colIndex = 0;
+
+    for(String header in headers){
+      sheet.cell(
+        CellIndex.indexByColumnRow(columnIndex: colIndex, rowIndex: 0))
+          ..value = TextCellValue(header)
+          ..cellStyle = headerCellStyle;
+      
+      colIndex++;
+    }
+
+  }
+
+
+
+
 
 
   void _populateQuestionnaireSheet() {
@@ -84,6 +128,13 @@ class ExcelExporter{
       "Remark"
     ];
 
+
+    // sheet.appendRow(
+    //   headers.map((header) => TextCellValue(header)).toList(),
+    // );
+
+    _buildWorkSheetHeader(headers: headers, sheet: sheet);
+
     //todo: add the headers to the table.
     sheet.appendRow(
         List<CellValue>.from(headers.map((value) => TextCellValue(value))
@@ -101,12 +152,15 @@ class ExcelExporter{
 
       //todo: Fill answer_summary cols and row.
       options.forEach((option, count) {
-        sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex))
-            .value = TextCellValue(option);
-        sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: rowIndex))
-            .value = IntCellValue(count);
+        sheet.cell(
+          CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex))
+            ..value = TextCellValue(option)
+            ..cellStyle = textCellStyle;
+
+
+        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: rowIndex))
+            ..value = IntCellValue(count)
+            ..cellStyle = numberCellStyle;
 
         rowIndex++;
       });
@@ -120,9 +174,10 @@ class ExcelExporter{
           CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: endRow));
 
       //populate the merged rows with the actual question
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: startRow))
-          .value = TextCellValue(questionEval.question.toString());
+      sheet.cell(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: startRow))
+          ..value = TextCellValue(questionEval.question.toString())
+          ..cellStyle = textCellStyle;
 
 
       //todo: Merge and fill Answer Type
@@ -131,18 +186,20 @@ class ExcelExporter{
           CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: endRow));
 
       //populate the answer type
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: startRow))
-          .value = TextCellValue(questionEval.answerType.typeString);
+      sheet.cell(
+        CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: startRow))
+          ..value = TextCellValue(questionEval.answerType.typeString)
+          ..cellStyle = textCellStyle;
 
       //todo: Merge and fill Average Score
       sheet.merge(
           CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: startRow),
           CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: endRow));
 
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: startRow))
-          .value = DoubleCellValue((questionEval.meanScore as num).toDouble());
+      sheet.cell(
+        CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: startRow))
+          ..value = DoubleCellValue((questionEval.meanScore as num).toDouble())
+          ..cellStyle = numberCellStyle;
 
       //todo: Merge and fill Percentage Score
       sheet.merge(
@@ -150,9 +207,10 @@ class ExcelExporter{
           CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: endRow));
 
       //fill with the percentage score
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: startRow))
-          .value = DoubleCellValue((questionEval.percentageScore as num).toDouble());
+      sheet.cell(
+        CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: startRow))
+          ..value = DoubleCellValue((questionEval.percentageScore as num).toDouble())
+          ..cellStyle = numberCellStyle;
 
       //todo: Merge and fill Remark
       sheet.merge(
@@ -160,9 +218,10 @@ class ExcelExporter{
           CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: endRow));
 
       //fill with the remark
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: startRow))
-          .value = TextCellValue(questionEval.remark);
+      sheet.cell(
+        CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: startRow))
+          ..value = TextCellValue(questionEval.remark)
+          ..cellStyle = textCellStyle;
     }
 
 
@@ -170,11 +229,14 @@ class ExcelExporter{
 
 
 
-  void _populateCategorySheet(){
 
+
+
+  void _populateCategorySheet() {
     final sheet = _excel['Category Summary'];
     _excel.setDefaultSheet(sheet.sheetName);
 
+    // category headers
     final List<String> headers = [
       'Core Area (Category)',
       'Questions',
@@ -183,90 +245,132 @@ class ExcelExporter{
       'Remark'
     ];
 
+    // sheet.appendRow(
+    //   headers.map((header) => TextCellValue(header)).toList(),
+    // );
 
-    sheet.appendRow(
-        List<CellValue>.from(
-            headers.map((header) => TextCellValue(header)).toList())
-    );
+    _buildWorkSheetHeader(headers: headers, sheet: sheet);
 
 
-    int rowIndex = 1; //because the first row has been populated with the headers
+    int rowIndex = 1; // because row 0 = headers
 
-    for(var entry in categoryData){
+    for (CategoryRemark entry in categoryData) {
 
-      String categoryName = entry['category'];
-      List<String> questions = entry['questions'];
-      double meanScore = entry['mean_score'].toDouble();
-      double percentage = entry['percentage_score'].toDouble();
-      String remark = entry['remark'];
+      String categoryName = entry.categoryName;
+      List<String> questions = []; // <-- use actual questions
+      double meanScore = entry.meanScore;
+      double percentage = entry.percentageScore;
+      String remark = entry.remark;
+
+      // Handle empty category gracefully
+      if (questions.isEmpty) {
+        questions = ['-'];
+      }
 
       int startRow = rowIndex;
-      int endRow = startRow + questions.length - 1; //calculate the number of spans
+      int endRow = startRow + questions.length - 1;
 
-
-      //to be able to merge the rows we must first work on the questions' rows
-      questions.forEach((question) {
-        sheet.cell(
-            CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: rowIndex))
+      // fill questions
+      for (final question in questions) {
+        sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: rowIndex))
             .value = TextCellValue(question);
-
         rowIndex++;
-      });
+      }
 
-
-      //merge the category
+      // category column
       sheet.merge(
-          CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: startRow),
-          CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: endRow)
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: startRow),
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: endRow),
       );
-
-      //fill category
-      sheet.cell(
-          CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: startRow))
+      sheet
+          .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: startRow))
           .value = TextCellValue(categoryName);
 
-
-
-      //merge the mean score rows
+      // mean score
       sheet.merge(
-          CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: startRow),
-          CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: endRow)
+        CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: startRow),
+        CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: endRow),
       );
-
-      //fill mean score
-      sheet.cell(
-          CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: startRow))
+      sheet
+          .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: startRow))
           .value = DoubleCellValue(meanScore);
 
-
-      //merge the percentage rows
+      // percentage
       sheet.merge(
-          CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: startRow),
-          CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: endRow)
+        CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: startRow),
+        CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: endRow),
       );
-
-      //fill percentage
-      //fill mean score
-      sheet.cell(
-          CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: startRow))
+      sheet
+          .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: startRow))
           .value = DoubleCellValue(percentage);
 
-
-      //merge remark rows
+      // remark
       sheet.merge(
-          CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: startRow),
-          CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: endRow)
+        CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: startRow),
+        CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: endRow),
       );
-
-      //fill remark
-      //fill mean score
-      sheet.cell(
-          CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: startRow))
+      sheet
+          .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: startRow))
           .value = TextCellValue(remark);
+    }
+  }
 
+
+
+  void _populateLecturerRatingSheet(){
+
+    final sheet = _excel['lecturer_ratings'];
+
+
+    final List<String> headers = [
+      'Rating'
+      'Percentage Score(%)',
+      'Remark'
+    ];
+
+
+    //todo: add the headers to the table.
+    // sheet.appendRow(
+    //   headers.map((header) => TextCellValue(header)).toList(),
+    // );
+
+
+    _buildWorkSheetHeader(headers: headers, sheet: sheet);
+
+
+
+    //we start adding the actual data from row 1
+    int rowIndex = 1;
+
+
+    //todo: populate the actual rating data
+    for(EvalLecturerRatingSummary lecturerRating in ratingSummary){
+      int rating = lecturerRating.rating;
+      int count = lecturerRating.ratingCount;
+      double percentage = lecturerRating.percentage;
+
+
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: rowIndex))
+        ..value = IntCellValue(rating)
+        ..cellStyle = numberCellStyle;
+
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: rowIndex))
+        ..value = IntCellValue(count)
+        ..cellStyle = numberCellStyle;
+
+
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex))
+        ..value = DoubleCellValue(percentage)
+        ..cellStyle = textCellStyle;
+
+
+      rowIndex++;
     }
 
   }
+
+
 
 
 
@@ -275,9 +379,16 @@ class ExcelExporter{
 
     final sheet = _excel['suggestion_summary'];
 
-    sheet.toString();
+    final headers = ['Sentiment', 'Count', 'Percentage(%)'];
+
+    _buildWorkSheetHeader(headers: headers, sheet: sheet);
+
+
+    int rowIndex = 1;
 
   }
+
+
 
 
 
@@ -304,7 +415,12 @@ class ExcelExporter{
 
     
     //if the file is saved succesfully, 
-    Provider.of<PreferencesProvider>(context, listen: false).preferences.savedFiles.add(fullFilePath);
+    try{
+      Provider.of<PreferencesProvider>(context, listen: false).preferences.savedFiles.add(fullFilePath);
+    }on Exception catch(_){
+      //do nothing here
+    }
+    
     //it must be registered in the files section
 
 

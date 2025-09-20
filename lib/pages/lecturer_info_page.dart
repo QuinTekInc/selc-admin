@@ -190,7 +190,12 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                                   (int index) => CustomBarGroup(
                                     x: index,
                                     label: ratingSummary[index].rating.toString(),
-                                    rods: [Rod(y: ratingSummary[index].ratingCount.toDouble())]
+                                    rods: [
+                                      Rod(
+                                        y: ratingSummary[index].ratingCount.toDouble(), 
+                                        rodColor: [Colors.green, Colors.green.shade300, Colors.amber, Colors.amber.shade300, Colors.red][index]
+                                      )
+                                    ]
                                   )
                                 )
                               )
@@ -222,7 +227,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
   Container buildRatingSummarySection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
-      height: 400,
+      //height: 400,
       decoration: BoxDecoration(
         color: PreferencesProvider.getColor(context, 'alt-primary-color'),
         borderRadius: BorderRadius.circular(12)
@@ -247,6 +252,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                 return Row(  
                   children: [
                     Expanded(
+                      flex: 2,
                       child: buildStars(ratingSummary[index].rating)
                     ),
                           

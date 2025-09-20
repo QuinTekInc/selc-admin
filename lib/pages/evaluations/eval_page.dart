@@ -579,7 +579,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
     ExcelExporter excelExporter = ExcelExporter(
       classCourse: widget.classCourse,
       questionnaireData: evalSummary,
-      categoryData: [],
+      categoryData: categoryRemarks,
       ratingSummary: [],
       sentimentSummary: sentimentSummaries
     );

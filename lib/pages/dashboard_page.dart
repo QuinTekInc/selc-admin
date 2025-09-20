@@ -571,8 +571,12 @@ class _DashboardPageState extends State<DashboardPage> {
           SizedBox(height: 8,),
       
       
-          if(filesLength == 0) CollectionPlaceholder(title: 'No Files Yet', detail: 'All saved files appear here')
-          
+          if(filesLength == 0) Expanded(
+            child: CollectionPlaceholder(
+              title: 'No Files Yet', 
+              detail: 'All saved files appear here'
+            )
+          )
           else ListView.separated(
                 
             physics: NeverScrollableScrollPhysics(),

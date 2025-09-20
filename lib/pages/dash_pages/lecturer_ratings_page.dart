@@ -186,8 +186,31 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
                                 mainAxisSize: MainAxisSize.min,
                               
                                 children: [
+
+                                  CustomText(
+                                    'Department',
+                                    textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                               
-                                  CustomText('Academic Year'),
+                                  const SizedBox(height: 8),
+                              
+                                  CustomDropdownButton<Department>(
+                                    hint: 'Select Department',
+                                    controller: departmentController, 
+                                    items: Provider.of<SelcProvider>(context).departments,
+                                    onChanged: (newValue) => onDropDownValueChanged()
+                                  ),
+
+                                  const SizedBox(height: 8,),
+
+
+                              
+                                  CustomText(
+                                    'Academic Year',
+                                    textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                               
                                   const SizedBox(height: 8),
                               
@@ -198,11 +221,14 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
                                     onChanged: (newValue) => onDropDownValueChanged()
                                   ),
                               
-                              
                                   const SizedBox(height: 8,),
-                              
-                              
-                                  CustomText('Semester'),
+                            
+
+                                  CustomText(
+                                    'Semester',
+                                    textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                               
                                   const SizedBox(height: 8),
                               
@@ -215,18 +241,8 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
                                   
                               
                                   const SizedBox(height: 8,),
-                              
-                                  CustomText('Department'),
-                              
-                                  const SizedBox(height: 8),
-                              
-                                  //todo: populate with the departments.
-                                  CustomDropdownButton<Department>(
-                                    hint: 'Select Department',
-                                    controller: departmentController, 
-                                    items: Provider.of<SelcProvider>(context).departments,
-                                    onChanged: (newValue) => onDropDownValueChanged()
-                                  ),
+
+
                               
                                   Divider(),
                               
@@ -283,9 +299,8 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
                             child: Center(  
                               child: CircularProgressIndicator(),
                             ),
-                          ),
-
-                          if(!isLoading && lecturersRatings.isEmpty) Expanded(
+                          )
+                          else if(!isLoading && lecturersRatings.isEmpty) Expanded(
                             child: Center(  
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -517,7 +532,7 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
     Department? department = departmentController.value;
 
     if(department != null){
-      filterMap.addAll({'department': department.departmentId});
+      filterMap.addAll({'department_id': department.departmentId});
     }
 
 
