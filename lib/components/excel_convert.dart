@@ -339,7 +339,6 @@ class ExcelExporter{
     _buildWorkSheetHeader(headers: headers, sheet: sheet);
 
 
-
     //we start adding the actual data from row 1
     int rowIndex = 1;
 
