@@ -257,7 +257,7 @@ class ExcelExporter{
     for (CategoryRemark entry in categoryData) {
 
       String categoryName = entry.categoryName;
-      List<String> questions = []; // <-- use actual questions
+      List<String> questions = entry.questions; // <-- use actual questions
       double meanScore = entry.meanScore;
       double percentage = entry.percentageScore;
       String remark = entry.remark;

@@ -417,21 +417,32 @@ class CategoryRemark{
   final double percentageScore;
   final double meanScore;
   final String remark;
+  final List<String> questions;
 
   CategoryRemark({
     required this.categoryName,
     this.percentageScore = 0,
     required this.meanScore,
     required this.remark,
+    required this.questions
   });
 
 
   factory CategoryRemark.fromJson(Map<String, dynamic> jsonMap){
+    List<String> questions;
+
+    try{
+      questions = List<String>.from(jsonMap['questions']);
+    }on Error catch(_){
+      questions = [];
+    }
+
     return CategoryRemark(
-        categoryName: jsonMap['category'],
-        percentageScore: jsonMap['percentage_score'].toDouble() ?? 0,
-        meanScore: jsonMap['average_score'].toDouble() ?? 0,
-        remark: jsonMap['remark']
+      categoryName: jsonMap['category'],
+      percentageScore: jsonMap['percentage_score'].toDouble() ?? 0,
+      meanScore: jsonMap['average_score'].toDouble() ?? 0,
+      remark: jsonMap['remark'],
+      questions: questions
     );
   }
 
