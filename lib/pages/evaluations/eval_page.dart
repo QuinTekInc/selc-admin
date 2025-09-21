@@ -40,7 +40,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
   List<CourseEvaluationSummary> evalSummary = [];
   List<CategoryRemark> categoryRemarks = [];
   List<EvaluationSuggestion> evaluationSuggestions = [];
-  List<SuggestionSentimentSummary> sentimentSummaries = [];
+  //List<SuggestionSentimentSummary> sentimentSummaries = [];
 
   late SuggestionSummaryReport suggestionSummaryReport;
 
@@ -581,7 +581,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
       questionnaireData: evalSummary,
       categoryData: categoryRemarks,
       ratingSummary: [],
-      sentimentSummary: sentimentSummaries
+      sentimentSummary: suggestionSummaryReport.sentimentSummaries
     );
 
 
@@ -597,6 +597,8 @@ class _EvaluationPageState extends State<EvaluationPage> {
         classCourse: widget.classCourse,
         evaluationSummaries: this.evalSummary,
         categoryRemarks: this.categoryRemarks,
+        ratingSummary: this.evalLecturerRatingSummaries,
+        sentimentSummary: suggestionSummaryReport.sentimentSummaries,
       ),
       'Report View'
     );

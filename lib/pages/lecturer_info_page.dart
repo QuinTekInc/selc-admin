@@ -10,6 +10,7 @@ import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/charts/bar_chart.dart';
+import 'package:selc_admin/components/charts/line_chart.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart' show formatDecimal;
 import 'package:selc_admin/model/models.dart';
@@ -128,36 +129,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                     child: CircularProgressIndicator(),
                   ),
                 )
-                else if(!isLoading && cummulativeClassCourses.isEmpty) Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 150),
-                    alignment: Alignment.center,
-
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-
-                      children: [
-
-                        CustomText(
-                          'No Data',
-                          textAlignment: TextAlign.center,
-                          fontWeight: FontWeight.w700,
-                        ),
-
-
-                        CustomText('Lecturer may not have any courses yet'),
-
-                        const SizedBox(height: 8,),
-
-
-                        CustomButton.withText('Click to reload', onPressed: () => loadData())
-
-                      ],
-                    ),
-                  ),
-                )
+                else if(!isLoading && cummulativeClassCourses.isEmpty) buildNoInfoPlaceholder()
 
                 else Expanded(
                   child: SingleChildScrollView(
@@ -168,6 +140,31 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                       spacing: 12,
 
                       children: [
+
+
+                        //lecturer yearly average rating line chart
+                        CustomLineChart(
+                          chartTitle: 'Yearly Average Rating trend',
+                          width: double.infinity,
+                          leftAxisTitle: 'Rating',
+                          bottomAxisitle: 'Years',
+                          titleStyle: TextStyle( 
+                            color: PreferencesProvider.getColor(context, 'text-color'),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            fontFamily: 'Poppins'
+                          ),
+                          axisLabelStyle: TextStyle(
+                            color: PreferencesProvider.getColor(context,'placeholder-text-color'),
+                            fontFamily: 'Poppins',
+                          ),
+                          axisNameStyle: TextStyle(  
+                            color: PreferencesProvider.getColor(context,'text-color'),
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w600
+                          ),
+                        ),
+
 
                         //todo: lecturer ratings bar chart
                         Row(
@@ -220,6 +217,39 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Expanded buildNoInfoPlaceholder() {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 150),
+        alignment: Alignment.center,
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+
+          children: [
+
+            CustomText(
+              'No Data',
+              textAlignment: TextAlign.center,
+              fontWeight: FontWeight.w700,
+            ),
+
+
+            CustomText('Lecturer may not have any courses yet'),
+
+            const SizedBox(height: 8,),
+
+
+            CustomButton.withText('Click to reload', onPressed: () => loadData())
+
+          ],
+        ),
       ),
     );
   }
