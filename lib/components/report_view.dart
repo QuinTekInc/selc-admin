@@ -5,7 +5,8 @@ import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
-import 'package:selc_admin/providers/pref_provider.dart';
+
+import 'pdf_export_chatgpt.dart' as gpt_export;
 
 class ReportView extends StatelessWidget {
 
@@ -15,7 +16,7 @@ class ReportView extends StatelessWidget {
   final List<EvalLecturerRatingSummary> ratingSummary;
   final List<SuggestionSentimentSummary> sentimentSummary;
 
-  const ReportView({
+  ReportView({
     super.key,
     required this.classCourse,
     required this.evaluationSummaries,
@@ -23,6 +24,16 @@ class ReportView extends StatelessWidget {
     required this.ratingSummary,
     required this.sentimentSummary
   });
+
+
+  final List<dynamic> remarkInfo = [
+    ('4.6 - 5.0', '90-100', 'Excellent'),
+    ('4.0 - 4.59', '60-89', 'Very Good'),
+    ('3.0 - 3.99', '40-59', 'Good'),
+    ('2.0 - 2.99', '20-39', 'Average'),
+    ('0.0 - 1.9', '0-19', 'Poor')
+  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +59,20 @@ class ReportView extends StatelessWidget {
             children: [
 
               //todo: the header of the report view
-              buildReportHeader(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: buildReportHeader()
+                  ),
+
+                  TextButton(
+                    onPressed: () => gpt_export.generateReportPdf(classCourse: classCourse, evaluationSummaries: evaluationSummaries, categoryRemarks: categoryRemarks, ratingSummary: ratingSummary, sentimentSummary: sentimentSummary), 
+                    child: CustomText('Save', textColor: Colors.blue.shade400, fontWeight: FontWeight.w600,)
+                  )
+                ],
+              ),
               NavigationTextButtons(),
 
 
@@ -63,24 +87,11 @@ class ReportView extends StatelessWidget {
                       buildCourseInformationSection(),
 
 
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
 
+                      
 
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(12)
-                          ),
-
-                          child: CustomText(
-                            'Questionnaire Summary',
-                            fontWeight: FontWeight.w600,
-                          )
-                        ),
-                      ),
+                      buildSectionTitle('Questionnaire Summary'),
 
                       const SizedBox(height: 8,),
                       //todo: to be replaced with official description statement provided
@@ -90,26 +101,14 @@ class ReportView extends StatelessWidget {
 
                       buildQuestionnaireTable(),
 
+
+
+
                       const SizedBox(height: 16),
 
 
 
-
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade300),
-                              borderRadius: BorderRadius.circular(12)
-                          ),
-
-                          child: CustomText(
-                            'Summary Report',
-                            fontWeight: FontWeight.w600,
-                          )
-                        ),
-                      ),
+                      buildSectionTitle('Summary Report'),
 
                       const SizedBox(height: 8,),
                       //todo: to be replaced with official description statement provided
@@ -119,38 +118,40 @@ class ReportView extends StatelessWidget {
 
                       buildCategoryTable(),
 
-                      const SizedBox(height: 12,),
+
+
+                      const SizedBox(height: 16,),
+
+
+
+                      buildSectionTitle('Remarks Reference'),
+
+                      const SizedBox(height: 8,),
+                      //todo: to be replaced with official description statement provided
+                      CustomText('This table shows the range of scores(mean/average scores) and their corresponding remarks'),
+
+                      const SizedBox(height: 8),
+
+                      buildScoringTable(),
+
+                      const SizedBox(height: 16,),
 
 
 
 
 
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(12)
-                          ),
 
-                          child: CustomText(
-                            'Lecturer Rating summary',
-                            fontWeight: FontWeight.w600,
-                          )
-                        ),
-                      ),
-
+                      buildSectionTitle('Lecturer Rating Summary'),
                       const SizedBox(height: 8,),
                       //todo: to be replaced with official description statement provided
                       CustomText(
                         'The table shows the rating summary of the lecturer for this course.'
                       ),
 
-
                       const SizedBox(height: 8,),
 
                       buildLRatingTable(),
+
 
 
                       const SizedBox(height: 16,),
@@ -158,21 +159,8 @@ class ReportView extends StatelessWidget {
 
 
 
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade300),
-                              borderRadius: BorderRadius.circular(12)
-                            ),
 
-                            child: CustomText(
-                              'Suggestion Sentiment Summary',
-                              fontWeight: FontWeight.w600,
-                            )
-                        ),
-                      ),
+                      buildSectionTitle('Suggestion Sentiment Summary'),
 
                       const SizedBox(height: 8,),
                       //todo: to be replaced with official description statement provided
@@ -196,6 +184,23 @@ class ReportView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+
+
+  Container buildSectionTitle(String title) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12)
+      ),
+    
+      child: CustomText(
+        title,
+        fontWeight: FontWeight.w600,
+      )
     );
   }
 
@@ -225,7 +230,7 @@ class ReportView extends StatelessWidget {
                 fontSize: 20,
               ),
               HeaderText(
-                'Quality Assurance and Academic Planning Committee',
+                'Quality Assurance and Academic Planning Directorate',
                 fontSize: 18,
               ),
               HeaderText(
@@ -396,7 +401,7 @@ class ReportView extends StatelessWidget {
                 SizedBox(
                   width: 120,
                   child: CustomText(
-                    'Percentage Score(%)',
+                    'Mean Score',
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -404,7 +409,7 @@ class ReportView extends StatelessWidget {
                 SizedBox(
                   width: 120,
                   child: CustomText(
-                      'Mean score',
+                      'Percentage Score(%)',
                       fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -432,6 +437,7 @@ class ReportView extends StatelessWidget {
       )
     );
   }
+
 
 
 
@@ -495,7 +501,7 @@ class ReportView extends StatelessWidget {
             width: 120,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CustomText(formatDecimal(summary.percentageScore)),
+              child: CustomText(formatDecimal(summary.meanScore)),
             )
           ),
 
@@ -507,7 +513,7 @@ class ReportView extends StatelessWidget {
             width: 120,
             child: Padding(
               padding: const EdgeInsets.all(8),
-              child: CustomText(formatDecimal(summary.meanScore))
+              child: CustomText(formatDecimal(summary.percentageScore))
             )
           ),
 
@@ -680,7 +686,112 @@ class ReportView extends StatelessWidget {
   
 
   Widget buildScoringTable(){
-    return Container();
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12)
+      ),
+
+      child: Column(  
+        children: [
+
+          Container(  
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(  
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12)
+            ),
+
+            child: Row(  
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(  
+                  child: CustomText('Score Range', fontWeight: FontWeight.w600,),
+                ),
+
+
+                Expanded(  
+                  child: CustomText(
+                    'Percentage Range', 
+                    fontWeight: FontWeight.w600,
+                    textAlignment: TextAlign.center
+                  ),
+                ),
+
+
+                Expanded(  
+                  child: CustomText(
+                    'Remark', 
+                    fontWeight: FontWeight.w600,
+                    textAlignment: TextAlign.center,
+                  ),
+                ),
+              ]
+            )
+          ),
+
+
+          ListView.builder(  
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: remarkInfo.length,
+            //separatorBuilder: (_, __) => Divider(thickness: 1.5,),
+            itemBuilder: (_, index){
+
+              final divider = VerticalDivider(width: 0, thickness: 1.5);
+
+              final isLast = index == (ratingSummary.length - 1);
+
+              return IntrinsicHeight(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(  
+                    border: isLast ? null : Border(
+                      bottom: BorderSide(color: Colors.grey.shade300, width: 1.5)
+                    )
+                  ),
+                  child: Row(  
+                    children: [
+                      Expanded(  
+                        child: Padding(  
+                          padding: const EdgeInsets.all(12),
+                          child: CustomText(remarkInfo[index].$1),
+                        )
+                      ),
+                  
+                      divider,
+                  
+                      Expanded(  
+                        child: Padding(  
+                          padding: const EdgeInsets.all(12),
+                          child: CustomText(
+                            remarkInfo[index].$2,
+                            textAlignment: TextAlign.center
+                          ),
+                        )
+                      ),
+                  
+                      divider,
+                  
+                      Expanded(  
+                        child: Padding(  
+                          padding: const EdgeInsets.all(12),
+                          child: CustomText(
+                            remarkInfo[index].$3,
+                            textAlignment: TextAlign.center,
+                          ),
+                        )
+                      )
+                    ]
+                  ),
+                ),
+              );
+            }
+          ),
+
+        ]
+      ),
+    );
   }
 
 
@@ -950,7 +1061,7 @@ class ReportView extends StatelessWidget {
 
 
 
-
+  //todo: implement this later.
   Widget buildGeneralEvaluationSummary(){
     //course mean score
     //course percentage score
@@ -959,7 +1070,9 @@ class ReportView extends StatelessWidget {
     //average sentiment
     //response rate (number of registered students and those who have submitted thier evaluation)
     //final QAAPD statement.
-    return Placeholder();
+    return Container(
+
+    ); 
   }
 
 }

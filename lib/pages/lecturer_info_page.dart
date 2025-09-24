@@ -148,6 +148,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                           width: double.infinity,
                           leftAxisTitle: 'Rating',
                           bottomAxisitle: 'Years',
+                          maxY: 5,
                           titleStyle: TextStyle( 
                             color: PreferencesProvider.getColor(context, 'text-color'),
                             fontWeight: FontWeight.bold,

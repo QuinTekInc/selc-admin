@@ -385,6 +385,22 @@ class ExcelExporter{
 
     int rowIndex = 1;
 
+    for(var summary in sentimentSummary){
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: rowIndex))
+        ..value = TextCellValue(summary.sentiment)
+        ..cellStyle = textCellStyle;
+
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: rowIndex))
+        ..value = IntCellValue(summary.sentimentCount)
+        ..cellStyle = textCellStyle;
+
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex))
+        ..value = DoubleCellValue(summary.sentimentPercent)
+        ..cellStyle = textCellStyle;
+
+      rowIndex++;
+    }
+
   }
 
 

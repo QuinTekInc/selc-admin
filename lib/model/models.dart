@@ -162,6 +162,7 @@ class Question{
 
 
 //todo: category
+// ignore: must_be_immutable
 class Category extends Equatable{
 
   int categoryId;

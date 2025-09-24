@@ -24,7 +24,7 @@ class CustomLineChart extends StatelessWidget {
   final TextStyle? axisLabelStyle;
   final TextStyle? axisNameStyle;
 
-  final double maxY;
+  final double? maxY;
   final double? maxX;
   final double minY;
   final double? minX;
@@ -41,7 +41,7 @@ class CustomLineChart extends StatelessWidget {
     this.axisLabelStyle,
     this.width = 400,
     this.height = 400,
-    this.maxY = 20,
+    this.maxY,
     this.maxX,
     this.minY = 0,
     this.minX = 0,
