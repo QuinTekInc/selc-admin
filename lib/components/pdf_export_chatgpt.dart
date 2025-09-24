@@ -36,6 +36,7 @@ Future<void> generateReportPdf({
         pw.SizedBox(height: 16),
 
         buildSectionTitle('Questionnaire Summary'),
+        pw.SizedBox(height: 8),
         pw.Text('Summary information on how students answered the evaluation questionnaire.'),
         pw.SizedBox(height: 8),
         //buildQuestionnaireTable(evaluationSummaries),
@@ -44,6 +45,7 @@ Future<void> generateReportPdf({
         pw.SizedBox(height: 16),
 
         buildSectionTitle('Summary Report'),
+        pw.SizedBox(height: 8),
         pw.Text('The table below shows the categorical (core area) summary of the questionnaire.'),
         pw.SizedBox(height: 8),
         buildCategoryTable(categoryRemarks),
@@ -51,6 +53,7 @@ Future<void> generateReportPdf({
         pw.SizedBox(height: 16),
 
         buildSectionTitle('Remarks Reference'),
+        pw.SizedBox(height: 8),
         pw.Text('This table shows the range of mean/average scores and their corresponding remarks.'),
         pw.SizedBox(height: 8),
         buildScoringTable(),
@@ -58,6 +61,7 @@ Future<void> generateReportPdf({
         pw.SizedBox(height: 16),
 
         buildSectionTitle('Lecturer Rating Summary'),
+        pw.SizedBox(height: 8),
         pw.Text('This table shows the rating summary of the lecturer for this course.'),
         pw.SizedBox(height: 8),
         buildLRatingTable(ratingSummary, classCourse),
@@ -65,6 +69,7 @@ Future<void> generateReportPdf({
         pw.SizedBox(height: 16),
 
         buildSectionTitle('Suggestion Sentiment Summary'),
+        pw.SizedBox(height: 8),
         pw.Text(
           'This shows the summary of sentiments of students regarding this course and lecturer.\n'
           'NB: For the actual suggestions, check the evaluation report in your portal.',
@@ -120,12 +125,13 @@ pw.Widget buildSectionTitle(String title) {
   return pw.Container(
     padding: const pw.EdgeInsets.all(8),
     decoration: pw.BoxDecoration(
+      color: PdfColors.grey200,
       border: pw.Border.all(color: PdfColors.grey300),
       borderRadius: pw.BorderRadius.circular(12),
     ),
     child: pw.Text(
       title,
-      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
+      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
     ),
   );
 }
