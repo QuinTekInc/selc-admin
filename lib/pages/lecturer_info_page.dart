@@ -36,6 +36,8 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
   List<ClassCourse> currentClassCourses = [];
   List<EvalLecturerRatingSummary> ratingSummary = [];
 
+  List<dynamic> yearlyLecturerRatingSummary = [];
+
   bool isLoading = false;
 
   @override
@@ -51,6 +53,10 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
     setState(() => isLoading = true);
 
     try{
+
+      //get the yearly lecturer rating summary
+      yearlyLecturerRatingSummary  = await Provider.of<SelcProvider>(context, listen: false)
+                          .getYearlyLecturerRatingSummary(widget.lecturer.username);
 
       ratingSummary = await Provider.of<SelcProvider>(context, listen: false)
                           .getOverallLecturerRatingSummary(widget.lecturer.username);
@@ -163,6 +169,16 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                             color: PreferencesProvider.getColor(context,'text-color'),
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w600
+                          ),
+
+
+                          spotData: List<CustomLineChartSpotData>.generate(
+                            yearlyLecturerRatingSummary.length, 
+                            (index) => CustomLineChartSpotData(
+                              x: (index).toDouble(), 
+                              label: yearlyLecturerRatingSummary[index].$1.toString(),
+                              y: yearlyLecturerRatingSummary[index].$2,
+                            )
                           ),
                         ),
 

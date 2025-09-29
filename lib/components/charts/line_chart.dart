@@ -154,15 +154,20 @@ class CustomLineChart extends StatelessWidget {
                       showTitles: true,
                       interval: 1,
                       getTitlesWidget: (value, meta){
+                        String label = '${value.toInt()}';
+
+                        dynamic xLabel = spotData.where((group) => group.x == value.toInt()).toList().first.label;
+
+                        if(xLabel != null){
+                          label = xLabel;
+                        }
+
                         return SideTitleWidget(
                           meta: meta,
-                          child: Text(  
-                            '${value.toInt()}',
-                            style: axisLabelStyle ?? TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          child: Text(
+                            label,
+                            style: axisLabelStyle,
+                          )
                         );
                       }
                     )

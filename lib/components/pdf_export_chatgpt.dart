@@ -80,7 +80,13 @@ Future<void> generateReportPdf({
     ),
   );
 
-  final file = File('report.pdf');
+
+  //todo: it is my plan to put the lecturer rating and the sentimement table on a separate page.
+
+  
+  String fileName = '${classCourse.year}-${classCourse.semester}-${classCourse.course.courseCode}-${classCourse.lecturer.name}-report.pdf';
+
+  final file = File(fileName);
   await file.writeAsBytes(await pdf.save());
 }
 
@@ -420,103 +426,103 @@ pw.Widget gpt2BuildQuestionnaireTable(List<CourseEvaluationSummary> summaries) {
 
 
 
- //create some mandatory cells.
-pw.Widget buildQuestionnaireTableCell(CourseEvaluationSummary summary){
+ 
+// pw.Widget buildQuestionnaireTableCell(CourseEvaluationSummary summary){
 
-  final rightBorder = pw.Border(right: pw.BorderSide(color: PdfColors.grey300, width: 1.5));
+//   final rightBorder = pw.Border(right: pw.BorderSide(color: PdfColors.grey300, width: 1.5));
 
-  return pw.Row(
-    crossAxisAlignment: pw.CrossAxisAlignment.start,  
-    children: [
+//   return pw.Row(
+//     crossAxisAlignment: pw.CrossAxisAlignment.start,  
+//     children: [
       
-      //todo: question
-      pw.Expanded(
-        flex: 3,
-        child: pw.Container(  
-          padding: const pw.EdgeInsets.all(8),
-          decoration: pw.BoxDecoration(  
-            border: rightBorder
-          ),
-          child: pw.Text(  
-            summary.question
-          ),
-        ),
-      ),
+//       //todo: question
+//       pw.Expanded(
+//         flex: 3,
+//         child: pw.Container(  
+//           padding: const pw.EdgeInsets.all(8),
+//           decoration: pw.BoxDecoration(  
+//             border: rightBorder
+//           ),
+//           child: pw.Text(  
+//             summary.question
+//           ),
+//         ),
+//       ),
   
 
-      //todo: answers
-      pw.Expanded(
-        flex: 2,
-        child: pw.Container(
-          padding: const pw.EdgeInsets.all(8.0),
-          decoration: pw.BoxDecoration(  
-            border: rightBorder
-          ),
-          child: pw.Column(
-            mainAxisSize: pw.MainAxisSize.min,
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            mainAxisAlignment: pw.MainAxisAlignment.start,
-            children: List<pw.Widget>.generate(
-              summary.answerSummary!.length,
-              (index) {
+//       //todo: answers
+//       pw.Expanded(
+//         flex: 2,
+//         child: pw.Container(
+//           padding: const pw.EdgeInsets.all(8.0),
+//           decoration: pw.BoxDecoration(  
+//             border: rightBorder
+//           ),
+//           child: pw.Column(
+//             mainAxisSize: pw.MainAxisSize.min,
+//             crossAxisAlignment: pw.CrossAxisAlignment.start,
+//             mainAxisAlignment: pw.MainAxisAlignment.start,
+//             children: List<pw.Widget>.generate(
+//               summary.answerSummary!.length,
+//               (index) {
   
-                String answerKey = summary.answerSummary!.keys.elementAt(index);
+//                 String answerKey = summary.answerSummary!.keys.elementAt(index);
   
-                int answerFrequency = summary.answerSummary![answerKey];
+//                 int answerFrequency = summary.answerSummary![answerKey];
   
-                return pw.Row(
-                  children: [
-                    pw.Text('$answerKey :'),
-                    pw.Spacer(),
-                    pw.Text(answerFrequency.toString())
-                  ],
-                );
-              }
-            )
-          ),
-        )
-      ),
+//                 return pw.Row(
+//                   children: [
+//                     pw.Text('$answerKey :'),
+//                     pw.Spacer(),
+//                     pw.Text(answerFrequency.toString())
+//                   ],
+//                 );
+//               }
+//             )
+//           ),
+//         )
+//       ),
 
 
-      //todo: mean score
-      pw.Expanded(
-        flex: 1,
-        child: pw.Container(
-          padding: const pw.EdgeInsets.all(8),
-          decoration: pw.BoxDecoration(  
-            border: rightBorder
-          ),
-          child: pw.Text(formatDecimal(summary.meanScore))
-        )
-      ),
+//       //todo: mean score
+//       pw.Expanded(
+//         flex: 1,
+//         child: pw.Container(
+//           padding: const pw.EdgeInsets.all(8),
+//           decoration: pw.BoxDecoration(  
+//             border: rightBorder
+//           ),
+//           child: pw.Text(formatDecimal(summary.meanScore))
+//         )
+//       ),
 
 
   
   
-      //todo: percentage score
-      pw.Expanded(
-        flex: 1,
-        child: pw.Container(
-          padding: const pw.EdgeInsets.all(8.0),
-          decoration: pw.BoxDecoration(  
-            border: rightBorder
-          ),
-          child: pw.Text(formatDecimal(summary.percentageScore)),
-        )
-      ),
+//       //todo: percentage score
+//       pw.Expanded(
+//         flex: 1,
+//         child: pw.Container(
+//           padding: const pw.EdgeInsets.all(8.0),
+//           decoration: pw.BoxDecoration(  
+//             border: rightBorder
+//           ),
+//           child: pw.Text(formatDecimal(summary.percentageScore)),
+//         )
+//       ),
   
 
-      //todo: remark  
-      pw.Expanded(
-        flex: 2,
-        child: pw.Container(
-          padding: const pw.EdgeInsets.all(8.0),
-          child: pw.Text(summary.remark)
-        )
-      )
-    ],
-  );
-}
+//       //todo: remark  
+//       pw.Expanded(
+//         flex: 2,
+//         child: pw.Container(
+//           padding: const pw.EdgeInsets.all(8.0),
+//           child: pw.Text(summary.remark)
+//         )
+//       )
+//     ],
+//   );
+// }
 
 
 
@@ -528,8 +534,8 @@ pw.Widget buildCategoryTable(List<CategoryRemark> remarks) {
     headers: ['Core Area (Category)', 'Mean Score', 'Percentage Score', 'Remarks'],
     data: remarks.map((r) => [
       r.categoryName,
-      r.meanScore.toStringAsFixed(2),
-      r.percentageScore.toStringAsFixed(2),
+      formatDecimal(r.meanScore),
+      formatDecimal(r.percentageScore),
       r.remark,
     ]).toList(),
     cellStyle: const pw.TextStyle(fontSize: 10),
@@ -569,7 +575,7 @@ pw.Widget buildLRatingTable(List<EvalLecturerRatingSummary> ratings, ClassCourse
   final rows = ratings.map((r) => [
     r.rating.toString(),
     r.ratingCount.toString(),
-    r.percentage.toStringAsFixed(2),
+    formatDecimal(r.percentage),
   ]).toList();
 
   rows.add(['', 'Average Rating', course.lecturerRating.toStringAsFixed(2)]);
@@ -594,7 +600,7 @@ pw.Widget buildSentimentTable(List<SuggestionSentimentSummary> sentiments) {
     data: sentiments.map((s) => [
       s.sentiment,
       s.sentimentCount.toString(),
-      s.sentimentPercent.toStringAsFixed(2),
+      formatDecimal(s.sentimentPercent),
     ]).toList(),
     cellStyle: const pw.TextStyle(fontSize: 10),
     headerStyle: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold),

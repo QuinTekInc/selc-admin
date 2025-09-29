@@ -300,6 +300,19 @@ class SelcProvider with ChangeNotifier{
   }
 
 
+  Future<List<dynamic>> getYearlyLecturerRatingSummary(String username) async {
+    final response = await connector.getRequest(endPoint: 'yearly-average-lrating-summary/$username');
+
+    if(response.statusCode != 200){
+      throw Error();
+    }
+
+    List<dynamic> responseBody = jsonDecode(response.body);
+
+    return responseBody.map((jsonMap) => (jsonMap['year'], (jsonMap['average_rating'] as num).toDouble())).toList();
+  }
+
+
   Future<List<EvalLecturerRatingSummary>> getOverallLecturerRatingSummary(String lecturerUsername) async {
     
     final response = await connector.getRequest(endPoint: 'overall-lrating-summary/$lecturerUsername');
@@ -561,5 +574,6 @@ class SelcProvider with ChangeNotifier{
 
     notifyListeners();
   }
+
 
 }
