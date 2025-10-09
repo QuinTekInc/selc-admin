@@ -1,16 +1,19 @@
 
 
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:provider/provider.dart';
 import 'package:selc_admin/components/utils.dart';
 
-import 'package:selc_admin/model/models.dart'; // keep your models
+import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/providers/pref_provider.dart'; // keep your models
 
 
 final headerDecoration = pw.BoxDecoration(color: PdfColors.grey200,);
 
-Future<void> generateReportPdf({
+Future<void> generateReportPdf(BuildContext context, {
   required ClassCourse classCourse,
   required List<CourseEvaluationSummary> evaluationSummaries,
   required List<CategoryRemark> categoryRemarks,
@@ -39,8 +42,7 @@ Future<void> generateReportPdf({
         pw.SizedBox(height: 8),
         pw.Text('Summary information on how students answered the evaluation questionnaire.'),
         pw.SizedBox(height: 8),
-        //buildQuestionnaireTable(evaluationSummaries),
-        gpt2BuildQuestionnaireTable(evaluationSummaries),
+        buildQuestionnaireTable(evaluationSummaries),
 
         pw.SizedBox(height: 16),
 
@@ -52,42 +54,61 @@ Future<void> generateReportPdf({
 
         pw.SizedBox(height: 16),
 
+
         buildSectionTitle('Remarks Reference'),
         pw.SizedBox(height: 8),
         pw.Text('This table shows the range of mean/average scores and their corresponding remarks.'),
         pw.SizedBox(height: 8),
         buildScoringTable(),
 
-        pw.SizedBox(height: 16),
-
-        buildSectionTitle('Lecturer Rating Summary'),
-        pw.SizedBox(height: 8),
-        pw.Text('This table shows the rating summary of the lecturer for this course.'),
-        pw.SizedBox(height: 8),
-        buildLRatingTable(ratingSummary, classCourse),
-
-        pw.SizedBox(height: 16),
-
-        buildSectionTitle('Suggestion Sentiment Summary'),
-        pw.SizedBox(height: 8),
-        pw.Text(
-          'This shows the summary of sentiments of students regarding this course and lecturer.\n'
-          'NB: For the actual suggestions, check the evaluation report in your portal.',
-        ),
-        pw.SizedBox(height: 8),
-        buildSentimentTable(sentimentSummary),
+    
+        
       ],
     ),
   );
 
 
   //todo: it is my plan to put the lecturer rating and the sentimement table on a separate page.
+  pdf.addPage(
+    pw.Page( 
+      build: (_) => pw.Column(  
+        mainAxisAlignment: pw.MainAxisAlignment.start,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [ 
 
-  
+          buildSectionTitle('Lecturer Rating Summary'),
+          pw.SizedBox(height: 8),
+          pw.Text('This table shows the rating summary of the lecturer for this course.'),
+          pw.SizedBox(height: 8),
+          buildLRatingTable(ratingSummary, classCourse),
+
+          pw.SizedBox(height: 16),
+
+          buildSectionTitle('Suggestion Sentiment Summary'),
+          pw.SizedBox(height: 8),
+          pw.Text(
+            'This shows the summary of sentiments of students regarding this course and lecturer.\n'
+            'NB: For the actual suggestions, check the evaluation report in your portal.',
+          ),
+          pw.SizedBox(height: 8),
+          buildSentimentTable(sentimentSummary),
+
+        ]
+      )
+    )
+  );
+
+  //todo: save the generated pdf to the default application document directory
+  String appDirPath = Provider.of<PreferencesProvider>(context, listen:false).preferences.defaultDownloadDirectory!;
+
   String fileName = '${classCourse.year}-${classCourse.semester}-${classCourse.course.courseCode}-${classCourse.lecturer.name}-report.pdf';
 
-  final file = File(fileName);
+  String fullFilePath = '$appDirPath/$fileName';
+
+  final file = File(fullFilePath);
   await file.writeAsBytes(await pdf.save());
+
+  Provider.of<PreferencesProvider>(context, listen:false).addSavedFile(fileName);
 }
 
 //
@@ -222,7 +243,7 @@ pw.Widget buildDetailField(String title, String detail) {
 
 
 
-pw.Widget gpt2BuildQuestionnaireTable(List<CourseEvaluationSummary> summaries) {
+pw.Widget buildQuestionnaireTable(List<CourseEvaluationSummary> summaries) {
   return pw.Table(
     border: pw.TableBorder.all(
       color: PdfColors.grey300,
@@ -321,208 +342,6 @@ pw.Widget gpt2BuildQuestionnaireTable(List<CourseEvaluationSummary> summaries) {
 
 
 
-
-// pw.Widget buildQuestionnaireTable(List<CourseEvaluationSummary> summaries) {
-
-
-//   final headerStyle = pw.TextStyle(  
-//     fontWeight: pw.FontWeight.bold,
-//     fontSize: 11
-//   );
-
-//   return pw.Column(
-//     mainAxisAlignment: pw.MainAxisAlignment.start,
-//     crossAxisAlignment: pw.CrossAxisAlignment.start,
-//     mainAxisSize: pw.MainAxisSize.min,
-//     children: [
-
-//       //todo: table headers
-//       pw.Container(
-//         padding: const pw.EdgeInsets.all(8),
-//         decoration: pw.BoxDecoration(
-//           color: PdfColors.grey200,
-//           borderRadius: pw.BorderRadius.circular(12)
-//         ),
-
-//         child: pw.Row(  
-//           mainAxisAlignment: pw.MainAxisAlignment.start,
-//           crossAxisAlignment: pw.CrossAxisAlignment.center,
-//           children: [
-
-//             pw.Expanded(
-//               flex: 3,
-//               child: pw.Text(  
-//                 'Question',
-//                 textAlign: pw.TextAlign.center,
-//                 style: headerStyle
-//               )
-//             ),
-
-//             //pw.VerticalDivider(),
-
-//             pw.Expanded(
-//               flex: 2,
-//               child: pw.Text(  
-//                 'Answers',
-//                 textAlign: pw.TextAlign.center,
-//                 style: headerStyle
-//               )
-//             ),
-
-//             //pw.VerticalDivider(),
-
-//             pw.Expanded(
-//               flex: 1,
-//               child: pw.Text(  
-//                 'Mean Score',
-//                 textAlign: pw.TextAlign.center,
-//                 style: headerStyle
-//               )
-//             ),
-
-//             //pw.VerticalDivider(),
-
-//             pw.Expanded(
-//               flex: 1,
-//               child: pw.Text(  
-//                 'Percentage Score(%)',
-//                 textAlign: pw.TextAlign.center,
-//                 style: headerStyle
-//               )
-//             ),
-
-//             //pw.VerticalDivider(),
-
-//             pw.Expanded(
-//               flex: 2,
-//               child: pw.Text(  
-//                 'Remark',
-//                 textAlign: pw.TextAlign.center,
-//                 style: headerStyle
-//               )
-//             )
-
-//           ]
-//         )
-//       ),
-
-
-
-//       //todo: the actual question items here
-//       for(int i = 0; i < summaries.length; i++)  pw.DecoratedBox(  
-//         decoration: pw.BoxDecoration(  
-//           border: pw.Border(
-//             bottom: pw.BorderSide(color: PdfColors.grey300, width: 1.5)
-//           )
-//         ),
-
-//         child: buildQuestionnaireTableCell(summaries[i])
-//       )
-
-//     ]
-//   );
-
-// }
-
-
-
- 
-// pw.Widget buildQuestionnaireTableCell(CourseEvaluationSummary summary){
-
-//   final rightBorder = pw.Border(right: pw.BorderSide(color: PdfColors.grey300, width: 1.5));
-
-//   return pw.Row(
-//     crossAxisAlignment: pw.CrossAxisAlignment.start,  
-//     children: [
-      
-//       //todo: question
-//       pw.Expanded(
-//         flex: 3,
-//         child: pw.Container(  
-//           padding: const pw.EdgeInsets.all(8),
-//           decoration: pw.BoxDecoration(  
-//             border: rightBorder
-//           ),
-//           child: pw.Text(  
-//             summary.question
-//           ),
-//         ),
-//       ),
-  
-
-//       //todo: answers
-//       pw.Expanded(
-//         flex: 2,
-//         child: pw.Container(
-//           padding: const pw.EdgeInsets.all(8.0),
-//           decoration: pw.BoxDecoration(  
-//             border: rightBorder
-//           ),
-//           child: pw.Column(
-//             mainAxisSize: pw.MainAxisSize.min,
-//             crossAxisAlignment: pw.CrossAxisAlignment.start,
-//             mainAxisAlignment: pw.MainAxisAlignment.start,
-//             children: List<pw.Widget>.generate(
-//               summary.answerSummary!.length,
-//               (index) {
-  
-//                 String answerKey = summary.answerSummary!.keys.elementAt(index);
-  
-//                 int answerFrequency = summary.answerSummary![answerKey];
-  
-//                 return pw.Row(
-//                   children: [
-//                     pw.Text('$answerKey :'),
-//                     pw.Spacer(),
-//                     pw.Text(answerFrequency.toString())
-//                   ],
-//                 );
-//               }
-//             )
-//           ),
-//         )
-//       ),
-
-
-//       //todo: mean score
-//       pw.Expanded(
-//         flex: 1,
-//         child: pw.Container(
-//           padding: const pw.EdgeInsets.all(8),
-//           decoration: pw.BoxDecoration(  
-//             border: rightBorder
-//           ),
-//           child: pw.Text(formatDecimal(summary.meanScore))
-//         )
-//       ),
-
-
-  
-  
-//       //todo: percentage score
-//       pw.Expanded(
-//         flex: 1,
-//         child: pw.Container(
-//           padding: const pw.EdgeInsets.all(8.0),
-//           decoration: pw.BoxDecoration(  
-//             border: rightBorder
-//           ),
-//           child: pw.Text(formatDecimal(summary.percentageScore)),
-//         )
-//       ),
-  
-
-//       //todo: remark  
-//       pw.Expanded(
-//         flex: 2,
-//         child: pw.Container(
-//           padding: const pw.EdgeInsets.all(8.0),
-//           child: pw.Text(summary.remark)
-//         )
-//       )
-//     ],
-//   );
-// }
 
 
 

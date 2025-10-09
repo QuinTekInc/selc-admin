@@ -338,6 +338,14 @@ class ClassCourse{
     );
   }
 
+
+
+  double calculateResponseRate(){
+    if(registeredStudentsCount == 0) return 0;
+
+    return (evaluatedStudentsCount / registeredStudentsCount) * 100;
+  }
+
 }
 
 
@@ -412,6 +420,7 @@ class CourseEvaluationSummary{
 
 
 //todo: category remarks for evaluations
+//todo: rename this class to "EvaluationCategoryRemark"
 class CategoryRemark{
 
   final String categoryName;
@@ -465,9 +474,9 @@ class CourseRating{
 
   factory CourseRating.fromJson(Map<String, dynamic> jsonMap){
     return CourseRating(
-        course: Course.fromJson(jsonMap),
-        numberOfStudents: jsonMap['number_of_students'],
-        parameterRating: jsonMap['parameter_rating'].toDouble()
+      course: Course.fromJson(jsonMap),
+      numberOfStudents: jsonMap['number_of_students'],
+      parameterRating: jsonMap['parameter_rating'].toDouble()
     );
   }
 
@@ -561,4 +570,26 @@ class EvalLecturerRatingSummary{
 }
 
 
+
+
+
+//the model for the dashboard category scores for each lecturer.
+class DashboardCategoryRemark{
+  final String lecturerName;
+  final Course course;
+  final List<CategoryRemark> categoryRemarks;
+
+
+  DashboardCategoryRemark({required this.lecturerName, required this.course, required this.categoryRemarks});
+
+  factory DashboardCategoryRemark.fromJson(Map<String, dynamic> jsonMap){
+    return DashboardCategoryRemark(
+      lecturerName: jsonMap['lecturer'],
+      course: Course.fromJson(jsonMap['course']),
+      categoryRemarks: List<CategoryRemark>.from(
+          jsonMap['category_remarks'].map(
+                  (_jsonMap) => CategoryRemark.fromJson(_jsonMap)).toList())
+    );
+  }
+}
 

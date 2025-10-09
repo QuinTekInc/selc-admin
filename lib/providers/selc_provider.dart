@@ -83,6 +83,7 @@ class SelcProvider with ChangeNotifier{
 
   }
 
+
   Future<void> logout() async {
 
     Response response = await connector.getRequest(endPoint: 'logout/');
@@ -166,7 +167,6 @@ class SelcProvider with ChangeNotifier{
 
   Future<void> getGeneralCurrentStatistics() async {
 
-
     final response = await connector.getRequest(endPoint: 'general-current-stats/');
 
     if(response.statusCode != 200){
@@ -178,6 +178,19 @@ class SelcProvider with ChangeNotifier{
     _generalStat = GeneralCurrentStatistics.fromJson(responseBody as Map<String, dynamic>);
 
     notifyListeners();
+  }
+
+
+  //get all the class_courses for the current academic year and semester.
+  Future<List<ClassCourse>> getCurrentClassCourses() async {
+    final response = await connector.getRequest(endPoint: 'get-all-current-class-courses/');
+
+    if(response.statusCode != 200){
+      throw Exception('An Unexpected error occurred. Please try again');
+    }
+
+    List<dynamic> responseBody = jsonDecode(response.body);
+    return responseBody.map((jsonMap) => ClassCourse.fromJson(jsonMap)).toList();
   }
 
 
@@ -300,6 +313,7 @@ class SelcProvider with ChangeNotifier{
   }
 
 
+  //this function is called at a lecturer's detail or information page.
   Future<List<dynamic>> getYearlyLecturerRatingSummary(String username) async {
     final response = await connector.getRequest(endPoint: 'yearly-average-lrating-summary/$username');
 

@@ -209,7 +209,6 @@ class _CoursesPageState extends State<CoursesPage> {
 
 
 
-
   void handleSearchFilter(){
 
     String newValue = searchController.text.toLowerCase();

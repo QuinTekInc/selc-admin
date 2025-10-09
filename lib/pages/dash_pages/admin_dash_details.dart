@@ -1,0 +1,163 @@
+
+
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:selc_admin/components/alert_dialog.dart';
+import 'package:selc_admin/components/button.dart';
+import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/components/utils.dart';
+import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/pages/dash_pages/dash_tables/course_performance_table.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
+import 'package:selc_admin/providers/selc_provider.dart';
+
+import 'dash_tables/lecturer_ratings_table.dart';
+import 'dash_tables/response_rate_table.dart';
+
+
+class AdminDashPage extends StatefulWidget {
+  const AdminDashPage({super.key});
+
+  @override
+  State<AdminDashPage> createState() => _AdminDashPageState();
+}
+
+class _AdminDashPageState extends State<AdminDashPage> {
+
+  int selectedTab = 0;
+
+  List<ClassCourse> classCourses = [];
+  List<CategoryRemark> questionCategories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    
+    loadData();
+  }
+
+
+
+  void loadData() async {
+    try{
+      classCourses = await Provider.of<SelcProvider>(context, listen: false).getCurrentClassCourses();
+    } on SocketException{
+      showNoConnectionAlertDialog(context);
+    }
+
+    setState(() {});
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(  
+      padding: const EdgeInsets.all(16),
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+          
+          HeaderText('OVERALL DETAILS', fontSize: 25,),
+          NavigationTextButtons(),
+
+
+          const SizedBox(height: 12,),
+
+          //todo: add the rest of the ui here.
+          Expanded(
+            child: DefaultTabController(
+              initialIndex: 0,
+              length: 5, 
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 12,
+                children: [
+
+                  //TabBar
+                  Container(  
+                    //padding: const EdgeInsets.all(8),
+                    height: 50,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1.5, color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(12)
+                    ),
+
+                    child: TabBar(
+                      indicatorColor: Colors.green.shade200,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      dividerColor: Colors.transparent,
+                      indicatorPadding: EdgeInsets.zero,
+
+                      indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: Colors.green.shade400,
+                      ),
+
+                      padding: const EdgeInsets.all(4),
+                      labelPadding: const EdgeInsets.all(8),
+                      indicatorAnimation: TabIndicatorAnimation.elastic,
+                      labelColor: Colors.white,
+
+                        labelStyle: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600
+                        ),
+                        unselectedLabelStyle: TextStyle(
+                            fontFamily: 'Poppins'
+                        ),
+
+
+                        onTap: (newValue) => setState(() => selectedTab = newValue),
+                        tabs: [
+
+                          Tab(
+                            text: 'General',
+                          ),
+
+                          Tab(
+                            text: 'Response Rates',
+                          ),
+
+                          Tab(  
+                            text: 'Course Scores'
+                          ),
+
+                          Tab(  
+                            text: 'Lecturer Ratings'
+                          ),
+
+                          Tab(   
+                            text: 'Suggestion Sentiments'
+                          )
+
+                        ]
+                    ),
+
+                  ),
+
+
+                  //todo tabviews.
+                  Expanded(  
+                    child: selectedTab ==  1 ?  ResponseRateTable(classCourses: classCourses,) :
+                          selectedTab == 2 ? CoursePerformanceTable(classCourses: classCourses,) :
+                            selectedTab == 3 ? LecturerRatingsTable(classCourses: classCourses,) : Placeholder(),
+                  )
+
+                ],
+
+              )
+            ),
+          )
+
+        ],
+      ),
+    );
+  }
+}
+

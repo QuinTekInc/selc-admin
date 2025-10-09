@@ -156,16 +156,19 @@ class CustomLineChart extends StatelessWidget {
                       getTitlesWidget: (value, meta){
                         String label = '${value.toInt()}';
 
-                        dynamic xLabel = spotData.where((group) => group.x == value.toInt()).toList().first.label;
+                        dynamic xLabel;
 
-                        if(xLabel != null){
-                          label = xLabel;
+
+                        try{
+                          xLabel = spotData.where((group) => group.x == value.toInt()).toList().first.label;
+                        }on Exception catch(_){
+                          xLabel = label;
                         }
 
                         return SideTitleWidget(
                           meta: meta,
                           child: Text(
-                            label,
+                            xLabel,
                             style: axisLabelStyle,
                           )
                         );

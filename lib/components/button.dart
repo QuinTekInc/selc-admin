@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/providers/page_provider.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 
 class CustomButton extends StatelessWidget {
 
@@ -252,4 +253,58 @@ class _NavigationTextButtonsState extends State<NavigationTextButtons> {
   }
 }
 
+
+
+
+
+
+//todo: build the foward arrow button for 
+class DashSeeMoreButton extends StatefulWidget {
+  
+  final void Function() onPressed;
+
+  const DashSeeMoreButton({super.key, required this.onPressed});
+
+  @override
+  State<DashSeeMoreButton> createState() => _DashSeeMoreButtonState();
+}
+
+class _DashSeeMoreButtonState extends State<DashSeeMoreButton> {
+
+  Color hoverColor = Colors.green.shade400;
+
+  Color borderColor = Colors.transparent;
+  Color iconColor = Colors.white;
+
+  @override
+  Widget build(BuildContext context) {
+    return  MouseRegion(
+      onHover: (mouseEvent) => setState((){
+        borderColor = hoverColor;
+        iconColor = hoverColor;
+      }),
+      onExit: (mouseEvent) => setState((){
+        borderColor = Colors.transparent;
+        iconColor = Colors.white;
+      }),
+      child: GestureDetector(
+        onTap: widget.onPressed,
+        child: Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(  
+            shape: BoxShape.circle,
+            border: Border.all(color: borderColor),
+            color: PreferencesProvider.getColor(context, 'alt-primary-color')
+          ),
+          child: Icon(  
+            Icons.arrow_forward_ios,
+            color: iconColor,
+            size: 45,
+          )
+        ),
+      ),
+    );
+  }
+}
 

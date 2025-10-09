@@ -136,7 +136,6 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                   ),
                 )
                 else if(!isLoading && cummulativeClassCourses.isEmpty) buildNoInfoPlaceholder()
-
                 else Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -150,6 +149,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
                         //lecturer yearly average rating line chart
                         CustomLineChart(
+                          containerBackgroundColor: PreferencesProvider.getColor(context, 'alt-primary-color'),
                           chartTitle: 'Yearly Average Rating trend',
                           width: double.infinity,
                           leftAxisTitle: 'Rating',

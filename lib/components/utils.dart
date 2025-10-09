@@ -1,5 +1,5 @@
 
-
+import 'dart:io';
 // ignore_for_file: constant_identifier_names
 
 
@@ -68,3 +68,33 @@ String formatDecimal(double number){
 
   return number.toStringAsFixed(2);
 }
+
+
+
+
+String getAppDocumentsDirectory(){
+
+  const String appFolderName = "SELC_ADMIN";
+
+  Directory baseDir;
+
+  if (Platform.isWindows) {
+    final userProfile = Platform.environment['USERPROFILE'];
+    baseDir = Directory('$userProfile\\Documents');
+  } else if (Platform.isLinux || Platform.isMacOS) {
+    final home = Platform.environment['HOME'];
+    baseDir = Directory('$home/Documents');
+  } else {
+    throw UnsupportedError("Unsupported platform for this function");
+  }
+
+  // Create the subfolder for your app
+  final appDir = Directory('${baseDir.path}/$appFolderName');
+  if (appDir.existsSync()) {
+    appDir.createSync(recursive: true); // creates all parent dirs if needed
+  }
+
+  return appDir.path;
+}
+
+

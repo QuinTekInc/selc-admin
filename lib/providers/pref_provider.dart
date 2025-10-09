@@ -9,12 +9,15 @@ class PreferencesProvider extends ChangeNotifier{
 
   Preferences preferences = Preferences();
 
+  List<String> savedFiles = []; 
+
   //for handling the themes
   Brightness brightness = Brightness.light;
   Map<String, Color> colorScheme = LIGHT_THEME_COLORS;
 
   void loadPreferences() async{
     preferences = await  Preferences.fromSharedPreferences();
+    savedFiles = preferences.savedFiles;
     _updateUI(preferences.darkMode);
   }
 
@@ -53,6 +56,17 @@ class PreferencesProvider extends ChangeNotifier{
 
     brightness = preferences.darkMode ? Brightness.dark: Brightness.light;
     colorScheme = preferences.darkMode ? DARK_THEME_COLORS : LIGHT_THEME_COLORS;
+
+    notifyListeners();
+  }
+
+
+  void addSavedFile(String fileName){
+
+    savedFiles.add(fileName);
+
+    preferences.savedFiles = savedFiles;
+    Preferences.save(preferences);
 
     notifyListeners();
   }

@@ -324,7 +324,7 @@ class ExcelExporter{
 
 
     final List<String> headers = [
-      'Rating'
+      'Rating',
       'Percentage Score(%)',
       'Remark'
     ];
@@ -431,7 +431,7 @@ class ExcelExporter{
     
     //if the file is saved succesfully, 
     try{
-      Provider.of<PreferencesProvider>(context, listen: false).preferences.savedFiles.add(fullFilePath);
+      Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(fullFilePath);
     }on Exception catch(_){
       //do nothing here
     }

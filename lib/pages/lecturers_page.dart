@@ -195,74 +195,115 @@ class _LecturersPageState extends State<LecturersPage> {
 
           Lecturer lecturer = lecturers[index];
 
-          return Card( 
-            elevation: 5, 
-                
-            shape: RoundedRectangleBorder(  
-              borderRadius: BorderRadius.circular(8)
-            ),
-                
-            child: GestureDetector(
-              onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(
-                LecturerInfoPage(lecturer: lecturer,),
-                'Lecturer Information'
-              ),
-              child: Container(  
-                height: 200,
-                width: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(  
-                      height: 150,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade300,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(8))
-                      ),
-                      child: Icon(CupertinoIcons.person, color: Colors.white, size: 50,),
-                    ),
-              
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.topLeft,
-                        width: double.maxFinite,
-                        height: double.maxFinite,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,  
-                          children: [
-          
-                            CustomText(
-                              lecturer.name, 
-                              fontSize: 16, 
-                              fontWeight: FontWeight.w600,
-                              softwrap: true,
-                              maxLines: 1,
-                            ),
-                            
-                            Expanded(
-                              child: CustomText(
-                                lecturer.department, 
-                                fontSize: 14, 
-                                fontWeight: FontWeight.w500,
-                                softwrap: true,
-                                maxLines: 2,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          );
+          return LecturerCell(lecturer: lecturer);
         }
+      ),
+    );
+  }
+}
+
+
+
+
+
+//todo: the lecturer cell.
+class LecturerCell extends StatefulWidget {
+  final Lecturer lecturer;
+
+  const LecturerCell({super.key, required this.lecturer});
+
+  @override
+  State<LecturerCell> createState() => _LecturerCellState();
+}
+
+class _LecturerCellState extends State<LecturerCell> {
+
+  final Color transparentColor = Colors.transparent;
+  final Color hoverColor = Colors.green.shade400;
+
+  Color borderColor = Colors.transparent;
+  double elevation = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onHover: (_) => setState(() {
+        borderColor = hoverColor;
+        elevation = 10;
+      }),
+      
+      onExit: (_) => setState(() {
+        borderColor = transparentColor;
+        elevation = 3;
+      }),
+
+      child: Card( 
+        elevation: elevation, 
+            
+        shape: RoundedRectangleBorder(  
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: borderColor, width: 1.5)
+        ),
+            
+        child: GestureDetector(
+          onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(
+            LecturerInfoPage(lecturer: widget.lecturer,),
+            'Lecturer Information'
+          ),
+          child: Container(  
+            height: 200,
+            width: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(  
+                  height: 150,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade300,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(8))
+                  ),
+                  child: Icon(CupertinoIcons.person, color: Colors.white, size: 50,),
+                ),
+          
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    width: double.maxFinite,
+                    height: double.maxFinite,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,  
+                      children: [
+      
+                        CustomText(
+                          widget.lecturer.name, 
+                          fontSize: 16, 
+                          fontWeight: FontWeight.w600,
+                          softwrap: true,
+                          maxLines: 1,
+                        ),
+                        
+                        Expanded(
+                          child: CustomText(
+                            widget.lecturer.department, 
+                            fontSize: 14, 
+                            fontWeight: FontWeight.w500,
+                            softwrap: true,
+                            maxLines: 2,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

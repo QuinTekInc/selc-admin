@@ -5,10 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
+import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/custom_notification_badge.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/pages/dash_pages/admin_dash_details.dart';
 import 'package:selc_admin/pages/dash_pages/course_ratings_page.dart';
 import 'package:selc_admin/pages/dash_pages/files_page.dart';
 import 'package:selc_admin/pages/dash_pages/lecturer_ratings_page.dart';
@@ -319,6 +321,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
 
 
+                          const SizedBox(width: 12,),
+                          
+                          //todo: button to show in-depth administrator dashboard of the course evaluation
+                          DashSeeMoreButton(onPressed: () => Provider.of<PageProvider>(context, listen:false).pushPage(AdminDashPage(), 'Overall Details')),
                         ],
                       ),
                     ),
@@ -341,6 +347,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
+                          spacing: 12,
 
                           children: [
 
@@ -360,11 +367,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             //   ),
                             // ),
 
-                            const SizedBox(height: 12),
 
                             buildLecturerRatingsTable(context),
-
-                            const SizedBox(height: 12),
 
                             buildCourseRatingsTable(context),
 

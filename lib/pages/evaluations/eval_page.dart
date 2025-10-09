@@ -580,7 +580,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
       classCourse: widget.classCourse,
       questionnaireData: evalSummary,
       categoryData: categoryRemarks,
-      ratingSummary: [],
+      ratingSummary: evalLecturerRatingSummaries,
       sentimentSummary: suggestionSummaryReport.sentimentSummaries
     );
 

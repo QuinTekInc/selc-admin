@@ -199,61 +199,91 @@ class QuestionCell extends StatelessWidget {
 
 
 //todo: course cell.
-class CourseCell extends StatelessWidget {
+class CourseCell extends StatefulWidget {
 
   final Course course;
 
   const CourseCell({super.key, required this.course});
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(CourseProfilePage(course: course), 'Course Profile'),
+  State<CourseCell> createState() => _CourseCellState();
+}
 
-      child: Card(
+class _CourseCellState extends State<CourseCell> {
+  final Color transparentColor = Colors.transparent;
+  final Color hoverColor = Colors.green.shade400;
+
+  Color borderColor = Colors.transparent;
+  double elevation = 3;
+  
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+
+      onHover: (_) => setState(() {
+        borderColor = hoverColor;
+        elevation = 10;
+      }),
+
+      onExit: (_) => setState(() {
+        borderColor = transparentColor;
+        elevation = 10;
+      }),
+
+      child: GestureDetector(
+        onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(CourseProfilePage(course: widget.course), 'Course Profile'),
       
-        child: Container(
-          width: 240,
-          height: 250,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12)
+        child: Card(
+
+          elevation: elevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: borderColor, width: 1.5)
           ),
         
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-        
-            children: [
-        
-              Container(
-                height: 150,
-                alignment: Alignment.center,
-                              
-                decoration: BoxDecoration(
-                  color: Colors.green.shade400,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(12))
+          child: Container(
+            width: 240,
+            height: 250,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12)
+            ),
+          
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+          
+              children: [
+          
+                Container(
+                  height: 150,
+                  alignment: Alignment.center,
+                                
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade400,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(12))
+                  ),
+                                
+                  child: Icon(CupertinoIcons.book, color: Colors.white, size: 45,),
                 ),
-                              
-                child: Icon(CupertinoIcons.book, color: Colors.white, size: 45,),
-              ),
-      
-              const SizedBox(height: 4,),
         
-              CustomText(
-                course.courseCode,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-        
-              CustomText(
-                course.title,
-                softwrap: true,
-                maxLines: 2,
-              )
-        
-            ],
-        
+                const SizedBox(height: 4,),
+          
+                CustomText(
+                  widget.course.courseCode,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+          
+                CustomText(
+                  widget.course.title,
+                  softwrap: true,
+                  maxLines: 2,
+                )
+          
+              ],
+          
+            ),
           ),
         ),
       ),

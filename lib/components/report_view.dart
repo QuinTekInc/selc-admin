@@ -68,7 +68,7 @@ class ReportView extends StatelessWidget {
                   ),
 
                   TextButton(
-                    onPressed: () => gpt_export.generateReportPdf(classCourse: classCourse, evaluationSummaries: evaluationSummaries, categoryRemarks: categoryRemarks, ratingSummary: ratingSummary, sentimentSummary: sentimentSummary), 
+                    onPressed: () => gpt_export.generateReportPdf(context, classCourse: classCourse, evaluationSummaries: evaluationSummaries, categoryRemarks: categoryRemarks, ratingSummary: ratingSummary, sentimentSummary: sentimentSummary), 
                     child: CustomText('Save', textColor: Colors.blue.shade400, fontWeight: FontWeight.w600,)
                   )
                 ],
@@ -139,8 +139,6 @@ class ReportView extends StatelessWidget {
 
 
 
-
-
                       buildSectionTitle('Lecturer Rating Summary'),
                       const SizedBox(height: 8,),
                       //todo: to be replaced with official description statement provided
@@ -155,8 +153,6 @@ class ReportView extends StatelessWidget {
 
 
                       const SizedBox(height: 16,),
-
-
 
 
 

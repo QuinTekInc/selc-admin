@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/pages/auth/auth_pages_background.dart';
@@ -333,6 +334,12 @@ class NewPasswordPage extends StatelessWidget {
 
 
   void handleContinue(BuildContext context){
+
+    showCustomAlertDialog(
+      context, 
+      title: 'Not Implemented', 
+      contentText: 'This part of the program has not yet been implemented.'
+    );
 
   }
 }

@@ -1,8 +1,8 @@
 
 
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:selc_admin/components/utils.dart';
 
 class Preferences {
 
@@ -19,7 +19,9 @@ class Preferences {
     this.darkMode=false, 
     this.defaultDownloadDirectory, 
     this.savedFiles = const []
-  });
+  }){
+    defaultDownloadDirectory ??= getAppDocumentsDirectory();
+  }
 
 
   factory Preferences.fromJson(Map<String, dynamic> jsonMap){
@@ -27,7 +29,7 @@ class Preferences {
       fontScale: jsonMap['font_scale'].toDouble(),
       darkMode: jsonMap['dark_mode'],
       defaultDownloadDirectory: jsonMap['default_download_directory'],
-      savedFiles:  jsonMap['saved_files'] ?? []
+      savedFiles:  List<String>.from(jsonMap['saved_files'])
     );
   }
 
