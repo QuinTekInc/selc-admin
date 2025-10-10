@@ -92,7 +92,7 @@ class LecturerRatingsTable extends StatelessWidget {
           if(classCourses.isEmpty) Expanded(
             child: CollectionPlaceholder(
                 title: 'No Data!',
-                detail: 'Courses and their response rates appear here.'
+                detail: 'Lecturers ratings for their course taught this semester and academic year appears here'
             ),
           )
           else Expanded(

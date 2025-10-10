@@ -147,9 +147,6 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                           width: double.infinity,
                           height: MediaQuery.of(context).size.height * 0.5,
                           maxY: 5,
-                          minX: 2011,
-                          maxX: DateTime.now().year.toDouble(),
-                          
                           chartTitle: 'Course Performance Score Trend',
                           titleStyle: TextStyle(
                             color: Colors.green.shade400,
@@ -175,7 +172,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                             cummulativeClassCourses.length,
                             (index) => CustomLineChartSpotData(
                               label: cummulativeClassCourses[index].year.toString(), 
-                              x: cummulativeClassCourses[index].year.toDouble(), 
+                              x: index.toDouble(),
                               y: cummulativeClassCourses[index].grandMeanScore
                             )
                           ),

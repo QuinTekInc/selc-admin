@@ -78,9 +78,9 @@ class QuestionnaireEvalTable extends StatelessWidget {
                 ),
 
                 const SizedBox(
-                  width: 130,
+                  width: 135,
                   child: CustomText(
-                    'Mean Score',
+                    'Percentage (%)',
                     fontWeight: FontWeight.w600,
                   ),
                 ),

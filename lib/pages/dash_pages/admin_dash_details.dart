@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'package:animations/animations.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
@@ -10,6 +12,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/dash_pages/dash_tables/course_performance_table.dart';
+import 'package:selc_admin/pages/dash_pages/dash_tables/suggestion_sentiments_table.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
@@ -29,7 +32,7 @@ class _AdminDashPageState extends State<AdminDashPage> {
   int selectedTab = 0;
 
   List<ClassCourse> classCourses = [];
-  List<CategoryRemark> questionCategories = [];
+  List<DashboardSuggestionSentiment> suggestionSentiments = [];
 
   @override
   void initState() {
@@ -43,6 +46,9 @@ class _AdminDashPageState extends State<AdminDashPage> {
   void loadData() async {
     try{
       classCourses = await Provider.of<SelcProvider>(context, listen: false).getCurrentClassCourses();
+      suggestionSentiments = await Provider.of<SelcProvider>(context, listen: false).getDashSuggestionSentiments();
+
+      //todo: write a function to handle the querying of the suggestion sentiments
     } on SocketException{
       showNoConnectionAlertDialog(context);
     }
@@ -62,7 +68,34 @@ class _AdminDashPageState extends State<AdminDashPage> {
 
         children: [
           
-          HeaderText('OVERALL DETAILS', fontSize: 25,),
+          Row(
+            children: [
+              HeaderText('OVERALL DETAILS', fontSize: 25,),
+
+              Spacer(),
+
+
+              //todo: button to handle excel export
+              TextButton.icon(
+                onPressed: (){},
+                icon: Icon(Icons.download, color: Colors.green.shade400),
+                label: CustomText('Export to Excel', textColor: Colors.green.shade400,),
+              ),
+
+
+              const SizedBox(width: 12,),
+
+
+
+              //todo: button to handle refreshing
+              TextButton.icon(
+                onPressed: loadData,
+                icon: Icon(Icons.refresh, color: Colors.green.shade400),
+                label: CustomText('Refresh', textColor: Colors.green.shade400,),
+              )
+
+            ],
+          ),
           NavigationTextButtons(),
 
 
@@ -144,9 +177,22 @@ class _AdminDashPageState extends State<AdminDashPage> {
 
                   //todo tabviews.
                   Expanded(  
-                    child: selectedTab ==  1 ?  ResponseRateTable(classCourses: classCourses,) :
-                          selectedTab == 2 ? CoursePerformanceTable(classCourses: classCourses,) :
-                            selectedTab == 3 ? LecturerRatingsTable(classCourses: classCourses,) : Placeholder(),
+                    child: PageTransitionSwitcher(
+
+                      duration: Duration(milliseconds: 500),
+
+                      transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
+                        animation: animation,
+                        secondaryAnimation: secondaryAnimation,
+                        fillColor: Colors.transparent,
+                        child: child,
+                      ),
+
+                      child: selectedTab ==  1 ?  ResponseRateTable(classCourses: classCourses,) :
+                            selectedTab == 2 ? CoursePerformanceTable(classCourses: classCourses,) :
+                            selectedTab == 3 ? LecturerRatingsTable(classCourses: classCourses,) :
+                            selectedTab == 4 ? SuggestionSentimentsTable(sentiments: suggestionSentiments) : Placeholder()
+                    ),
                   )
 
                 ],
@@ -161,3 +207,7 @@ class _AdminDashPageState extends State<AdminDashPage> {
   }
 }
 
+
+
+//read more on signals in django
+//caches and cache invalidation using django

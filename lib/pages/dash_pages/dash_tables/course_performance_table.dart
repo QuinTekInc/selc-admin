@@ -84,7 +84,7 @@ class CoursePerformanceTable extends StatelessWidget {
           if(classCourses.isEmpty) Expanded(
             child: CollectionPlaceholder(
                 title: 'No Data!',
-                detail: 'Courses and their response rates appear here.'
+                detail: 'Course performances appear here.'
             ),
           )
           else Expanded(

@@ -574,21 +574,21 @@ class EvalLecturerRatingSummary{
 
 
 //the model for the dashboard category scores for each lecturer.
-class DashboardCategoryRemark{
+class DashboardSuggestionSentiment{
   final String lecturerName;
   final Course course;
-  final List<CategoryRemark> categoryRemarks;
+  final List<SuggestionSentimentSummary> sentimentSummary;
 
 
-  DashboardCategoryRemark({required this.lecturerName, required this.course, required this.categoryRemarks});
+  DashboardSuggestionSentiment({required this.lecturerName, required this.course, required this.sentimentSummary});
 
-  factory DashboardCategoryRemark.fromJson(Map<String, dynamic> jsonMap){
-    return DashboardCategoryRemark(
+  factory DashboardSuggestionSentiment.fromJson(Map<String, dynamic> jsonMap){
+    return DashboardSuggestionSentiment(
       lecturerName: jsonMap['lecturer'],
       course: Course.fromJson(jsonMap['course']),
-      categoryRemarks: List<CategoryRemark>.from(
-          jsonMap['category_remarks'].map(
-                  (_jsonMap) => CategoryRemark.fromJson(_jsonMap)).toList())
+      sentimentSummary: List<SuggestionSentimentSummary>.from(
+          jsonMap['sentiment_summary'].map(
+                  (_jsonMap) => SuggestionSentimentSummary.fromJson(_jsonMap)).toList())
     );
   }
 }
