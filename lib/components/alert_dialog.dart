@@ -54,7 +54,11 @@ void showCustomAlertDialog(BuildContext context,{
         fontSize: 18, 
         textAlignment: TextAlign.center,
       ),
-      content: CustomText(contentText, fontSize: 14, textAlignment: TextAlign.center,),
+      content: CustomText(
+        contentText,
+        fontSize: 14,
+        textAlignment: TextAlign.center,
+      ),
 
       actions: controls ?? [buildDefaultButton(context)],
     )

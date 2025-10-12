@@ -11,6 +11,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/dash_pages/admin_dash_details.dart';
+import 'package:selc_admin/pages/dash_pages/best_lecturer_card.dart';
 import 'package:selc_admin/pages/dash_pages/course_ratings_page.dart';
 import 'package:selc_admin/pages/dash_pages/files_page.dart';
 import 'package:selc_admin/pages/dash_pages/lecturer_ratings_page.dart';
@@ -386,24 +387,29 @@ class _DashboardPageState extends State<DashboardPage> {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 12,
 
                           children: [
 
-                            buildRecentEvaluations(),
 
-                            const SizedBox(height: 12,),
-
-                            buildRecentAction(context),
+                            BestLecturerCard(),
 
 
-                            const SizedBox(height: 12),
+                            BestCourseCard(),
 
 
                             // CustomPieChart(
                             //   width: 100,
                             //   height: 100,
                             //   pieSections: List.generate(5, (index) => CustomPieSection(title: index.toString(), value: Random().nextDouble() * 20),),
-                            // )
+                            // ),
+
+
+                            buildRecentEvaluations(),
+
+
+                            //buildRecentAction(context),
+
 
                           ],
                         ),

@@ -45,6 +45,7 @@ class _AdminDashPageState extends State<AdminDashPage> {
 
   void loadData() async {
     try{
+
       classCourses = await Provider.of<SelcProvider>(context, listen: false).getCurrentClassCourses();
       suggestionSentiments = await Provider.of<SelcProvider>(context, listen: false).getDashSuggestionSentiments();
 
@@ -77,7 +78,7 @@ class _AdminDashPageState extends State<AdminDashPage> {
 
               //todo: button to handle excel export
               TextButton.icon(
-                onPressed: (){},
+                onPressed: (){}, //write out this function later.
                 icon: Icon(Icons.download, color: Colors.green.shade400),
                 label: CustomText('Export to Excel', textColor: Colors.green.shade400,),
               ),
