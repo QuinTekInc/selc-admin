@@ -6,7 +6,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 
-import 'pdf_export_chatgpt.dart' as gpt_export;
+import 'cc_evaluation_pdf_export.dart' as gpt_export;
 
 class ReportView extends StatelessWidget {
 

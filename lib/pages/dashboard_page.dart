@@ -392,7 +392,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           children: [
 
 
-                            BestLecturerCard(),
+                            BestLecturerCard(
+                              lecturerRating: Provider.of<SelcProvider>(context).lecturersRatings.first,
+                              isLoading: this.isLRatingsLoading,
+                            ),
 
 
                             BestCourseCard(),
