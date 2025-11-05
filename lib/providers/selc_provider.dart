@@ -211,6 +211,22 @@ class SelcProvider with ChangeNotifier{
 
 
 
+  Future<List<DashboardCategoriesSummary>> getDashCategoriesSummary() async {
+
+    final response = await connector.getRequest(endPoint: 'get-all-current-class-courses-categories-summary/');
+
+    if(response.statusCode != 200){
+      throw Error();
+    }
+
+
+    List<dynamic> responseBody = jsonDecode(response.body);
+
+    return responseBody.map((jsonMap) => DashboardCategoriesSummary.fromJson(jsonMap)).toList();
+  }
+
+
+
   Future<void> getDepartments() async{
     Response response = await connector.getRequest(endPoint: 'departments/');
 

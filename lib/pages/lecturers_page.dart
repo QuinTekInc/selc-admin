@@ -1,11 +1,15 @@
 
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/lecturer_info_page.dart';
+import 'package:selc_admin/pages/new_lecturer_info_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
@@ -30,16 +34,25 @@ class _LecturersPageState extends State<LecturersPage> {
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
-    loadLecturersData();
+    filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers;
   }
 
-  void loadLecturersData() async{
+
+  void loadData() async{
 
     setState(() => isLoading = true);
-    
-    await Provider.of<SelcProvider>(context, listen: false).getLecturers();
+
+
+    try{
+      await Provider.of<SelcProvider>(context, listen: false).getLecturers();
+    }on SocketException{
+      showNoConnectionAlertDialog(context);
+    }on Error{
+      showCustomAlertDialog(context, title: 'Error', contentText: 'An unexpected error occurred please try again');
+    }
+
+
 
     setState((){
       isLoading = false;
@@ -50,16 +63,16 @@ class _LecturersPageState extends State<LecturersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
-      children: [
+        children: [
 
 
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
 
@@ -77,7 +90,7 @@ class _LecturersPageState extends State<LecturersPage> {
               //todo: refresh button.
               IconButton(
 
-                onPressed: () => loadLecturersData(),
+                onPressed: () => loadData(),
                 icon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -99,73 +112,75 @@ class _LecturersPageState extends State<LecturersPage> {
             ],
 
           ),
-        ),
-
-
-        Container(
-          width: MediaQuery.of(context).size.width * 0.45,
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: CustomTextField(
-            controller: searchController,
-            leadingIcon: CupertinoIcons.search,
-            useLabel: false,
-            hintText: 'Search by name or dept....',
-            onChanged: (String newValue) => setState(() {
-
-              if(newValue.isEmpty) {
-                filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers;
-                return;
-              }
-
-
-              filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers.where((lecturer){
-                return lecturer.name.toLowerCase().contains(newValue.toLowerCase()) ||
-                        lecturer.department.toLowerCase().contains(newValue.toLowerCase());
-              }).toList();
-
-            })
-          ),
-        ),
 
 
 
-        const SizedBox(height: 8),
+          //search text field
+          Container(
+            width: MediaQuery.of(context).size.width * 0.45,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: CustomTextField(
+              controller: searchController,
+              leadingIcon: CupertinoIcons.search,
+              useLabel: false,
+              hintText: 'Search by name or department...',
+              onChanged: (String newValue) => setState(() {
+
+                if(newValue.isEmpty) {
+                  filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers;
+                  return;
+                }
 
 
+                filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers.where((lecturer){
+                  return lecturer.name.toLowerCase().contains(newValue.toLowerCase()) ||
+                          lecturer.department.toLowerCase().contains(newValue.toLowerCase());
+                }).toList();
 
-        if(isLoading) const Expanded(
-          child: Center(child: CircularProgressIndicator(),),
-        ),
-
-
-        if(filteredLecturer.isEmpty && !isLoading) Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-
-              children: [
-
-                CustomText(
-                  'No Lecturer Data',
-                  fontWeight: FontWeight.bold,
-                  textAlignment: TextAlign.center,
-                ),
-
-                CustomText(
-                  'The list of lecturers appear here.',
-                  textAlignment: TextAlign.center,
-                )
-              ]
+              })
             ),
           ),
-        )else Expanded(
-          child: buildLecturersGridView(context, filteredLecturer),
-        ),
 
-      ],
+
+
+
+          const SizedBox(height: 8),
+
+
+
+          if(isLoading) const Expanded(
+            child: Center(child: CircularProgressIndicator(),),
+          )
+          else if(!isLoading && filteredLecturer.isEmpty) Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+
+                children: [
+
+                  CustomText(
+                    'No Lecturer Data',
+                    fontWeight: FontWeight.bold,
+                    textAlignment: TextAlign.center,
+                  ),
+
+                  CustomText(
+                    'The list of lecturers appear here.',
+                    textAlignment: TextAlign.center,
+                  )
+                ]
+              ),
+            ),
+          )
+          else Expanded(
+            child: buildLecturersGridView(context, filteredLecturer),
+          ),
+
+        ],
+      ),
     );
   }
 
@@ -247,7 +262,7 @@ class _LecturerCellState extends State<LecturerCell> {
             
         child: GestureDetector(
           onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(
-            LecturerInfoPage(lecturer: widget.lecturer,),
+            NewLecturerInfoPage(lecturer: widget.lecturer,),//LecturerInfoPage(lecturer: widget.lecturer,),
             'Lecturer Information'
           ),
           child: Container(  

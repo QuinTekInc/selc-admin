@@ -73,7 +73,8 @@ class CustomLineChart extends StatelessWidget {
           if(chartTitle != null) Text(
             chartTitle!,
             style: titleStyle ?? TextStyle(
-              color: Colors.white,
+              color: Colors.green.shade400,
+              fontFamily: 'Poppins',
               fontWeight: FontWeight.bold,
               fontSize: 16
             ),

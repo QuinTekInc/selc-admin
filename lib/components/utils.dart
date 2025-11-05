@@ -23,6 +23,9 @@ String concatDateTime(DateTime dateTime){
 
 
 
+
+
+
 String generatePassword() {
   const String chars = 
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#\$%^&*()_+-=[]{}|;:,.<>?';
@@ -72,18 +75,23 @@ String formatDecimal(double number){
 
 
 
-String getAppDocumentsDirectory(){
+//directory to store documents generated from this application
+String getAppDocumentsDirPath(){
 
   const String appFolderName = "SELC_ADMIN";
 
   Directory baseDir;
 
   if (Platform.isWindows) {
+
     final userProfile = Platform.environment['USERPROFILE'];
     baseDir = Directory('$userProfile\\Documents');
+
   } else if (Platform.isLinux || Platform.isMacOS) {
+
     final home = Platform.environment['HOME'];
     baseDir = Directory('$home/Documents');
+
   } else {
     throw UnsupportedError("Unsupported platform for this function");
   }
@@ -95,6 +103,16 @@ String getAppDocumentsDirectory(){
   }
 
   return appDir.path;
+}
+
+
+
+
+
+
+//this function is called in the flutter web application
+void triggerFileDownload(){
+
 }
 
 

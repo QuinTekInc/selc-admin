@@ -6,6 +6,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:selc_admin/components/admin_excel_export.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
@@ -33,6 +34,7 @@ class _AdminDashPageState extends State<AdminDashPage> {
 
   List<ClassCourse> classCourses = [];
   List<DashboardSuggestionSentiment> suggestionSentiments = [];
+  List<DashboardCategoriesSummary> dashCategoriesSummary = [];
 
   @override
   void initState() {
@@ -48,6 +50,7 @@ class _AdminDashPageState extends State<AdminDashPage> {
 
       classCourses = await Provider.of<SelcProvider>(context, listen: false).getCurrentClassCourses();
       suggestionSentiments = await Provider.of<SelcProvider>(context, listen: false).getDashSuggestionSentiments();
+      dashCategoriesSummary = await Provider.of<SelcProvider>(context, listen: false).getDashCategoriesSummary();
 
       //todo: write a function to handle the querying of the suggestion sentiments
     } on SocketException{
@@ -78,7 +81,12 @@ class _AdminDashPageState extends State<AdminDashPage> {
 
               //todo: button to handle excel export
               TextButton.icon(
-                onPressed: (){}, //write out this function later.
+
+                onPressed: () async {
+                  AdminReportExcelExport adminExcelReport = AdminReportExcelExport(context: context, classCourses: classCourses, categoriesSummary: dashCategoriesSummary, suggestionSentiments: suggestionSentiments);
+                  adminExcelReport.save();
+                },
+                //write out this function later.
                 icon: Icon(Icons.download, color: Colors.green.shade400),
                 label: CustomText('Export to Excel', textColor: Colors.green.shade400,),
               ),
@@ -106,7 +114,7 @@ class _AdminDashPageState extends State<AdminDashPage> {
           Expanded(
             child: DefaultTabController(
               initialIndex: 0,
-              length: 5, 
+              length: 4,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -150,9 +158,9 @@ class _AdminDashPageState extends State<AdminDashPage> {
                         onTap: (newValue) => setState(() => selectedTab = newValue),
                         tabs: [
 
-                          Tab(
-                            text: 'General',
-                          ),
+                          // Tab(
+                          //   text: 'General',
+                          // ),
 
                           Tab(
                             text: 'Response Rates',
@@ -189,10 +197,10 @@ class _AdminDashPageState extends State<AdminDashPage> {
                         child: child,
                       ),
 
-                      child: selectedTab ==  1 ?  ResponseRateTable(classCourses: classCourses,) :
-                            selectedTab == 2 ? CoursePerformanceTable(classCourses: classCourses,) :
-                            selectedTab == 3 ? LecturerRatingsTable(classCourses: classCourses,) :
-                            selectedTab == 4 ? SuggestionSentimentsTable(sentiments: suggestionSentiments) : Placeholder()
+                      child: selectedTab ==  0 ?  ResponseRateTable(classCourses: classCourses,) :
+                            selectedTab == 1 ? CoursePerformanceTable(classCourses: classCourses,) :
+                            selectedTab == 2 ? LecturerRatingsTable(classCourses: classCourses,) :
+                            selectedTab == 3 ? SuggestionSentimentsTable(sentiments: suggestionSentiments) : Placeholder()
                     ),
                   )
 
@@ -212,3 +220,7 @@ class _AdminDashPageState extends State<AdminDashPage> {
 
 //read more on signals in django
 //caches and cache invalidation using django
+
+
+
+//red obsession

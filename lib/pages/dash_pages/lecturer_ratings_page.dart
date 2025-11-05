@@ -99,7 +99,7 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
 
                     child: Container(
                       padding: const EdgeInsets.all(8),
-                      width: MediaQuery.of(context).size.width * 0.22,
+                      width: MediaQuery.of(context).size.width * 0.19,
 
                       child: Column(  
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -373,63 +373,51 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
         children: [
 
           SizedBox(
-            width: 150,
+            width: 120,
             child: CustomText(
               'No.',
-              textAlignment: TextAlign.center
             ),
           ),
-
-          Expanded(
-            flex: 3, 
-            child: CustomText(
-              'Lecturer',
-              textAlignment: TextAlign.left
-            ),
-          ),
-
 
           Expanded(
             flex: 2,
             child: CustomText(
-              'Department',
-              textAlignment: TextAlign.left
+              'Lecturer',
             ),
           ),
 
 
           Expanded(
+            flex: 1,
+            child: CustomText(
+              'Department',
+
+            ),
+          ),
+
+
+          SizedBox(
+            width: 150,
             child: CustomText(
               'No. of Courses',
-              textAlignment: TextAlign.center
             ),
           ),
 
 
-          Expanded(
+          SizedBox(
+            width: 150,
             child: CustomText(
               'No. of Students',
-              textAlignment: TextAlign.center,
             ),
           ), 
 
 
 
 
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-
-                Icon(Icons.star, color: Colors.green.shade400, size: 20,),
-
-                CustomText(
-                  'Rating',
-                  textAlignment: TextAlign.center
-                )
-              ],
+          SizedBox(
+            width: 150,
+            child: CustomText(
+              'Rating',
             ),
           ), 
 
@@ -455,16 +443,15 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
         children: [
 
           SizedBox(
-            width: 150,
+            width: 120,
             child: CustomText(  
               rank.toString(),
-              textAlignment: TextAlign.center
             ),
           ),
 
           // 3
           Expanded(
-            flex: 3,
+            flex: 2,
             child: CustomText(
               lecturerRating.lecturer.name,
               textAlignment: TextAlign.left
@@ -474,7 +461,7 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
 
           //2
           Expanded(
-            flex: 3,
+            flex: 1,
             child: CustomText(
               lecturerRating.lecturer.department,
               textAlignment: TextAlign.left
@@ -483,29 +470,29 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
 
 
           //1
-          Expanded(
+          SizedBox(
+            width: 150,
             child: CustomText(
               lecturerRating.numberOfCourses.toString(),
-              textAlignment: TextAlign.center
             ),
           ),
 
 
           //1
-          Expanded(
+          SizedBox(
+            width: 150,
             child: CustomText(
               lecturerRating.numberOfStudents.toString(),
-              textAlignment: TextAlign.center
             ),
           ),
 
 
 
           //1
-          Expanded(
+          SizedBox(
+            width: 150,
             child: CustomText(
               lecturerRating.parameterRating.toStringAsFixed(2),
-              textAlignment: TextAlign.center
             ),
           ),
 
@@ -548,7 +535,6 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
     if(semester != null){
       filterMap.addAll({'semester': semester});
     }
-
 
     loadLecturerRatingsData(filterMap: filterMap);
 

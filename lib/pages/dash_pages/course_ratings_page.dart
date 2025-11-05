@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
@@ -96,7 +97,9 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              
+
+
+                  //todo: filter section
                   Card(  
               
                     color: Colors.white,
@@ -106,7 +109,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
               
               
                     child: Container(  
-                      width: MediaQuery.of(context).size.width * 0.22,
+                      width: MediaQuery.of(context).size.width * 0.19,
                       padding: const EdgeInsets.all(8),
 
                       decoration: BoxDecoration( 
@@ -181,7 +184,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                           Divider(),
               
                           Padding(  
-                            padding: const EdgeInsets.only(left:8),
+                            padding: const EdgeInsets.only(left: 8),
                             child: IgnorePointer(
                               ignoring: !filterSelected,
                               child: Column(  
@@ -307,10 +310,12 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                             ),
               
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
 
+                                //position
                                 SizedBox(
-                                  width: 150,
+                                  width: 120,
                                   child: CustomText(  
                                     'No.'
                                   ),
@@ -319,7 +324,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
 
                                 Expanded(
                                   child: CustomText(  
-                                    'Course Code'
+                                    'C. Code'
                                   ),
                                 ),
 
@@ -333,27 +338,73 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
 
 
 
-                                Expanded(
+                                //number of lecturers handling this course.
+                                SizedBox(
+                                  width: 120,
+                                  child: CustomText(
+                                    'Lecturers'
+                                  )
+                                ),
+
+
+                                //number of lecturers handling this course.
+                                SizedBox(
+                                  width: 120,
+                                  child: CustomText(
+                                    'Students'
+                                  )
+                                ),
+
+
+
+                                //students who have evaluated this course.
+                                SizedBox(
+                                  width: 130,
+                                  child: CustomText(
+                                    'Evaluated stds.'
+                                  )
+                                ),
+
+
+                                //response rate
+
+                                SizedBox(
+                                  width: 135,
+                                  child: CustomText(
+                                    'Rate(%)'
+                                  )
+                                ),
+
+
+
+                                //mean score
+                                SizedBox(
+                                  width: 130,
                                   child: CustomText(  
-                                    'Eval. Count'
+                                    'Mean Score'
                                   ),
                                 ),
 
+
+
+
+                                //percentage score
+                                SizedBox(
+                                  width: 130,
+                                  child: CustomText(
+                                    'Percentage (%)'
+                                  ),
+                                ),
+
+
+
+
+                                //remark
                                 SizedBox(
                                   width: 150,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-
-                                      Icon(Icons.star, color: Colors.green.shade300, size: 20,),
-
-                                      CustomText(  
-                                        'Rating',
-                                        textAlignment: TextAlign.center,
-                                      )
-                                    ],
+                                  child: CustomText(
+                                    'Remark',
+                                    textAlignment: TextAlign.center,
                                   ),
                                 ),
 
@@ -408,44 +459,100 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
 
+                                      //position
                                       SizedBox(
-                                        width: 150,
-                                        child: CustomText(  
-                                          (1+coursesRatings.indexOf(cRating)).toString()
+                                        width: 120,
+                                        child: CustomText(
+                                            (1+coursesRatings.indexOf(cRating)).toString()
                                         ),
                                       ),
 
 
                                       Expanded(
-                                        child: CustomText(  
-                                          cRating.course.courseCode
+                                        child: CustomText(
+                                          cRating.course.courseCode,
                                         ),
                                       ),
 
 
                                       Expanded(
                                         flex: 2,
-                                        child: CustomText(  
-                                          cRating.course.title
-                                        ),
-                                      ),
-
-
-
-                                      Expanded(
-                                        child: CustomText(  
-                                          cRating.numberOfStudents.toString()
-                                        ),
-                                      ),
-
-
-                                      SizedBox(  
-                                        width: 150,
                                         child: CustomText(
-                                          cRating.parameterRating.toStringAsFixed(3),
+                                          cRating.course.title,
+                                        ),
+                                      ),
+
+
+
+                                      //number of lecturers handling this course.
+                                      SizedBox(
+                                          width: 120,
+                                          child: CustomText(
+                                            cRating.numberOfLecturers.toString()
+                                          )
+                                      ),
+
+
+                                      //number of lecturers handling this course.
+                                      SizedBox(
+                                        width: 120,
+                                        child: CustomText(
+                                          cRating.numberOfStudents.toString()
+                                        )
+                                      ),
+
+
+
+                                      //students who have evaluated this course.
+                                      SizedBox(
+                                        width: 120,
+                                        child: CustomText(
+                                          cRating.evaluatedStudents.toString()
+                                        )
+                                      ),
+
+
+                                      //response rate
+
+                                      SizedBox(
+                                        width: 130,
+                                        child: CustomText(
+                                          formatDecimal(cRating.calculateResponseRate())
+                                        )
+                                      ),
+
+
+
+                                      //mean score
+                                      SizedBox(
+                                        width: 130,
+                                        child: CustomText(
+                                          formatDecimal(cRating.parameterMeanScore)
+                                        ),
+                                      ),
+
+
+
+
+                                      //percentage score
+                                      SizedBox(
+                                        width: 130,
+                                        child: CustomText(
+                                            formatDecimal(cRating.percentageScore)
+                                        ),
+                                      ),
+
+
+
+
+                                      //remark
+                                      SizedBox(
+                                        width: 140,
+                                        child: CustomText(
+                                          cRating.remark,
                                           textAlignment: TextAlign.center,
                                         ),
-                                      )
+                                      ),
 
 
                                     ],

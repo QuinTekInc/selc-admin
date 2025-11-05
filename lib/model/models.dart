@@ -465,20 +465,45 @@ class CategoryRemark{
 class CourseRating{
 
   final Course course;
+  final int numberOfLecturers;
   final int numberOfStudents;
-  final double parameterRating;
+  final int evaluatedStudents;
+  final double parameterMeanScore;
+  final double percentageScore;
+
+  final String remark;
 
 
-  CourseRating({required this.course, required this.numberOfStudents, required this.parameterRating});
+  CourseRating({
+    required this.course,
+    this.numberOfLecturers = 0,
+    required this.numberOfStudents,
+    this.evaluatedStudents = 0,
+    required this.parameterMeanScore,
+    this.percentageScore = 0,
+    this.remark = ''
+  });
 
 
   factory CourseRating.fromJson(Map<String, dynamic> jsonMap){
     return CourseRating(
       course: Course.fromJson(jsonMap),
+      numberOfLecturers: jsonMap['number_of_lecturers'],
       numberOfStudents: jsonMap['number_of_students'],
-      parameterRating: jsonMap['parameter_rating'].toDouble()
+      evaluatedStudents: jsonMap['number_of_evaluated_students'],
+      parameterMeanScore: jsonMap['parameter_mean_score'].toDouble(),
+      percentageScore: jsonMap['percentage_score'].toDouble(),
+      remark: jsonMap['remark']
     );
   }
+
+
+
+  double calculateResponseRate() {
+    if(numberOfStudents == 0 || evaluatedStudents == 0) return 0;
+
+    return (evaluatedStudents/numberOfStudents) * 100;
+  } //todo: implement this function later
 
 
 }
@@ -507,6 +532,9 @@ class EvaluationSuggestion{
 
 
 
+
+
+
 class SuggestionSentimentSummary{
 
   final String sentiment;
@@ -525,6 +553,8 @@ class SuggestionSentimentSummary{
   }
   
 }
+
+
 
 
 
@@ -552,6 +582,8 @@ class SuggestionSummaryReport{
 
 
 
+
+
 //todo: rename this class to "LecturerRatingSummary"
 class EvalLecturerRatingSummary{
   final int rating;
@@ -573,7 +605,9 @@ class EvalLecturerRatingSummary{
 
 
 
-//the model for the dashboard category scores for each lecturer.
+
+
+//the model for the dashboard evaluation sentiment scores for each lecturer.
 class DashboardSuggestionSentiment{
   final String lecturerName;
   final Course course;
@@ -593,3 +627,41 @@ class DashboardSuggestionSentiment{
   }
 }
 
+
+
+
+
+//the model for the dashboard evaluation categories for each lecturer.
+class DashboardCategoriesSummary{
+  final String lecturerName;
+  final String department;
+  final Course course;
+  final List<CategoryRemark> categoryRemarks;
+
+
+  DashboardCategoriesSummary({required this.lecturerName, required this.department, required this.course, required this.categoryRemarks});
+
+
+
+  factory DashboardCategoriesSummary.fromJson(Map<String, dynamic> jsonMap){
+
+    List<CategoryRemark> categoryRemarks = [];
+
+    if(jsonMap['categories_summary'] != null){
+      categoryRemarks = List<CategoryRemark>.from(jsonMap['categories_summary']!.map(
+              (summaryMap) => CategoryRemark.fromJson(summaryMap)).toList());
+    }
+
+    return DashboardCategoriesSummary(
+      lecturerName: jsonMap['lecturer'],
+      department: jsonMap['department'],
+      course: Course.fromJson(jsonMap['course']), //contains course_code and title.
+      categoryRemarks: categoryRemarks
+    );
+  }
+
+}
+
+
+
+//beads of fortune

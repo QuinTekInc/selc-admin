@@ -34,7 +34,7 @@ class SuggestionsTable extends StatelessWidget {
 
 
 
-          if(summaryReport.suggestions.isEmpty)buildEmptyPlacehoder()
+          if(summaryReport.suggestions.isEmpty)buildEmptyPlaceholder()
           else Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -54,6 +54,7 @@ class SuggestionsTable extends StatelessWidget {
 
                       Expanded(  
                         child: CustomBarChart(
+                          containerBackgroundColor: PreferencesProvider.getColor(context, 'alt-primary-color'),
                           height: MediaQuery.of(context).size.height * 0.463,
                           leftAxisTitle: 'Frequency',
                           bottomAxisTitle: 'Sentiment',
@@ -95,7 +96,7 @@ class SuggestionsTable extends StatelessWidget {
 
                   const SizedBox(height: 16,),
 
-                  HeaderText('Sample Suggestions'),
+                  HeaderText('Students Suggestions'),
                   
                   FractionallySizedBox(
                     widthFactor: 0.6,
@@ -277,7 +278,7 @@ class SuggestionsTable extends StatelessWidget {
                           CustomText(
                             formatDecimal(courseLRating),
                             fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontSize: 20,
                             textColor: Colors.grey.shade700,
                           )
                         ]
@@ -380,7 +381,7 @@ class SuggestionsTable extends StatelessWidget {
 
 
 
-  Widget buildEmptyPlacehoder() {
+  Widget buildEmptyPlaceholder() {
     return Expanded(
       child: CollectionPlaceholder(
         detail: 'All students\' suggestions appear here.'

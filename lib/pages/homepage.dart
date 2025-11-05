@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/pages/courses_page.dart';
 import 'package:selc_admin/pages/dashboard_page.dart';
+import 'package:selc_admin/pages/department_management/departments_page.dart';
 import 'package:selc_admin/pages/lecturers_page.dart';
 import 'package:selc_admin/pages/questions_page.dart';
 import 'package:selc_admin/pages/settings_page.dart';
@@ -42,6 +43,7 @@ class _HomepageState extends State<Homepage> {
 
     fragments = [
       DashboardPage(),
+      DepartmentsPage(),
       LecturersPage(),
       CoursesPage(),
       QuestionsPage(), 
@@ -53,6 +55,7 @@ class _HomepageState extends State<Homepage> {
 
     fragmentNames = [
       'Dashboard',
+      'Departments',
       'Lecturers',
       'Courses',
       'Questionnaire',
@@ -126,6 +129,7 @@ class _SideBarState extends State<SideBar> {
 
     navigatorItems = [
       (CupertinoIcons.list_dash, 'Dashboard'),
+      (CupertinoIcons.home, 'Depts.'),
       (CupertinoIcons.person, 'Lecturers'),
       (CupertinoIcons.book, 'Courses'),
       (CupertinoIcons.chat_bubble_2, 'Questions'),

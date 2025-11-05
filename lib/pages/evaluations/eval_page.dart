@@ -159,61 +159,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                     buildClassCourseInfoSection(),
 
-                    Container(  
-                      padding: const EdgeInsets.all(8),
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      decoration: BoxDecoration(
-                        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-                        borderRadius: BorderRadius.circular(12)
-                      ),
+                    buildResponseSection(),
 
-                      child: Column(  
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          HeaderText('Lecturer rating for this course'),
-                          const SizedBox(height: 8,),
+                    buildRatingsAndScoresDetail(),
 
-                          DetailContainer(
-                              title: 'Rating',
-                              detail: formatDecimal(widget.classCourse.lecturerRating)
-                          )
-                        ],
-                      )
-                    ),
-
-                    Container(  
-                      padding: const EdgeInsets.all(8),
-                      width: MediaQuery.of(context).size.width * 0.2,
-
-                      decoration: BoxDecoration(  
-                        borderRadius: BorderRadius.circular(12),
-                        color: PreferencesProvider.getColor(context, 'alt-primary-color')
-                      ),
-
-                      child: Column(  
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-
-                        children: [
-
-                          HeaderText('Course Remark'),
-
-                          const SizedBox(height: 12,),
-
-                          DetailContainer(
-                              title: 'Score',
-                              detail: formatDecimal(widget.classCourse.grandMeanScore)
-                          ),
-
-                          const SizedBox(height: 8,),
-
-                          DetailContainer(title: 'Remark', detail: widget.classCourse.remark!),
-
-                        ],
-                      ),
-                    )
                   ],
                 ),
             
@@ -244,9 +193,9 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                           //todo: tab bar for handling switch
                           Container(
-                            margin: const EdgeInsets.only(top: 12),
+                            margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
                             height: 50,
-                            width: MediaQuery.of(context).size.width * 0.4,
+                            width: double.infinity, //MediaQuery.of(context).size.width * 0.4,
 
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
@@ -395,6 +344,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
 
           children: [
 
@@ -403,28 +353,24 @@ class _EvaluationPageState extends State<EvaluationPage> {
             ),
 
 
-            const SizedBox(height: 8),
 
             DetailContainer(title: 'Course', detail: course!.toString()),
 
-            const SizedBox(height: 8,), 
 
             DetailContainer(title: 'Lecturer', detail: widget.classCourse.lecturer.name),
 
-            const SizedBox(height: 8,),
 
             DetailContainer(title: 'Department', detail: widget.classCourse.lecturer.department),
 
-            const SizedBox(height: 8,),
 
             Row(  
               mainAxisAlignment: MainAxisAlignment.start,
+              spacing: 8,
               children: [
                 Expanded(
                   child: DetailContainer(title: 'Year', detail: widget.classCourse.year.toString()),
                 ),
-                
-                const SizedBox(width: 8,),
+
 
                 Expanded(
                   child: DetailContainer(title: 'Semester', detail: widget.classCourse.semester.toString()),
@@ -432,12 +378,131 @@ class _EvaluationPageState extends State<EvaluationPage> {
               ],
             )
 
-
           ],
         ),
       ),
     );
   }
+
+
+
+
+
+  Widget buildResponseSection(){
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12)
+      ),
+
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        width: MediaQuery.of(context).size.width * 0.2,
+
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: PreferencesProvider.getColor(context, 'alt-primary-color')
+        ),
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
+
+          children: [
+
+            HeaderText('Students and Responses Info'),
+
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 8,
+
+              children: [
+                Expanded(
+                  child: DetailContainer(
+                    title: 'No. of Students',
+                    detail: '${widget.classCourse.registeredStudentsCount}',
+                  ),
+                ),
+
+
+                Expanded(
+                  child: DetailContainer(
+                    title: 'No. of Responses',
+                    detail: '${widget.classCourse.evaluatedStudentsCount}',
+                  ),
+                ),
+              ],
+            ),
+
+
+            DetailContainer(
+              title: 'Response Rate',
+              detail: '${formatDecimal(widget.classCourse.calculateResponseRate())} %'
+            ),
+
+
+
+          ],
+        ),
+      )
+    );
+  }
+
+
+
+
+
+  Widget buildRatingsAndScoresDetail(){
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12)
+      ),
+
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        width: MediaQuery.of(context).size.width * 0.2,
+
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: PreferencesProvider.getColor(context, 'alt-primary-color')
+        ),
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
+
+          children: [
+
+            HeaderText('Ratings, Scores and Remarks'),
+
+
+            DetailContainer(
+              title: 'Avg. Lecturer Rating',
+              detail: formatDecimal(widget.classCourse.lecturerRating),
+            ),
+
+
+            DetailContainer(
+                title: 'Class Course Score',
+                detail: formatDecimal(widget.classCourse.grandMeanScore)
+            ),
+
+
+            DetailContainer(title: 'Remark', detail: widget.classCourse.remark!),
+
+          ],
+        ),
+      )
+    );
+  }
+
 
 
 

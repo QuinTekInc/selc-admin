@@ -130,6 +130,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+
+
   void handleLogin(BuildContext context) async {
 
     showDialog(  
@@ -174,6 +176,7 @@ class _LoginPageState extends State<LoginPage> {
     }on Error catch(_, stackTrace){
 
       Navigator.pop(context);
+      Navigator.of(context).pop();
 
       debugPrint('${_.toString()}\n${stackTrace.toString()}');
 

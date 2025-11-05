@@ -107,7 +107,8 @@ class CustomBarChart extends StatelessWidget {
             style: titleStyle ?? TextStyle(  
               fontWeight: FontWeight.w600,
               fontSize: 16,
-              color: Colors.black54
+              fontFamily: 'Poppins',
+              color: Colors.green.shade400
             ),
           ),
 

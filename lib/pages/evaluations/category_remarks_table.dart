@@ -86,7 +86,6 @@ class CategoryRemarksTable extends StatelessWidget {
                   child: CustomText(
                     'Remarks',
                     fontWeight: FontWeight.w600,
-                    textAlignment: TextAlign.center,
                   ),
                 )
               ],
@@ -154,7 +153,6 @@ class CategoryRemarksTable extends StatelessWidget {
           Expanded(
             child: CustomText(
               categoryRemark.remark,
-              textAlignment: TextAlign.center,
             ),
           )
         ],

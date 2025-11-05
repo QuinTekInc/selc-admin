@@ -392,13 +392,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           children: [
 
 
-                            BestLecturerCard(
-                              lecturerRating: Provider.of<SelcProvider>(context).lecturersRatings.first,
-                              isLoading: this.isLRatingsLoading,
-                            ),
+                            BestLecturerCard(isLoading: this.isLRatingsLoading,),
 
 
-                            BestCourseCard(),
+                            BestCourseCard(isLoading: this.isCRatingsLoading),
 
 
                             // CustomPieChart(
@@ -560,7 +557,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
               //todo: do something here
               TextButton(
-                onPressed: () => Provider.of<PageProvider>(context, listen:false).pushPage(FilesPage(), 'Files'),
+                onPressed: () => PageProvider.of(context, listen:false).pushPage(FilesPage(), 'Files'),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -982,11 +979,14 @@ class _DashboardPageState extends State<DashboardPage> {
             child: Row(
               children: [
 
+                //position
                 const SizedBox(
                   width: 120,
                   child: CustomText('No.'),
                 ),
 
+
+                //course code
                 Expanded(
                   child: CustomText(
                     'Course Code'
@@ -994,6 +994,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
 
 
+
+                //course title
                 Expanded(
                   flex: 2,
                   child: CustomText(
@@ -1002,11 +1004,36 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
 
 
+                //Number of students registered for the course.
+                SizedBox(
+                    width: 130,
+                    child: CustomText('Lecturers')
+                ),
 
+
+
+                //Number of students registered for the course.
+                SizedBox(
+                  width: 130,
+                  child: CustomText('Eval. Students')
+                ),
+
+
+
+                //collective mean score
                 SizedBox(
                   width: 120,
                   child: CustomText(
                     'Mean Score'
+                  ),
+                ),
+
+
+
+                SizedBox(
+                  width: 130,
+                  child: CustomText(
+                    'Percentage(%)'
                   ),
                 )
               ],
@@ -1044,12 +1071,18 @@ class _DashboardPageState extends State<DashboardPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
 
+
+                      //position
+
                       SizedBox(
                         width: 120,
                         child: CustomText(
                          '${index+1}'
                         ),
                       ),
+
+
+                      //course code
 
                       Expanded(
                         child: CustomText(
@@ -1058,6 +1091,8 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
 
 
+
+                      //course title
                       Expanded(
                         flex: 2,
                         child: CustomText(
@@ -1069,11 +1104,34 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
 
+
+                      //Number of lecturers.
+                      SizedBox(
+                          width: 130,
+                          child: CustomText(courseRating.numberOfLecturers.toString())
+                      ),
+
+
+
+                      //Number of students who have evaluated this course.
+                      SizedBox(
+                          width: 130,
+                          child: CustomText(courseRating.evaluatedStudents.toString())
+                      ),
+
+
+
                       SizedBox(
                         width: 120,
                         child: CustomText(
-                          courseRating.parameterRating.toStringAsFixed(2)
+                          courseRating.parameterMeanScore.toStringAsFixed(2)
                         ),
+                      ),
+
+
+                      SizedBox(
+                        width: 130,
+                        child: CustomText(formatDecimal(courseRating.percentageScore)),
                       )
 
                     ],

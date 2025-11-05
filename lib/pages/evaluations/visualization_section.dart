@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:selc_admin/components/charts/bar_chart.dart';
 import 'package:selc_admin/components/charts/pie_chart.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
@@ -99,137 +100,137 @@ class _QuestionnaireVisualisationCellState extends State<QuestionnaireVisualisat
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
-        widthFactor: 0.6,
-        child: Container(
-            padding: const EdgeInsets.all(12),
+      widthFactor: 0.6,
+      child: Container(
+        padding: const EdgeInsets.all(12),
 
-            decoration: BoxDecoration(
-                color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300, width: 1.5)
-            ),
+          decoration: BoxDecoration(
+            color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300, width: 1.5)
+          ),
 
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            spacing: 8,
+            children: [
+
+              Row(
                 spacing: 8,
                 children: [
 
-                  Row(
-                      spacing: 8,
-                      children: [
-
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          height: 50,
-                          width: 50,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: PreferencesProvider.getColor(context, 'table-background-color'),
-                              borderRadius: BorderRadius.circular(12)
-                          ),
-                          child: CustomText(
-                            widget.questionnaireNumber.toString(),
-                            textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            textAlignment: TextAlign.center,
-                          ),
-                        ),
-
-
-                        Expanded(
-                            child: CustomText(
-                                widget.summary.question,
-                                fontSize: 15
-                            )
-                        ),
-
-                        SizedBox(
-                          height: 45,
-                          child: VerticalDivider(
-                            width: 0,
-                            thickness: 1.5,
-                            color: PreferencesProvider.getColor(context, 'table-background-color'),
-                          ),
-                        ),
-
-
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomText(
-                              'Answer type',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                            ),
-
-                            CustomText(
-                              widget.summary.answerType.typeString,
-                              fontSize: 13,
-                              textColor: Colors.green.shade400,
-                            )
-                          ],
-                        )
-                      ]
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    height: 50,
+                    width: 50,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: PreferencesProvider.getColor(context, 'table-background-color'),
+                        borderRadius: BorderRadius.circular(12)
+                    ),
+                    child: CustomText(
+                      widget.questionnaireNumber.toString(),
+                      textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      textAlignment: TextAlign.center,
+                    ),
                   ),
 
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: FractionallySizedBox(
-                        widthFactor: 0.4,
-                        child: CustomDropdownButton(
-                            controller: chartTypeController,
-                            hint: 'Select Chart Type',
-                            items: chartTypes,
-                            onChanged: (newValue) => setState((){})
-                        ),
+
+                  Expanded(
+                      child: CustomText(
+                          widget.summary.question,
+                          fontSize: 15
                       )
                   ),
 
-
-                  //todo: chart
-                  buildCellChartSection(),
-
-
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: FractionallySizedBox(
-                      widthFactor: 0.4,
-
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-
-                            buildQuestionnaireField(
-                                title: 'Mean Score',
-                                detail: widget.summary.meanScore.toStringAsFixed(4)
-                            ),
-
-                            buildQuestionnaireField(
-                                title: 'Percentage Score(%)',
-                                detail: widget.summary.meanScore.toStringAsFixed(4)
-                            ),
-
-
-                            buildQuestionnaireField(
-                                title: 'Remark',
-                                detail: widget.summary.remark,
-                                detailWeight: FontWeight.w600
-                            ),
-
-                          ]
-                      ),
+                  SizedBox(
+                    height: 45,
+                    child: VerticalDivider(
+                      width: 0,
+                      thickness: 1.5,
+                      color: PreferencesProvider.getColor(context, 'table-background-color'),
                     ),
+                  ),
+
+
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CustomText(
+                        'Answer type',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+
+                      CustomText(
+                        widget.summary.answerType.typeString,
+                        fontSize: 13,
+                        textColor: Colors.green.shade400,
+                      )
+                    ],
                   )
                 ]
+              ),
 
-            )
+              Align(
+                  alignment: Alignment.centerRight,
+                  child: FractionallySizedBox(
+                    widthFactor: 0.4,
+                    child: CustomDropdownButton(
+                        controller: chartTypeController,
+                        hint: 'Select Chart Type',
+                        items: chartTypes,
+                        onChanged: (newValue) => setState((){})
+                    ),
+                  )
+              ),
+
+
+              //todo: chart
+              buildCellChartSection(),
+
+
+              Align(
+                alignment: Alignment.centerRight,
+                child: FractionallySizedBox(
+                  widthFactor: 0.4,
+
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+
+                      buildQuestionnaireField(
+                          title: 'Mean Score',
+                          detail: formatDecimal(widget.summary.meanScore)
+                      ),
+
+                      buildQuestionnaireField(
+                          title: 'Percentage Score(%)',
+                          detail: formatDecimal(widget.summary.meanScore)
+                      ),
+
+
+                      buildQuestionnaireField(
+                          title: 'Remark',
+                          detail: widget.summary.remark,
+                          detailWeight: FontWeight.w600
+                      ),
+
+                    ]
+                  ),
+                ),
+              )
+            ]
 
         )
+
+      )
     );
   }
 

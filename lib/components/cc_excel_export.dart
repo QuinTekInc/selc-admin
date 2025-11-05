@@ -230,8 +230,6 @@ class ExcelExporter{
 
 
 
-
-
   void _populateCategorySheet() {
     final sheet = _excel['Category Summary'];
     _excel.setDefaultSheet(sheet.sheetName);

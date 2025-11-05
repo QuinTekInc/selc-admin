@@ -20,7 +20,7 @@ class Preferences {
     this.defaultDownloadDirectory, 
     this.savedFiles = const []
   }){
-    defaultDownloadDirectory ??= getAppDocumentsDirectory();
+    defaultDownloadDirectory ??= getAppDocumentsDirPath();
   }
 
 

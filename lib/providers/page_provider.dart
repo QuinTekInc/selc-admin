@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:selc_admin/pages/dashboard_page.dart';
 
 
@@ -9,6 +10,10 @@ class PageProvider extends ChangeNotifier{
 
   List<Widget> navigatorStack = [DashboardPage()]; //by default the dashboard would be showing.
   List<String> pageNames = ['Dashboard'];
+
+
+
+  PageProvider(); //unnamed construction
 
   void pushPage(Widget page, String name){
 
@@ -32,6 +37,7 @@ class PageProvider extends ChangeNotifier{
 
   void popUntil(bool Function() flag){
 
+
     while(flag() != true && navigatorStack.isNotEmpty && pageNames.isNotEmpty){
       navigatorStack.removeLast();
       pageNames.removeLast();
@@ -49,5 +55,10 @@ class PageProvider extends ChangeNotifier{
 
     notifyListeners();
   }
+
+
+
+
+  factory PageProvider.of(BuildContext context, {listen = false}) => Provider.of<PageProvider>(context, listen: listen);
 
 }

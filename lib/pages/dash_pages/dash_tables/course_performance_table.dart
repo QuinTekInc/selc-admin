@@ -66,7 +66,7 @@ class CoursePerformanceTable extends StatelessWidget {
 
                 SizedBox(
                     width: 175,
-                    child: CustomText('Percentage Score (%)')
+                    child: CustomText('Percentage (%)')
                 ),
 
 
