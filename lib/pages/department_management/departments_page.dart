@@ -92,23 +92,32 @@ class _DepartmentsPageState extends State<DepartmentsPage> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.symmetric(vertical: 8),
             child: CustomTextField(
-                controller: searchController,
-                leadingIcon: CupertinoIcons.search,
-                useLabel: false,
-                hintText: 'Search department by name...',
-                onChanged: (String newValue) => setState(() {
+              controller: searchController,
+              leadingIcon: CupertinoIcons.search,
+              useLabel: false,
+              hintText: 'Search department by name...',
+              onChanged: (String newValue) => setState(() {
 
-                  //todo: code to run if the SearchField values is empty or null
+                //todo: code to run if the SearchField values is empty or null
 
-
-                  //convert the search field to lowercase.
-                  String searchLower = searchController.text.toLowerCase();
-
-
-                  //todo: code to run when value is found
+                if(searchController.text.isEmpty){
+                  setState(() => filteredDepartments = Provider.of<SelcProvider>(context, listen: false).departments);
+                  return;
+                }
 
 
-                })
+                //convert the search field to lowercase.
+                String searchLower = searchController.text.toLowerCase();
+
+                //todo: code to run when value is found
+                filteredDepartments = Provider.of<SelcProvider>(context, listen: false).departments
+                                          .where((department) => department.departmentName.toLowerCase().contains(searchLower))
+                                          .toList();
+
+                setState(() {});
+
+
+              })
             ),
           ),
 
@@ -142,6 +151,12 @@ class _DepartmentsPageState extends State<DepartmentsPage> {
         ],
       ),
     );
+  }
+
+
+
+  void applySearchFilter(){
+
   }
 
 

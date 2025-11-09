@@ -1,5 +1,6 @@
 
 
+import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -91,7 +92,19 @@ class _HomepageState extends State<Homepage> {
           ),
 
           Expanded(
-            child: Provider.of<PageProvider>(context).navigatorStack.last
+            child: PageTransitionSwitcher(
+
+              duration: Duration(milliseconds: 500),
+
+              transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
+                animation: animation,
+                secondaryAnimation: secondaryAnimation,
+                fillColor: Colors.transparent,
+                child: child,
+              ),
+
+              child: Provider.of<PageProvider>(context).navigatorStack.last
+            )
           )
 
         ],

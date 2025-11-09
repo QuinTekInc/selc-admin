@@ -2,14 +2,21 @@
 
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
+import 'package:selc_admin/components/cells.dart';
+import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/pages/evaluations/eval_page.dart';
+import 'package:selc_admin/pages/lecturer_info_page.dart';
+import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 import '../../components/text.dart';
+import '../../providers/page_provider.dart' show PageProvider;
 
 
 class DepartmentProfilePage extends StatefulWidget {
@@ -74,7 +81,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
         children: [
 
           HeaderText(
-            widget.department.departmentName,
+            'Department of ${widget.department.departmentName}',
             fontSize: 25,
           ),
 
@@ -82,12 +89,386 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
           NavigationTextButtons(),
 
+          const SizedBox(height: 12),
+
+          Expanded(
+            flex: 2,
+            child: SingleChildScrollView(
+
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 12,
 
 
+                children: [
 
+                  //department name
+
+
+                  //department info (number of lecturers, number of courses)
+
+
+                  //lecturers list
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 12,
+                    children: [
+                      buildLecturersList(),
+
+                      Expanded(
+                        child: buildClassCoursesSection(),
+                      )
+                    ],
+                  )
+
+
+                  //the courses(taught by lecturers in the department) list should be beside the lecturers list ranging from current to oldest.
+                ]
+              )
+            ),
+          )
 
         ],
       ),
     );
   }
+
+
+
+
+
+  Widget buildLecturersList(){
+    return Container(
+      padding: const EdgeInsets.all(12),
+      width: MediaQuery.of(context).size.width * 0.25,
+      height: MediaQuery.of(context).size.height * 0.45,
+      decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
+        borderRadius: BorderRadius.circular(12)
+      ),
+
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        spacing: 12,
+
+        children: [
+
+          HeaderText('Lecturers'),
+
+          if(lecturers.isEmpty) Expanded(
+            child: CollectionPlaceholder(detail: 'Lecturers in this department appear here.')
+          )
+          else Expanded(
+            child: ListView.builder(
+              itemCount: lecturers.length,
+              itemBuilder: (_, index){
+
+                Lecturer lecturer = lecturers[index];
+
+
+                return ListTile(
+                  onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(
+                    LecturerInfoPage(lecturer: lecturer),
+                    'Lecturer Information'
+                  ),
+
+                  leading: Container(
+                    color: Colors.green.shade300,
+                    padding: const EdgeInsets.all(8),
+                    child: Icon(CupertinoIcons.person, size: 25, color: Colors.white,),
+                  ),
+
+                  title: CustomText(lecturer.name, fontSize: 15, maxLines: 1, fontWeight: FontWeight.w600,),
+
+                  subtitle: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    spacing: 1,
+
+                    children: [
+                      CustomText(lecturer.email, maxLines: 1,),
+
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 8,
+                        children: [
+
+                          RatingStars(
+                            rating: lecturer.rating,
+                            zeroPadding: true,
+                            transparentBackground: true,
+                            spacing: 0,
+                          ),
+
+
+                          CustomText(
+                            '(${formatDecimal(lecturer.rating)})',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          )
+                        ],
+                      )
+
+
+                    ],
+                  ),
+                );
+              },
+            ),
+          )
+
+        ],
+      )
+    );
+  }
+
+
+
+
+  Widget buildClassCoursesSection(){
+
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      height: MediaQuery.of(context).size.height * 0.45,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
+        borderRadius: BorderRadius.circular(12)
+      ),
+
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 8,
+
+        children: [
+
+          HeaderText('Class Courses'),
+
+
+          //table header
+
+          Container(
+            padding: const EdgeInsets.all(8),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: PreferencesProvider.getColor(context, 'table-header-color'),
+            ),
+
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                SizedBox(
+                  width: 90,
+                  child: CustomText('Year'),
+                ),
+
+
+                SizedBox(
+                  width: 90,
+                  child: CustomText('Semester'),
+                ),
+
+
+                Expanded(
+                  flex: 2,
+                  child: CustomText('Lecturer')
+                ),
+
+
+                SizedBox(
+                  width: 120,
+                  child: CustomText('C. Code'),
+                ),
+
+                Expanded(
+                  flex: 2,
+                  child: CustomText('Course title')
+                ),
+
+
+                SizedBox(
+                  width: 120,
+                  child: CustomText('No. Students'),
+                ),
+
+
+                SizedBox(
+                  width: 120,
+                  child: CustomText('Avg. Score')
+                ),
+
+
+                SizedBox(
+                  width: 130,
+                  child: CustomText('Remark')
+                ),
+
+              ],
+            )
+          ),
+
+
+          if(classCourses.isEmpty) Expanded(
+            child: CollectionPlaceholder(
+              detail: 'All Class Courses in handled by lecturers in this department appear here.',
+            ),
+          )else Expanded(
+            child: ListView.builder(
+              itemCount: classCourses.length,
+              itemBuilder: (_, index){
+
+                final classCourse = classCourses[index];
+
+                return DClassCourseCell(classCourse: classCourse);
+              }
+            )
+          )
+
+        ]
+      )
+    );
+  }
 }
+
+
+
+
+
+//class course cell for department information section
+class DClassCourseCell extends StatefulWidget {
+
+  final ClassCourse classCourse;
+
+  const DClassCourseCell({super.key, required this.classCourse});
+
+  @override
+  State<DClassCourseCell> createState() => _DClassCourseCellState();
+}
+
+class _DClassCourseCellState extends State<DClassCourseCell> {
+
+  Color hoverColor = Colors.transparent;
+
+  bool isCurrentCourse = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    bool isCurrentYear = widget.classCourse.year == DateTime.now().year;
+    bool isCurrentSemester = widget.classCourse.year == Provider.of<SelcProvider>(context, listen: false).currentSemester;
+
+    isCurrentCourse = isCurrentSemester && isCurrentYear;
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onHover: (mouseEvent) => setState(() => hoverColor = Colors.green.shade400),
+      onExit: (mouseEvent) => setState(() => hoverColor = Colors.transparent),
+
+      child: GestureDetector(
+        onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(
+          EvaluationPage(classCourse: widget.classCourse),
+          'Evaluation'
+        ),
+
+
+        child: Container(
+
+          padding: const EdgeInsets.all(8),
+
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: hoverColor
+          ),
+
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+
+              if(isCurrentCourse) CircleAvatar(
+                radius: 5,
+                backgroundColor: Colors.green.shade400
+              ),
+
+
+              //academic year
+              SizedBox(
+                width: 90,
+                child: CustomText(widget.classCourse.year.toString()),
+              ),
+
+
+              //semester
+              SizedBox(
+                width: 90,
+                child: CustomText(widget.classCourse.semester.toString()),
+              ),
+
+
+              //lecturer's name
+              Expanded(
+                  flex: 2,
+                  child: CustomText(widget.classCourse.lecturer.name)
+              ),
+
+
+              //course code
+              SizedBox(
+                width: 120,
+                child: CustomText(widget.classCourse.course.courseCode),
+              ),
+
+
+              //course title
+              Expanded(
+                  flex: 2,
+                  child: CustomText(widget.classCourse.course.title)
+              ),
+
+
+              //number of students who registered for the class
+              SizedBox(
+                width: 120,
+                child: CustomText(widget.classCourse.registeredStudentsCount.toString()),
+              ),
+
+
+              //average score of this course
+              SizedBox(
+                  width: 120,
+                  child: CustomText(formatDecimal(widget.classCourse.grandMeanScore))
+              ),
+
+
+              //remark of the score after evaluation
+              SizedBox(
+                  width: 130,
+                  child: CustomText(widget.classCourse.remark!)
+              ),
+
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

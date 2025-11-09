@@ -423,13 +423,15 @@ class RatingStars extends StatelessWidget {
   final bool transparentBackground;
   final bool zeroPadding;
   final double spacing;
+  final double iconSize;
 
   const RatingStars({
     super.key,
     required this.rating,
     this.transparentBackground = false,
     this.zeroPadding = false,
-    this.spacing = 5
+    this.spacing = 5,
+    this.iconSize = 20,
   });
 
   @override
@@ -472,7 +474,7 @@ class RatingStars extends StatelessWidget {
       shouldColor = true;
     }
 
-    return Icon(iconData, color: shouldColor ? Colors.green.shade400 : null,);
+    return Icon(iconData, color: shouldColor ? Colors.green.shade400 : null, size: iconSize);
   }
 }
 
