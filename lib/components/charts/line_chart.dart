@@ -2,6 +2,7 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import '../../providers/pref_provider.dart';
 
 
 class CustomLineChart extends StatelessWidget {
@@ -29,6 +30,10 @@ class CustomLineChart extends StatelessWidget {
   final double minY;
   final double? minX;
 
+  final showXLabels;
+  final showYLabels;
+  final showGrid;
+
   const CustomLineChart({
     super.key, 
     this.containerBackgroundColor,
@@ -45,7 +50,34 @@ class CustomLineChart extends StatelessWidget {
     this.maxX,
     this.minY = 0,
     this.minX = 0,
+    this.showXLabels = true,
+    this.showYLabels = false,
+    this.showGrid = true
   });
+
+
+
+
+
+  TextStyle _titleStyle(BuildContext context)  => TextStyle(
+    color: PreferencesProvider.getColor(context, 'text-color'),
+    fontWeight: FontWeight.bold,
+    fontSize: 17,
+    fontFamily: 'Poppins'
+  );
+
+  TextStyle _axisLabelStyle(BuildContext context) => TextStyle(
+    color: PreferencesProvider.getColor(context,'placeholder-text-color'),
+    fontFamily: 'Poppins',
+  );
+
+
+  TextStyle _axisNameStyle(BuildContext context) => TextStyle(
+  color: PreferencesProvider.getColor(context,'text-color'),
+  fontFamily: 'Poppins',
+  fontWeight: FontWeight.w600
+  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +104,7 @@ class CustomLineChart extends StatelessWidget {
 
           if(chartTitle != null) Text(
             chartTitle!,
-            style: titleStyle ?? TextStyle(
-              color: Colors.green.shade400,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold,
-              fontSize: 16
-            ),
+            style: titleStyle ?? _titleStyle(context)
           ),
 
           const SizedBox(height: 12,),
@@ -91,6 +118,8 @@ class CustomLineChart extends StatelessWidget {
                 minY: minY,
                 maxY: maxY,
                 maxX: maxX,
+
+
 
                 lineBarsData: [makeLineChartBarData()],
 
@@ -112,17 +141,15 @@ class CustomLineChart extends StatelessWidget {
 
 
                   leftTitles: AxisTitles(
+
                     axisNameWidget: leftAxisTitle == null ? null : Text(  
                       leftAxisTitle!,
-                      style: axisNameStyle ?? TextStyle(
-                        color: Colors.white, 
-                        fontWeight: FontWeight.bold
-                      ),
+                      style: axisNameStyle ?? _axisNameStyle(context)
                     ),
 
                     //todo: labels from the y axis.
                     sideTitles: SideTitles(
-                      showTitles: true,
+                      showTitles: showYLabels,
                       interval: 1,
                       getTitlesWidget: (value, meta){
 
@@ -130,10 +157,7 @@ class CustomLineChart extends StatelessWidget {
                           meta: meta,
                           child: Text(  
                             '${value.toInt()}',
-                            style: axisLabelStyle ?? TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: axisLabelStyle ?? _axisLabelStyle(context)
                           ),
                         );
                       }
@@ -145,14 +169,11 @@ class CustomLineChart extends StatelessWidget {
                   bottomTitles: AxisTitles(
                     axisNameWidget: bottomAxisitle == null ? null : Text(  
                       bottomAxisitle!,
-                      style: axisNameStyle ?? TextStyle(
-                        color: Colors.white, 
-                        fontWeight: FontWeight.bold
-                      ),
+                      style: axisNameStyle ?? _axisNameStyle(context)
                     ),
 
                     sideTitles: SideTitles(
-                      showTitles: true,
+                      showTitles: showXLabels,
                       interval: 1,
                       getTitlesWidget: (value, meta){
                         String label = '${value.toInt()}';
@@ -170,7 +191,7 @@ class CustomLineChart extends StatelessWidget {
                           meta: meta,
                           child: Text(
                             xLabel,
-                            style: axisLabelStyle,
+                            style: axisLabelStyle ?? _axisLabelStyle(context),
                           )
                         );
                       }
@@ -179,8 +200,34 @@ class CustomLineChart extends StatelessWidget {
 
                 ),
 
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  touchTooltipData: LineTouchTooltipData(
+
+                    tooltipBorder: BorderSide(color: Colors.green.shade400),
+                    tooltipBorderRadius: BorderRadius.circular(12),
+
+                    getTooltipColor: (touchedSpots) => PreferencesProvider.getColor(context, 'alt-primary-color-2', listen: false),
+
+                    getTooltipItems: (touchedSpots){
+                      return touchedSpots.map((spot){
+
+                        int index = spot.x.toInt();
+
+                        return LineTooltipItem(
+                          spotData[index].label!,
+                          TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: PreferencesProvider.getColor(context, 'text-color', listen: false)
+                          )
+                        );
+                      }).toList();
+                    }
+                  )
+                ),
+
                 gridData: FlGridData(
-                  show: true
+                  show: showGrid
                 ),
 
                 borderData: FlBorderData(
@@ -189,7 +236,8 @@ class CustomLineChart extends StatelessWidget {
                     width: 1,
                     color: Colors.black45
                   )
-                )
+                ),
+
 
               )
             ),
@@ -208,12 +256,19 @@ class CustomLineChart extends StatelessWidget {
       isStrokeCapRound: true,
       isCurved: true,
       barWidth: 3,
-      color: Colors.purple.shade700,
+      color: Colors.green.shade600,
 
       dotData: FlDotData(
         show: true,
       ),
-      belowBarData: BarAreaData(show: false),
+      belowBarData: BarAreaData(
+      show: true,
+      gradient: LinearGradient(
+        colors: [Colors.green.shade400, Colors.blue.shade400]
+            .map((color) => color.withValues(alpha: 0.3))
+            .toList(),
+      ),
+    ),
 
 
       spots: List<FlSpot>.generate(

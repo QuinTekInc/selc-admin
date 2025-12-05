@@ -16,6 +16,8 @@ import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
+import 'files_page.dart';
+
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
 
@@ -47,7 +49,8 @@ class _HomepageState extends State<Homepage> {
       DepartmentsPage(),
       LecturersPage(),
       CoursesPage(),
-      QuestionsPage(), 
+      QuestionsPage(),
+      if(isSuperuser) FilesPage(),
       if(isSuperuser) UsersPage(),
       SettingsPage()
     ];
@@ -60,6 +63,7 @@ class _HomepageState extends State<Homepage> {
       'Lecturers',
       'Courses',
       'Questionnaire',
+      if(isSuperuser) 'Files',
       if(isSuperuser) 'Users',
       'Settings'
     ];
@@ -146,6 +150,7 @@ class _SideBarState extends State<SideBar> {
       (CupertinoIcons.person, 'Lecturers'),
       (CupertinoIcons.book, 'Courses'),
       (CupertinoIcons.chat_bubble_2, 'Questions'),
+      if(widget.isSuperSuper) (CupertinoIcons.folder_fill, "Files"),
       if(widget.isSuperSuper) (CupertinoIcons.person_3, 'Users'),
       (Icons.settings_outlined, 'Settings')
     ];

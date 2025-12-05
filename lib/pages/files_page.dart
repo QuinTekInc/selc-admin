@@ -25,8 +25,6 @@ class _FilesPageState extends State<FilesPage> {
 
           HeaderText('Files', fontSize: 25,),
 
-          NavigationTextButtons(),
-
 
           const SizedBox(height: 12,),
 
@@ -209,4 +207,21 @@ class _FilesPageState extends State<FilesPage> {
       ),
     );
   }
+
+
+
+  void handleOpen(){
+
+  }
+
+
+  void handleOpenFolder(){
+
+  }
+
+
+  void handleDelete(){
+
+  }
+
 }

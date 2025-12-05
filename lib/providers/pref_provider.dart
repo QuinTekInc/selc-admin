@@ -88,8 +88,8 @@ class PreferencesProvider extends ChangeNotifier{
 
 
 
-  static Color getColor(BuildContext context, String color){
-    return Provider.of<PreferencesProvider>(context,).colorScheme[color]!;
+  static Color getColor(BuildContext context, String color, {listen=true}){
+    return Provider.of<PreferencesProvider>(context, listen: listen).colorScheme[color]!;
   }
 
 }

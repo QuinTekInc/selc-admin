@@ -36,7 +36,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
   bool isLoading = false;
 
   List<ClassCourse> cummulativeClassCourses = [];
-  List<ClassCourse> currentCourses = [];
+  List<ClassCourse> currentClassCourses = [];
 
 
   @override
@@ -56,7 +56,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
       //first get all the data and store it in the cummulativeClassCourses
       cummulativeClassCourses = await Provider.of<SelcProvider>(context, listen: false).getCourseInformation(widget.course.courseCode);
 
-      currentCourses = cummulativeClassCourses.where(
+      currentClassCourses = cummulativeClassCourses.where(
         (classCourse) => classCourse.year == DateTime.now().year
             && classCourse.semester == Provider.of<SelcProvider>(context, listen: false).currentSemester)
           .toList();
@@ -219,7 +219,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
     return Expanded(
       flex: 2,
       child: Container(  
-        width: MediaQuery.of(context).size.width * 0.25,
+        width: MediaQuery.of(context).size.width * 0.2,
         height: double.infinity,
         padding: const EdgeInsets.all(8),
 
@@ -246,7 +246,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
               child: Center(child: CircularProgressIndicator(),),
             )
             //todo: show placeholder message when finished loading and the data is empty
-            else if(!isLoading && currentCourses.isEmpty) Expanded(  
+            else if(!isLoading && currentClassCourses.isEmpty) Expanded(  
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -268,54 +268,8 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
             //todo: load the actual data into the list view
             else Expanded(  
               child: ListView.builder(  
-                itemCount: currentCourses.length,
-                itemBuilder: (_, index) {
-
-                  ClassCourse classCourse = currentCourses[index];
-                  Lecturer lecturer = classCourse.lecturer;
-
-                  
-                  return ListTile(  
-                    leading: Icon(CupertinoIcons.person, color: Colors.green.shade400,),
-                    title: CustomText(lecturer.name, fontWeight: FontWeight.w600),
-                    subtitle: CustomText(lecturer.department),
-
-                    trailing: Container(
-                      //padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        //Colors.grey.shade200
-                        color: PreferencesProvider.getColor(context, 'table-background-color'),
-                        borderRadius: BorderRadius.circular(12)
-                      ),
-                      child: Row(  
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      
-                          IconButton(
-                            icon: Icon(CupertinoIcons.graph_circle, color: Colors.green.shade400,),
-                            onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(EvaluationPage(classCourse: classCourse), 'Analytics'),
-                            tooltip: 'Show Analytics',
-                          ),
-                      
-                      
-                      
-                          IconButton(
-                            icon: Icon(CupertinoIcons.profile_circled, color: Colors.blue.shade400,),
-                            onPressed: () {
-                              Provider.of<PageProvider>(context, listen: false).pushPage(LecturerInfoPage(lecturer: lecturer), 'Lecturer Information');
-                            },
-                            tooltip: 'View Lecturer Pofile'
-                          ),
-                      
-                        ],
-                      ),
-                    ),
-
-                    //onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(EvaluationPage(course: widget.course), 'Analytics'),
-                  );
-                },
+                itemCount: currentClassCourses.length,
+                itemBuilder: (_, index) => LCurrentCourseCell(classCourse: currentClassCourses[index], useLecturerName: true)
               ),
             )
 
@@ -332,7 +286,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
 
   Widget buildCourseDetailSection() {
     return Container(  
-      width: MediaQuery.of(context).size.width * 0.25,
+      width: MediaQuery.of(context).size.width * 0.2,
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
 
       decoration: BoxDecoration(

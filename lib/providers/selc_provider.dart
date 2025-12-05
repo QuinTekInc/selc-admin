@@ -196,6 +196,7 @@ class SelcProvider with ChangeNotifier{
 
 
   Future<List<DashboardSuggestionSentiment>> getDashSuggestionSentiments() async {
+
     final response = await connector.getRequest(endPoint: 'get-all-current-class-courses-sentiments/');
 
     if(response.statusCode != 200){
@@ -239,6 +240,20 @@ class SelcProvider with ChangeNotifier{
     departments = responseBody.map((jsonMap) => Department.fromJson(jsonMap)).toList();
 
     notifyListeners();
+  }
+
+
+
+  Future<List<ClassCourse>> getDepartmentClassCourses(int departmentId) async {
+
+    final response = await connector.getRequest(endPoint: 'get-department-class-courses/$departmentId');
+
+    if(response.statusCode != 200) throw Error();
+
+
+    List<dynamic> responseBody = jsonDecode(response.body);
+
+    return responseBody.map((jsonMap) => ClassCourse.fromJson(jsonMap)).toList();
   }
 
 
@@ -292,7 +307,7 @@ class SelcProvider with ChangeNotifier{
 
 
 
-  Future<List<CourseEvaluationSummary>> getClassCourseEvaluation(int classCourseId) async {
+  Future<List<dynamic>> getClassCourseEvaluation(int classCourseId) async {
 
     Response response = await connector.getRequest(endPoint: 'class-course-eval-summary/$classCourseId');
 
@@ -302,11 +317,16 @@ class SelcProvider with ChangeNotifier{
     }
 
     List<dynamic> responseBody = jsonDecode(response.body);
-    
-    List<CourseEvaluationSummary> evaluationSummaryList = responseBody.map(
-                              (jsonMap) => CourseEvaluationSummary.fromJson(jsonMap)).toList();
 
-    return evaluationSummaryList;
+
+    /*
+    todo: paste the format of the response here
+     */
+    //
+    // List<CourseEvaluationSummary> evaluationSummaryList = responseBody.map(
+    //                           (jsonMap) => CourseEvaluationSummary.fromJson(jsonMap)).toList();
+
+    return responseBody;
   }
 
 
@@ -619,6 +639,23 @@ class SelcProvider with ChangeNotifier{
 
 
     notifyListeners();
+  }
+
+
+
+  Future<List<ReportFile>> getReportFiles() async {
+
+    final response = await connector.getRequest(endPoint: '/report-files');
+
+    if(response.statusCode != 200){
+      throw Error();
+    }
+
+    final responseBody = jsonDecode(response.body);
+
+
+    return responseBody.map((jsonMap) => ReportFile.fromJson(jsonMap)).toList();
+
   }
 
 

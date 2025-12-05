@@ -206,6 +206,7 @@ class Lecturer {
   String email;
   String department;
   double rating;
+  String remark;
 
   List<dynamic> coursesHandled = [];
 
@@ -214,17 +215,19 @@ class Lecturer {
     required this.name,
     required this.email,
     required this.department,
-    required this.rating
+    required this.rating,
+    required this.remark
   });
 
 
   factory Lecturer.fromJson(Map<String, dynamic> jsonMap){
     return Lecturer(
-        username: jsonMap['username'],
-        name: jsonMap['name'],
-        email: jsonMap['email'],
-        department: jsonMap['department'],
-        rating: jsonMap['rating'].toDouble()
+      username: jsonMap['username'],
+      name: jsonMap['name'],
+      email: jsonMap['email'],
+      department: jsonMap['department'],
+      rating: jsonMap['rating'].toDouble(),
+      remark: jsonMap['remark']
     );
   }
 
@@ -294,6 +297,7 @@ class ClassCourse{
   int classCourseId;
   int semester;
   int year;
+  int credits;
   String klass;
   Lecturer lecturer;
   Course course;
@@ -310,6 +314,7 @@ class ClassCourse{
     required this.year,
     required this.klass,
     required this.course,
+    required this.credits,
     required this.lecturer,
     this.grandMeanScore = 0,
     this.grandPercentageScore = 0,
@@ -326,6 +331,7 @@ class ClassCourse{
       classCourseId: jsonMap['cc_id'],
       semester: jsonMap['semester'],
       year: jsonMap['year'],
+      credits: jsonMap['credit_hours'],
       klass: jsonMap['class'] ?? 'A',
       course: Course.fromJson(jsonMap['course']),
       lecturer: Lecturer.fromJson(jsonMap['lecturer']),
@@ -381,7 +387,7 @@ class CourseEvaluationSummary{
     return CourseEvaluationSummary(
       question: jsonMap['question'],
       answerType: answerType,
-      meanScore: jsonMap['average_score'].toDouble(),
+      meanScore: jsonMap['mean_score'].toDouble(),
       percentageScore: jsonMap['percentage_score'].toDouble(),
       answerSummary: answerSummary,
       remark: jsonMap['remark']
@@ -450,7 +456,7 @@ class CategoryRemark{
     return CategoryRemark(
       categoryName: jsonMap['category'],
       percentageScore: jsonMap['percentage_score'].toDouble() ?? 0,
-      meanScore: jsonMap['average_score'].toDouble() ?? 0,
+      meanScore: (jsonMap['mean_score'] as num).toDouble() ?? 0,
       remark: jsonMap['remark'],
       questions: questions
     );
@@ -665,3 +671,30 @@ class DashboardCategoriesSummary{
 
 
 //beads of fortune
+
+
+
+class ReportFile{
+
+  String fileName;
+  String fileType;
+  String url;
+
+
+
+  ReportFile({required this.fileName,  required this.fileType, required this.url});
+
+
+  factory ReportFile.fromJson(Map<String, dynamic> jsonMap){
+
+    return ReportFile(
+        fileName: jsonMap['file_name'],
+        fileType: 'file_type',
+        url: jsonMap['url']
+    );
+  }
+
+
+
+  String getFileName() => '$fileName.$fileType';
+}

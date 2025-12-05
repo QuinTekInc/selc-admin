@@ -185,10 +185,18 @@ pw.Widget buildCourseInformationSection(ClassCourse classCourse) {
                 buildDetailField('Lecturer:', lecturer.name),
                 buildDetailField('Email:', lecturer.email),
                 buildDetailField('Department:', lecturer.department),
+                //overall lecturer rating
+                buildDetailField('Overall Rating: ', formatDecimal(classCourse.lecturer.rating)),
+
+                //lecturer rating for this ClassCourse evaluation
+                buildDetailField('Lecturer rating(for this course):', formatDecimal(classCourse.lecturerRating))
+
               ],
             ),
           ),
+
           pw.SizedBox(width: 16),
+
           pw.Expanded(
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -196,8 +204,11 @@ pw.Widget buildCourseInformationSection(ClassCourse classCourse) {
                 buildDetailField('Course Code:', course.courseCode),
                 buildDetailField('Course Title:', course.title),
                 buildDetailField('No. on roll:', classCourse.registeredStudentsCount.toString()),
+                buildDetailField('Evaluated Students [Response Rate %]:', '${classCourse.evaluatedStudentsCount} [${formatDecimal(classCourse.calculateResponseRate())} %]'),
                 buildDetailField('Academic Year:', classCourse.year.toString()),
                 buildDetailField('Semester:', classCourse.semester.toString()),
+                buildDetailField('Mean Score [% Score]: ', '${formatDecimal(classCourse.grandMeanScore)} [${classCourse.grandPercentageScore} %]'),
+                buildDetailField('Remark:', classCourse.remark!)
               ],
             ),
           ),
@@ -266,25 +277,30 @@ pw.Widget buildQuestionnaireTable(List<CourseEvaluationSummary> summaries) {
             child: pw.Text('Question',
                 style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           ),
+
+
           pw.Padding(
             padding: const pw.EdgeInsets.all(6),
             child: pw.Text('Answers',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           ),
+
           pw.Padding(
             padding: const pw.EdgeInsets.all(6),
             child: pw.Text('Mean',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           ),
+
           pw.Padding(
             padding: const pw.EdgeInsets.all(6),
             child: pw.Text('Percentage(%)',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           ),
+
           pw.Padding(
             padding: const pw.EdgeInsets.all(6),
             child: pw.Text('Remark',
-                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           ),
         ],
       ),
@@ -319,13 +335,13 @@ pw.Widget buildQuestionnaireTable(List<CourseEvaluationSummary> summaries) {
             // Mean Score
             pw.Padding(
               padding: const pw.EdgeInsets.all(6),
-              child: pw.Text(summary.meanScore.toStringAsFixed(2)),
+              child: pw.Text(formatDecimal(summary.meanScore)),
             ),
 
             // Percentage Score
             pw.Padding(
               padding: const pw.EdgeInsets.all(6),
-              child: pw.Text(summary.percentageScore.toStringAsFixed(2)),
+              child: pw.Text(formatDecimal(summary.percentageScore)),
             ),
 
             // Remark
@@ -389,7 +405,7 @@ pw.Widget buildScoringTable() {
 
 
 
-
+//lecturer rating table
 pw.Widget buildLRatingTable(List<EvalLecturerRatingSummary> ratings, ClassCourse course) {
   final rows = ratings.map((r) => [
     r.rating.toString(),

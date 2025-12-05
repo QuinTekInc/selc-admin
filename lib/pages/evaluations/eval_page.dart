@@ -65,8 +65,23 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
     setState(() => isLoading = true);
 
-    evalSummary = await Provider.of<SelcProvider>(context, listen: false).getClassCourseEvaluation(widget.classCourse.classCourseId);
-    categoryRemarks = await Provider.of<SelcProvider>(context, listen: false).getCourseEvalCategoryRemark(widget.classCourse.classCourseId);
+    List<dynamic> ccSummary = await Provider.of<SelcProvider>(context, listen: false).getClassCourseEvaluation(widget.classCourse.classCourseId);
+
+    //collect the questions map from each category into on giant list
+    final List<Map<String, dynamic>> questionsMapList =[
+      for(final summary in ccSummary)
+        for(final question in summary['questions'] ?? [])
+          question
+    ];
+
+
+    //convert them to a list of "CourseEvaluationSummary" objects
+    evalSummary = questionsMapList.map(
+            (jsonMap) => CourseEvaluationSummary.fromJson(jsonMap))
+            .toList();
+
+    //extract the category remarks into list of "CategoryRemark" objects
+    categoryRemarks = ccSummary.map((jsonMap) => CategoryRemark.fromJson(jsonMap)).toList();
 
     suggestionSummaryReport =  await Provider.of<SelcProvider>(context, listen: false).getEvaluationSuggestions(widget.classCourse.classCourseId);
 

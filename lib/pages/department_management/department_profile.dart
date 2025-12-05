@@ -34,6 +34,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
   List<Lecturer> lecturers = [];
   List<ClassCourse> classCourses = [];
+  int currentCoursesCount = 0;
 
 
 
@@ -46,6 +47,9 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
     //sort the lecturers who are in this department
     lecturers = Provider.of<SelcProvider>(context, listen: false).lecturers
                         .where((lecturer) => lecturer.department == widget.department.departmentName).toList();
+
+
+    loadData();
 
     super.initState();
   }
@@ -60,8 +64,16 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
       //todo: load the necessary data here.
 
+      classCourses = await Provider.of<SelcProvider>(context, listen: false).getDepartmentClassCourses(widget.department.departmentId);
+
+      currentCoursesCount = classCourses.where((classCourse) =>
+                                classCourse.semester == Provider.of<SelcProvider>(context, listen: false).currentSemester &&
+                                classCourse.year == DateTime.now().year).length;
     } on SocketException {
       showNoConnectionAlertDialog(context);
+
+    } on Error{
+      showCustomAlertDialog(context, title: 'Error', contentText: 'An unknown error occurred. Please try again');
     }
 
 
@@ -80,9 +92,25 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
         children: [
 
-          HeaderText(
-            'Department of ${widget.department.departmentName}',
-            fontSize: 25,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              HeaderText(
+                'Department of ${widget.department.departmentName}',
+                fontSize: 25,
+              ),
+
+              Spacer(),
+
+
+              TextButton.icon(
+                icon: Icon(Icons.edit_document, color: Colors.green.shade300, size: 25,),
+                label: CustomText('Generate Report', textColor: Colors.green.shade300, fontSize: 16,),
+                onPressed: (){},
+              )
+            ],
           ),
 
           const SizedBox(height: 8,),
@@ -107,6 +135,35 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
 
                   //department info (number of lecturers, number of courses)
+                  Row(
+                    children: [
+
+                      buildDepartmentInfoCard(
+                        title: 'Lecturers',
+                        detail: lecturers.length.toString(),
+                        icon: CupertinoIcons.person
+                      ),
+
+
+                      buildDepartmentInfoCard(
+                        title: 'Class Courses',
+                        detail: classCourses.length.toString(),
+                        icon: CupertinoIcons.book,
+                        backgroundColor: Colors.amber
+                      ),
+
+
+
+                      buildDepartmentInfoCard(
+                          title: 'Current Class Courses',
+                          detail: currentCoursesCount.toString(),
+                          icon: Icons.menu_book,
+                          backgroundColor: Colors.red.shade500
+                      ),
+
+                    ]
+                  ),
+
 
 
                   //lecturers list
@@ -137,13 +194,75 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
 
 
+  Widget buildDepartmentInfoCard({required String title, required String detail, IconData? icon, Color? backgroundColor}){
+
+
+    if(backgroundColor == null){
+      backgroundColor = Colors.green.shade300;
+    }
+
+    return Card(  
+      shape: RoundedRectangleBorder( 
+        borderRadius: BorderRadius.circular(12)
+      ),
+
+      child: Container(  
+        padding: const EdgeInsets.all(8),
+        width: 300,
+        decoration: BoxDecoration(  
+          borderRadius: BorderRadius.circular(12),
+          color: backgroundColor
+        ),
+
+
+        child: Row(  
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 12,
+
+          children: [
+
+            CircleAvatar(  
+              radius: 30,
+              backgroundColor: Color.lerp(backgroundColor, Colors.white, 0.3),
+              child: Icon(icon, color: Colors.white, size: 30,),
+            ),
+
+
+
+            Column(  
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                CustomText(  
+                  title, 
+                  textColor: Colors.white,
+                  padding: EdgeInsets.zero,
+                ),
+
+
+                HeaderText(  
+                  detail, 
+                  textColor: Colors.white,
+                )
+              ],
+            )
+          ]
+        )
+      )
+    );
+  }
 
 
   Widget buildLecturersList(){
+
     return Container(
       padding: const EdgeInsets.all(12),
       width: MediaQuery.of(context).size.width * 0.25,
       height: MediaQuery.of(context).size.height * 0.45,
+
       decoration: BoxDecoration(
         color: PreferencesProvider.getColor(context, 'table-background-color'),
         borderRadius: BorderRadius.circular(12)
@@ -171,54 +290,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
                 Lecturer lecturer = lecturers[index];
 
 
-                return ListTile(
-                  onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(
-                    LecturerInfoPage(lecturer: lecturer),
-                    'Lecturer Information'
-                  ),
-
-                  leading: Container(
-                    color: Colors.green.shade300,
-                    padding: const EdgeInsets.all(8),
-                    child: Icon(CupertinoIcons.person, size: 25, color: Colors.white,),
-                  ),
-
-                  title: CustomText(lecturer.name, fontSize: 15, maxLines: 1, fontWeight: FontWeight.w600,),
-
-                  subtitle: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    spacing: 1,
-
-                    children: [
-                      CustomText(lecturer.email, maxLines: 1,),
-
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        spacing: 8,
-                        children: [
-
-                          RatingStars(
-                            rating: lecturer.rating,
-                            zeroPadding: true,
-                            transparentBackground: true,
-                            spacing: 0,
-                          ),
-
-
-                          CustomText(
-                            '(${formatDecimal(lecturer.rating)})',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          )
-                        ],
-                      )
-
-
-                    ],
-                  ),
-                );
+                return DLecturerCell(lecturer: lecturer);
               },
             ),
           )
@@ -230,7 +302,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
 
 
-
+  //class course table.
   Widget buildClassCoursesSection(){
 
 
@@ -320,11 +392,18 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
           ),
 
 
-          if(classCourses.isEmpty) Expanded(
+
+          if(isLoading) Expanded(
+            child: Center(
+              child: CircularProgressIndicator()
+            )
+          )
+          else if(classCourses.isEmpty) Expanded(
             child: CollectionPlaceholder(
               detail: 'All Class Courses in handled by lecturers in this department appear here.',
             ),
-          )else Expanded(
+          )
+          else Expanded(
             child: ListView.builder(
               itemCount: classCourses.length,
               itemBuilder: (_, index){
@@ -334,6 +413,28 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
                 return DClassCourseCell(classCourse: classCourse);
               }
             )
+          ),
+
+
+
+
+          if(!classCourses.isEmpty) Align(
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              spacing: 8,
+              children: [
+
+                Icon(CupertinoIcons.info, color: Colors.green.shade400,),
+
+                CustomText(
+                  'Press on a class course item in the table to view its evaluation summary',
+                  fontStyle: FontStyle.italic,
+                  textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                )
+              ]
+            ),
           )
 
         ]
@@ -342,6 +443,94 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
   }
 }
 
+
+
+
+
+
+
+//department lecturer cell.
+class DLecturerCell extends StatefulWidget {
+
+  final Lecturer lecturer;
+
+  const DLecturerCell({super.key, required this.lecturer});
+
+  @override
+  State<DLecturerCell> createState() => _DLecturerCellState();
+}
+
+class _DLecturerCellState extends State<DLecturerCell> {
+
+
+  Color backgroundColor = Colors.transparent;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return MouseRegion(
+      onHover: (mouseEvent) => setState(() => backgroundColor = Colors.green.shade100),
+      onExit: (mouseEvent) => setState(() => backgroundColor = Colors.transparent),
+
+      child: Container(
+
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(12)
+        ),
+
+        child: ListTile(
+
+          onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(
+              LecturerInfoPage(lecturer: widget.lecturer),
+              'Lecturer Information'
+          ),
+
+          leading: Container(
+            color: Colors.green.shade300,
+            padding: const EdgeInsets.all(8),
+            child: Icon(CupertinoIcons.person, size: 25, color: Colors.white,),
+          ),
+
+          title: CustomText(widget.lecturer.name, fontSize: 15, maxLines: 1, fontWeight: FontWeight.w600,),
+
+          subtitle: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            spacing: 1,
+
+            children: [
+              CustomText(widget.lecturer.email, maxLines: 1,),
+
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 8,
+                children: [
+
+                  RatingStars(
+                    rating: widget.lecturer.rating,
+                    zeroPadding: true,
+                    transparentBackground: true,
+                    spacing: 0,
+                  ),
+
+
+                  CustomText(
+                    '(${formatDecimal(widget.lecturer.rating)})',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  )
+                ],
+              )
+
+            ],
+          ),
+        ),
+      )
+    );
+  }
+}
 
 
 
@@ -368,17 +557,18 @@ class _DClassCourseCellState extends State<DClassCourseCell> {
     // TODO: implement initState
 
     bool isCurrentYear = widget.classCourse.year == DateTime.now().year;
-    bool isCurrentSemester = widget.classCourse.year == Provider.of<SelcProvider>(context, listen: false).currentSemester;
+    bool isCurrentSemester = widget.classCourse.semester == Provider.of<SelcProvider>(context, listen: false).currentSemester;
 
     isCurrentCourse = isCurrentSemester && isCurrentYear;
 
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onHover: (mouseEvent) => setState(() => hoverColor = Colors.green.shade400),
+      onHover: (mouseEvent) => setState(() => hoverColor = Colors.green.shade100),
       onExit: (mouseEvent) => setState(() => hoverColor = Colors.transparent),
 
       child: GestureDetector(
@@ -404,7 +594,7 @@ class _DClassCourseCellState extends State<DClassCourseCell> {
 
 
               if(isCurrentCourse) CircleAvatar(
-                radius: 5,
+                radius: 3,
                 backgroundColor: Colors.green.shade400
               ),
 
@@ -439,8 +629,8 @@ class _DClassCourseCellState extends State<DClassCourseCell> {
 
               //course title
               Expanded(
-                  flex: 2,
-                  child: CustomText(widget.classCourse.course.title)
+                flex: 2,
+                child: CustomText(widget.classCourse.course.title)
               ),
 
 
@@ -460,8 +650,8 @@ class _DClassCourseCellState extends State<DClassCourseCell> {
 
               //remark of the score after evaluation
               SizedBox(
-                  width: 130,
-                  child: CustomText(widget.classCourse.remark!)
+                width: 130,
+                child: CustomText(widget.classCourse.remark!)
               ),
 
             ],

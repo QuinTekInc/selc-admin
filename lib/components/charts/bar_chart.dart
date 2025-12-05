@@ -40,6 +40,19 @@ class CustomBarChart extends StatelessWidget {
   final double height;
 
 
+  bool showYaxisLabels;
+  bool showXAxisLabels;
+
+
+  bool showGrid;
+
+  double? rodWidth;
+  BorderRadius? rodBorderRadius;
+
+  double groupSpace;
+  double barSpace;
+
+
   CustomBarChart({
     super.key, 
     this.chartTitle, 
@@ -54,7 +67,14 @@ class CustomBarChart extends StatelessWidget {
     this.axisLabelStyle,
     this.axisNameStyle,
     this.width = 400,
-    this.height = 400
+    this.height = 400,
+    this.showYaxisLabels = true,
+    this.showXAxisLabels = true,
+    this.showGrid = true,
+    this.rodWidth,
+    this.rodBorderRadius,
+    this.groupSpace = 12,
+    this.barSpace = 3,
   });
 
 
@@ -126,6 +146,7 @@ class CustomBarChart extends StatelessWidget {
               BarChartData(
 
                 rotationQuarterTurns: rotation.value,
+                groupsSpace: groupSpace,
 
                 minY: minY,
                 maxY: maxY,
@@ -159,7 +180,7 @@ class CustomBarChart extends StatelessWidget {
                     ) : null,
 
                     sideTitles: SideTitles(
-                      showTitles: true,
+                      showTitles: showYaxisLabels,
                       getTitlesWidget: (double value, TitleMeta meta){
 
                         return SideTitleWidget(
@@ -182,7 +203,7 @@ class CustomBarChart extends StatelessWidget {
                     ) : null,
 
                     sideTitles: SideTitles(
-                      showTitles: true,
+                      showTitles: showXAxisLabels,
                       getTitlesWidget: (double value, TitleMeta meta){                      
 
                         String label = '${value.toInt()}';
@@ -212,6 +233,9 @@ class CustomBarChart extends StatelessWidget {
                 ),
 
 
+                gridData: FlGridData(
+                  show: showGrid,
+                )
                 
               ),
             ),
@@ -228,14 +252,15 @@ class CustomBarChart extends StatelessWidget {
   BarChartGroupData makeGroupedData(BuildContext context, CustomBarGroup group){
 
     return BarChartGroupData(
-      x: group.x, 
+      x: group.x,
+      barsSpace: barSpace,
       barRods: List<BarChartRodData>.generate(
         group.rods.length,
         (int index) => BarChartRodData(
           toY: group.rods[index].y,
-          width: 22,
+          width: rodWidth ?? 22,
           color: group.rods[index].rodColor ?? Colors.purple.shade700,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: rodBorderRadius ?? BorderRadius.circular(12),
           // borderSide: BorderSide(  
           //   color: constants.primaryMaterialColor.shade200,
           //   width: 1.5

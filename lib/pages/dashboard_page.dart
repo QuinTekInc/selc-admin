@@ -13,7 +13,7 @@ import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/dash_pages/admin_dash_details.dart';
 import 'package:selc_admin/pages/dash_pages/best_lecturer_card.dart';
 import 'package:selc_admin/pages/dash_pages/course_ratings_page.dart';
-import 'package:selc_admin/pages/dash_pages/files_page.dart';
+import 'package:selc_admin/pages/files_page.dart';
 import 'package:selc_admin/pages/dash_pages/lecturer_ratings_page.dart';
 import 'package:selc_admin/pages/auth/login_page.dart';
 import 'package:selc_admin/pages/notifications_page.dart';
@@ -79,12 +79,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
   void loadCRatingsRank() async{
     setState(() => isCRatingsLoading = true);
+
     await selcProvider.getCourseRatingsRank(
       filterBody: {
         'semester': Provider.of<SelcProvider>(context, listen: false).currentSemester,
         'year': DateTime.now().year
       }
     );
+
     setState(() => isCRatingsLoading = false);
   }
 

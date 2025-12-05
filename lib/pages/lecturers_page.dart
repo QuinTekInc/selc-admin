@@ -9,10 +9,9 @@ import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/lecturer_info_page.dart';
-import 'package:selc_admin/pages/new_lecturer_info_page.dart';
+import 'package:selc_admin/pages/lecturer_info_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
-
 
 class LecturersPage extends StatefulWidget {
   const LecturersPage({super.key});
@@ -261,10 +260,12 @@ class _LecturerCellState extends State<LecturerCell> {
         ),
             
         child: GestureDetector(
-          onTap: () => Provider.of<PageProvider>(context, listen: false).pushPage(
-            NewLecturerInfoPage(lecturer: widget.lecturer,),//LecturerInfoPage(lecturer: widget.lecturer,),
-            'Lecturer Information'
-          ),
+          onTap: () {
+            Provider.of<PageProvider>(context, listen: false).pushPage(
+              LecturerInfoPage(lecturer: widget.lecturer,),//LecturerInfoPage(lecturer: widget.lecturer,),
+              'Lecturer Information'
+            );
+          },
           child: Container(  
             height: 200,
             width: 200,

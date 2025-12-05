@@ -52,13 +52,15 @@ class HeaderText extends StatelessWidget {
   final TextAlign textAlignment;
   final double fontSize;
   final FontWeight fontWeight;
+  final int? maxLines;
 
   const HeaderText(this.textContent,{
     super.key,
     this.textColor = Colors.green,
     this.textAlignment = TextAlign.left,
     this.fontSize = 18,
-    this.fontWeight = FontWeight.bold
+    this.fontWeight = FontWeight.bold,
+    this.maxLines
   });
 
   factory HeaderText.appBar(String textContent){
@@ -75,6 +77,7 @@ class HeaderText extends StatelessWidget {
     return Text(
       textContent,
       textAlign: textAlignment,
+      maxLines: maxLines,
       style: TextStyle(
         color: textColor,
         fontSize: fontSize,
