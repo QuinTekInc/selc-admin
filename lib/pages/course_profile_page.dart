@@ -2,6 +2,7 @@
 
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,10 @@ import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/charts/line_chart.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/evaluations/eval_page.dart';
-import 'package:selc_admin/pages/lecturer_info_page.dart';
+import 'package:selc_admin/pages/lecturer_management/lecturer_info_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
@@ -119,65 +121,53 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                     child: Column(  
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                    
-                        //show the trend of course performance over the years in a line chart.
-                        if(isLoading)buildChartPlaceholderContainer(
-                          child: CircularProgressIndicator()
-                        )
-                        else if(!isLoading && cummulativeClassCourses.isEmpty) buildChartPlaceholderContainer(
-                          child: Column(  
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CustomText(  
-                                'No Data',
-                                fontWeight: FontWeight.bold,
-                                textAlignment: TextAlign.center,
-                              ), 
 
-                              CustomText(
-                                'Course performance score over the academic years is visualized here.',
-                                textAlignment: TextAlign.center,
-                              )
-                            ],
-                          )
-                        )
-                        else CustomLineChart(
-                          containerBackgroundColor:  PreferencesProvider.getColor(context, 'alt-primary-color'),
+
+
+                        Container(
                           width: double.infinity,
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          maxY: 5,
-                          chartTitle: 'Course Performance Score Trend',
-                          titleStyle: TextStyle(
-                            color: Colors.green.shade400,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                            borderRadius: BorderRadius.circular(12)
                           ),
-                          leftAxisTitle: 'Performance Scores',
-                          bottomAxisitle: 'Academic Years',
-                          axisNameStyle: TextStyle(  
-                            fontSize: 14, 
-                            fontWeight: FontWeight.w600,
-                            color: PreferencesProvider.getColor(context, 'text-color'),
-                            fontFamily: 'Poppins'
-                          ),
-                          axisLabelStyle: TextStyle(  
-                            fontSize: 14, 
-                            color: PreferencesProvider.getColor(context, 'placeholder-text-color'),
-                            fontFamily: 'Poppins'
-                          ),
-                          
-                          spotData: List<CustomLineChartSpotData>.generate(
-                            cummulativeClassCourses.length,
-                            (index) => CustomLineChartSpotData(
-                              label: cummulativeClassCourses[index].year.toString(), 
-                              x: index.toDouble(),
-                              y: cummulativeClassCourses[index].grandMeanScore
-                            )
-                          ),
+
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+
+                              HeaderText('Course Performance Trend'),
+
+                              if(isLoading)buildChartPlaceholderContainer(
+                                  child: CircularProgressIndicator()
+                              )
+                              else if(!isLoading && cummulativeClassCourses.isEmpty) buildChartPlaceholderContainer(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CustomText(
+                                      'No Data',
+                                      fontWeight: FontWeight.bold,
+                                      textAlignment: TextAlign.center,
+                                    ),
+
+                                    CustomText(
+                                      'Course performance score over the academic years is visualized here.',
+                                      textAlignment: TextAlign.center,
+                                    )
+                                  ],
+                                )
+                              )
+                              else buildTrendLineChart(),
+                            ]
+                          )
                         ),
 
+
+                        //show the trend of course performance over the years in a line chart.
 
                         const SizedBox(height: 12),
 
@@ -195,6 +185,39 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
           )
         ],
       ),
+    );
+  }
+
+  CustomLineChart buildTrendLineChart() {
+    return CustomLineChart(
+      containerBackgroundColor:  Colors.transparent,
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.35,
+      showXLabels: false,
+      showYLabels: false,
+      maxY: 5,
+      leftAxisTitle: 'Performance Scores',
+      bottomAxisitle: 'Academic Years',
+      spotData: List<CustomLineChartSpotData>.generate(
+        cummulativeClassCourses.length,
+        (index) => CustomLineChartSpotData(
+          label: cummulativeClassCourses[index].year.toString(),
+          x: index.toDouble(),
+          y: cummulativeClassCourses[index].grandMeanScore
+        )
+      ) + List.generate(
+        150,
+        (index) {
+
+          double gMeanScore = [1, 1.7, 2, 2.1, 2.5, 2, 3.2, 3.6, 4, 4.3, 4.8, 5][Random().nextInt(12)].toDouble();
+
+          return CustomLineChartSpotData(
+            x: (1+index).toDouble(),
+            y: gMeanScore,
+            label: 'Year: ${2026+index}\nMean Score: ${formatDecimal(gMeanScore)}\nIndex: $index'
+          );
+        },
+      )
     );
   }
 
@@ -488,11 +511,13 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
 
 
 
-
-
-  void lecturerInfoPage(Lecturer lecturer) => Provider.of<PageProvider>(context, listen: false).pushPage(  
-    LecturerInfoPage(lecturer: lecturer,),
-    "Lecturer Information"
-  );
-
 }
+
+
+//total number of classes
+//overall average score of course
+//overall remark of courses
+//total number of class this semester
+//average score of course and remarks this semester
+//number of lecturers handling this course
+//number of lecturers currently handling this course

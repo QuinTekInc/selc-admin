@@ -18,9 +18,9 @@ import 'package:selc_admin/pages/evaluations/eval_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
-import '../components/charts/line_chart.dart';
-import '../components/charts/pie_chart.dart';
-import '../providers/selc_provider.dart';
+import '../../components/charts/line_chart.dart';
+import '../../components/charts/pie_chart.dart';
+import '../../providers/selc_provider.dart';
 
 
 

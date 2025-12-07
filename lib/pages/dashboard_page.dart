@@ -1195,3 +1195,10 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
 }
+
+
+
+
+//total number of unique courses being handled in the semester
+//total number of class courses
+//total number of lecturers

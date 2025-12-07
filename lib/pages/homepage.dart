@@ -8,7 +8,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/pages/courses_page.dart';
 import 'package:selc_admin/pages/dashboard_page.dart';
 import 'package:selc_admin/pages/department_management/departments_page.dart';
-import 'package:selc_admin/pages/lecturers_page.dart';
+import 'package:selc_admin/pages/lecturer_management/lecturers_page.dart';
 import 'package:selc_admin/pages/questions_page.dart';
 import 'package:selc_admin/pages/settings_page.dart';
 import 'package:selc_admin/pages/user_management/users_page.dart';
