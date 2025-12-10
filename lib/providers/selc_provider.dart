@@ -21,6 +21,7 @@ class SelcProvider with ChangeNotifier{
   List<Category> categories = [];
   List<Course> courses = [];
   List<LecturerRating> lecturersRatings = [];
+  List<ClassCourse> classCourses = [];
   List<CourseRating> coursesRatings = [];
   List<User> users = [];
 
@@ -41,6 +42,7 @@ class SelcProvider with ChangeNotifier{
         'password': password,
       })
     );
+    
 
 
     if(response.statusCode == 403 || response.statusCode == 401){

@@ -382,6 +382,11 @@ class _EvaluationPageState extends State<EvaluationPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               spacing: 8,
               children: [
+
+                Expanded(
+                  child: DetailContainer(title: 'Credit', detail: widget.classCourse.credits.toString()),
+                ),
+
                 Expanded(
                   child: DetailContainer(title: 'Year', detail: widget.classCourse.year.toString()),
                 ),

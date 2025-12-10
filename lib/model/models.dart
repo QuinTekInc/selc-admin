@@ -301,6 +301,7 @@ class ClassCourse{
   String klass;
   Lecturer lecturer;
   Course course;
+  bool isAcceptingResponse;
   double grandMeanScore;
   double grandPercentageScore;
   double lecturerRating;
@@ -316,6 +317,7 @@ class ClassCourse{
     required this.course,
     required this.credits,
     required this.lecturer,
+    this.isAcceptingResponse = false,
     this.grandMeanScore = 0,
     this.grandPercentageScore = 0,
     this.lecturerRating = 0,
@@ -335,6 +337,7 @@ class ClassCourse{
       klass: jsonMap['class'] ?? 'A',
       course: Course.fromJson(jsonMap['course']),
       lecturer: Lecturer.fromJson(jsonMap['lecturer']),
+      isAcceptingResponse: jsonMap['is_accepting_response'],
       grandMeanScore: jsonMap['grand_mean_score'].toDouble() ?? 0,
       grandPercentageScore: jsonMap['grand_percentage'].toDouble() ?? 0,
       remark: jsonMap['remark'],
