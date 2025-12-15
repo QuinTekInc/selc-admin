@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/pages/ccs_page.dart';
 import 'package:selc_admin/pages/courses_page.dart';
 import 'package:selc_admin/pages/dashboard_page.dart';
 import 'package:selc_admin/pages/department_management/departments_page.dart';
@@ -16,6 +17,7 @@ import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
+import '../model/models.dart';
 import 'files_page.dart';
 
 class Homepage extends StatefulWidget {
@@ -41,7 +43,7 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
 
-    isSuperuser = Provider.of<SelcProvider>(context, listen: false).user.isSuperuser;
+    isSuperuser = Provider.of<SelcProvider>(context, listen: false).user.userRole == UserRole.SUPERUSER;
 
 
     fragments = [
@@ -49,6 +51,7 @@ class _HomepageState extends State<Homepage> {
       DepartmentsPage(),
       LecturersPage(),
       CoursesPage(),
+      ClassCoursesPage(),
       QuestionsPage(),
       if(isSuperuser) FilesPage(),
       if(isSuperuser) UsersPage(),
@@ -62,6 +65,7 @@ class _HomepageState extends State<Homepage> {
       'Departments',
       'Lecturers',
       'Courses',
+      'Classes',
       'Questionnaire',
       if(isSuperuser) 'Files',
       if(isSuperuser) 'Users',
@@ -145,12 +149,13 @@ class _SideBarState extends State<SideBar> {
   void initState() {
 
     navigatorItems = [
-      (CupertinoIcons.list_dash, 'Dashboard'),
+      (CupertinoIcons.speedometer, 'Dashboard'),
       (CupertinoIcons.home, 'Depts.'),
       (CupertinoIcons.person, 'Lecturers'),
       (CupertinoIcons.book, 'Courses'),
+      (Icons.school_outlined, 'Classes'),
       (CupertinoIcons.chat_bubble_2, 'Questions'),
-      if(widget.isSuperSuper) (CupertinoIcons.folder_fill, "Files"),
+      if(widget.isSuperSuper) (CupertinoIcons.folder, "Files"),
       if(widget.isSuperSuper) (CupertinoIcons.person_3, 'Users'),
       (Icons.settings_outlined, 'Settings')
     ];
@@ -282,7 +287,7 @@ class _NavigatorItemState extends State<NavigatorItem> {
                 ),
               ), 
       
-              SizedBox(height: 8,),
+              SizedBox(height: 3,),
       
               CustomText(
                 widget.name,

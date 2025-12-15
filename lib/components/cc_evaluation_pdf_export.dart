@@ -108,7 +108,9 @@ Future<void> generateReportPdf(BuildContext context, {
   final file = File(fullFilePath);
   await file.writeAsBytes(await pdf.save());
 
-  Provider.of<PreferencesProvider>(context, listen:false).addSavedFile(fileName);
+
+  //todo: fix this later
+  //Provider.of<PreferencesProvider>(context, listen:false).addSavedFile(fileName);
 }
 
 //

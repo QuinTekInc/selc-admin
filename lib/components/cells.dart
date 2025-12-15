@@ -38,7 +38,7 @@ class CategoryCell extends StatelessWidget {
         ),
 
 
-        trailing: !(Provider.of<SelcProvider>(context).user.isSuperuser) ? null : PopupMenuButton<String>(
+        trailing: Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER ? null : PopupMenuButton<String>(
           icon: Icon(CupertinoIcons.ellipsis_vertical),
           onSelected: (value){
 
@@ -89,8 +89,6 @@ class CategoryCell extends StatelessWidget {
     );
   }
 }
-
-
 
 
 
@@ -168,7 +166,7 @@ class QuestionCell extends StatelessWidget {
         ),
 
 
-        trailing: !(Provider.of<SelcProvider>(context).user.isSuperuser) ? null : Row(
+        trailing: Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER ? null : Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,

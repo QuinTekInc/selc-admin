@@ -93,25 +93,7 @@ class _CoursesPageState extends State<CoursesPage> {
 
 
               //todo: refresh button.
-              IconButton(
-                
-                onPressed: loadCourseData, 
-                icon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-
-                    Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.green.shade400,),
-
-                    const SizedBox(width: 8,),
-
-                    CustomText(
-                      'Refresh',
-                      fontWeight: FontWeight.w600,
-                      textColor: Colors.green.shade400,
-                    )
-                  ],
-                )
-              )
+              RefreshButton(onPress: loadCourseData)
             ],
           ),
 

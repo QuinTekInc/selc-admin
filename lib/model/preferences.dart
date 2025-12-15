@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:selc_admin/components/utils.dart';
 
+import 'models.dart';
+
 class Preferences {
 
   static const String _PREF_SHARED_KEY = "preferences";
@@ -12,7 +14,7 @@ class Preferences {
   bool darkMode;
   String? defaultDownloadDirectory;
 
-  List<String> savedFiles;
+  List<ReportFile> savedFiles;
 
   Preferences({
     this.fontScale=0, 
@@ -25,11 +27,14 @@ class Preferences {
 
 
   factory Preferences.fromJson(Map<String, dynamic> jsonMap){
+
+
     return Preferences(
       fontScale: jsonMap['font_scale'].toDouble(),
       darkMode: jsonMap['dark_mode'],
       defaultDownloadDirectory: jsonMap['default_download_directory'],
-      savedFiles:  List<String>.from(jsonMap['saved_files'])
+      savedFiles:  List<Map<String, dynamic>>.from(jsonMap['saved_files'])
+                            .map((rJsonMap) => ReportFile.fromJson(rJsonMap)).toList()
     );
   }
 
@@ -39,7 +44,7 @@ class Preferences {
     'font_scale': fontScale,
     'dark_mode': darkMode,
     'default_download_directory': defaultDownloadDirectory,
-    'saved_files': savedFiles
+    'saved_files': savedFiles.map((reportFile) => reportFile.toMap()).toList()
   };
 
 
@@ -59,6 +64,7 @@ class Preferences {
 
     return Preferences.fromJson(jsonMap);
   }
+
 
 
 

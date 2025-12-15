@@ -275,79 +275,81 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
           const SizedBox(height: 8,),
 
 
-          GridView.builder(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 350,
-              mainAxisExtent: 92,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8
-            ),
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: detailFields.length,
-            itemBuilder: (_, index) {
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 350,
+                mainAxisExtent: 92,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8
+              ),
+              //physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: detailFields.length,
+              itemBuilder: (_, index) {
 
-              String title = detailFields[index].$1;
-              dynamic detail = detailFields[index].$2;
-              IconData  icon = detailFields[index].$3;
-
-
-              if(detail.runtimeType == (1.5).runtimeType){
-                detail = formatDecimal(detail);
-              }else if(detail.runtimeType == (1).runtimeType){
-                detail = detail.toString();
-              }
-
-              return Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                height: 90,
-
-                constraints: BoxConstraints(minHeight: 90, maxHeight: 90, maxWidth: 300),
-
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: PreferencesProvider.getColor(context, 'alt-primary-color')
-                ),
+                String title = detailFields[index].$1;
+                dynamic detail = detailFields[index].$2;
+                IconData  icon = detailFields[index].$3;
 
 
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 12,
-                  children: [
+                if(detail.runtimeType == (1.5).runtimeType){
+                  detail = formatDecimal(detail);
+                }else if(detail.runtimeType == (1).runtimeType){
+                  detail = detail.toString();
+                }
 
-                    CircleAvatar(
-                      backgroundColor: PreferencesProvider.getColor(context, 'primary-color'),
-                      radius: 30,
-                      child: Icon(icon, color: Colors.green.shade400, size: 25,)
-                    ),
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  height: 90,
 
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        spacing: 3,
-                        children: [
+                  constraints: BoxConstraints(minHeight: 90, maxHeight: 90, maxWidth: 300),
 
-                          CustomText(
-                            title,
-                            fontWeight: FontWeight.w600,
-                            fontStyle: FontStyle.italic,
-                            fontSize: 13,
-                            maxLines: 1,
-                            textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
-                          ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: PreferencesProvider.getColor(context, 'alt-primary-color')
+                  ),
 
-                          CustomText(detail, maxLines: 2, overflow: TextOverflow.ellipsis,),
-                        ],
+
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 12,
+                    children: [
+
+                      CircleAvatar(
+                        backgroundColor: PreferencesProvider.getColor(context, 'primary-color'),
+                        radius: 30,
+                        child: Icon(icon, color: Colors.green.shade400, size: 25,)
                       ),
-                    ),
-                  ]
-                )
-              );
-            }
+
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 3,
+                          children: [
+
+                            CustomText(
+                              title,
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FontStyle.italic,
+                              fontSize: 13,
+                              maxLines: 1,
+                              textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                            ),
+
+                            CustomText(detail, maxLines: 2, overflow: TextOverflow.ellipsis,),
+                          ],
+                        ),
+                      ),
+                    ]
+                  )
+                );
+              }
+            ),
           )
 
         ],
@@ -1170,6 +1172,34 @@ class ClassCourseInfoModalSheet extends StatelessWidget {
       );
 
     }
+
+
+
+    final richText = RichText(
+      text: TextSpan(
+        text: 'Info: ',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w600,
+          fontStyle: FontStyle.italic,
+          color: classCourse.isAcceptingResponse ? Colors.green : Colors.red.shade400
+        ),
+
+
+        children: [
+
+          TextSpan(
+            text: classCourse.isAcceptingResponse ? 'Evaluation for this course is ongoing.' : 'No longer accepting evaluations for this course',
+            style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontStyle: FontStyle.normal,
+              color: PreferencesProvider.getColor(context, 'text-color')
+            )
+          )
+
+        ]
+      ),
+    );
     
     
     return Container( 
@@ -1203,7 +1233,10 @@ class ClassCourseInfoModalSheet extends StatelessWidget {
             ],
           ),
 
-          const SizedBox()
+          const SizedBox(),
+
+          richText,
+
         ] + colChildren,
       )
     );

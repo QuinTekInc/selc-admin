@@ -427,12 +427,13 @@ class ExcelExporter{
 
 
     
-    //if the file is saved succesfully, 
-    try{
-      Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(fullFilePath);
-    }on Exception catch(_){
-      //do nothing here
-    }
+    //if the file is saved succesfully,
+    //todo fix this later
+    // try{
+    //   Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(fullFilePath);
+    // }on Exception catch(_){
+    //   //do nothing here
+    // }
     
     //it must be registered in the files section
 

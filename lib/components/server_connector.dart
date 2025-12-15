@@ -6,17 +6,22 @@ import 'dart:async';
 import 'package:selc_admin/components/preferences_util.dart';
 
 
-const String base_url = 'http://127.0.0.1:8000';
+const String baseUrl = 'http://127.0.0.1:8000';
 //const String base_url = 'https://selc-backend.onrender.com';
 
 
-String concat(String other){
-  return '$base_url/admin-api/$other';
+String concat(String other, {useCore = false}){
+  
+  if(useCore) return '$baseUrl/core/$other';
+  
+  return '$baseUrl/admin-api/$other';
 }
 
-Future<http.Response> getRequest({required String endPoint, dynamic body}) async {
 
-  final url = Uri.parse(concat(endPoint));
+
+Future<http.Response> getRequest({required String endPoint, dynamic body, useCore=false}) async {
+
+  final url = Uri.parse(concat(endPoint, useCore: useCore));
 
   Map<String, String> headers = {'Content-Type': 'application/json'};
 
@@ -31,8 +36,10 @@ Future<http.Response> getRequest({required String endPoint, dynamic body}) async
   return response;
 }
 
-Future<http.Response> postRequest({required String endpoint, required Object body}) async {
-  final url = Uri.parse(concat(endpoint));
+
+Future<http.Response> postRequest({required String endpoint, required Object body, useCore=false}) async {
+
+  final url = Uri.parse(concat(endpoint, useCore: useCore));
 
   //adding authorization to it. 
   Map<String, String> headers = {

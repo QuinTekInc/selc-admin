@@ -99,10 +99,10 @@ class User{
   String? firstName;
   String? lastName;
   String? email;
-  bool isSuperuser; //the this is set to false, then the user role in this console is admin
+  UserRole userRole;
   bool isActive;
 
-  User({this.username, this.firstName, this.lastName, this.email, this.isSuperuser=false, this.isActive=true});
+  User({this.username, this.firstName, this.lastName, this.email, this.isActive=true, required this.userRole});
 
   factory User.fromJson(Map<String, dynamic> jsonMap){
     return User(
@@ -110,7 +110,7 @@ class User{
         firstName: jsonMap['first_name'],
         lastName: jsonMap['last_name'] ?? 'N/A',
         email: jsonMap['email'] ?? 'N/A',
-        isSuperuser: jsonMap['is_superuser'] ?? false,
+        userRole: UserRole.fromString(jsonMap['role']),
         isActive: jsonMap['is_active'] ?? true
     );
   }
@@ -129,6 +129,31 @@ class User{
 
     return  this.username == otherUserObject.username;
   }
+
+}
+
+
+
+enum UserRole{
+
+  SUPERUSER("superuser"),
+  ADMIN("admin"),
+  LECTURER("lecturer"),
+  STUDENT("student");
+
+  final String roleString;
+
+  const UserRole(this.roleString);
+
+  static UserRole fromString(String roleStr){
+    for(UserRole role in UserRole.values){
+      if(role.roleString == roleStr) return role;
+    }
+
+    throw Exception('Role not Found');
+  }
+
+  @override String toString() => roleString;
 
 }
 
@@ -456,6 +481,8 @@ class CategoryRemark{
       questions = [];
     }
 
+
+
     return CategoryRemark(
       categoryName: jsonMap['category'],
       percentageScore: jsonMap['percentage_score'].toDouble() ?? 0,
@@ -682,22 +709,33 @@ class ReportFile{
   String fileName;
   String fileType;
   String url;
+  String? localFilePath;
 
 
-
-  ReportFile({required this.fileName,  required this.fileType, required this.url});
+  ReportFile({required this.fileName,  required this.fileType, required this.url, this.localFilePath});
 
 
   factory ReportFile.fromJson(Map<String, dynamic> jsonMap){
-
     return ReportFile(
-        fileName: jsonMap['file_name'],
-        fileType: 'file_type',
-        url: jsonMap['url']
+      fileName: jsonMap['file_name'],
+      fileType: jsonMap['file_type'],
+      url: jsonMap['file_url'],
+      localFilePath: jsonMap['local_file_path']
     );
   }
 
 
 
+  String fullLocalFilePath() => '$localFilePath/$fileName.$fileType';
+
+
   String getFileName() => '$fileName.$fileType';
+
+
+  Map<String, dynamic> toMap() => {
+    'file_name': fileName,
+    'file_type': fileType,
+    'file_url': url,
+    'local_file_path': localFilePath
+  };
 }

@@ -196,6 +196,35 @@ class SelcProvider with ChangeNotifier{
   }
 
 
+  Future<void> getClassCourses() async {
+
+    final response = await connector.getRequest(endPoint: 'get-class-courses/');
+
+    if(response.statusCode != 200){
+      throw Exception('An Unexpected error occurred. Please try again');
+    }
+
+    List<dynamic> responseBody = jsonDecode(response.body);
+
+    classCourses = responseBody.map((jsonMap) => ClassCourse.fromJson(jsonMap)).toList();
+
+    notifyListeners();
+
+  }
+
+
+  Future<void> updateClassCourse(int classCourseId, bool isAcceptingResponse) async {
+    final response = await connector.postRequest(
+      endpoint: 'update-class-course/',
+      body: jsonEncode({'cc_id': classCourseId, 'is_accepting_response': isAcceptingResponse})
+    );
+
+    if(response.statusCode !=200){
+      throw Error();
+    }
+  }
+
+
 
   Future<List<DashboardSuggestionSentiment>> getDashSuggestionSentiments() async {
 

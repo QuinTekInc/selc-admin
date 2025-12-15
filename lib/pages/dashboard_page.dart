@@ -295,7 +295,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
                           buildSummaryCard(
                             icon: CupertinoIcons.book,
-                            name: 'Number of Courses',
+                            name: 'Number of Classes',
                             detail: Provider.of<SelcProvider>(context).generalStat.coursesCount.toString(),
                             backgroundColor: Colors.yellow.shade700
                           ),
@@ -353,6 +353,9 @@ class _DashboardPageState extends State<DashboardPage> {
                           spacing: 12,
 
                           children: [
+
+
+
 
                             // CustomBarChart(
                             //   width: double.infinity,
@@ -597,7 +600,10 @@ class _DashboardPageState extends State<DashboardPage> {
             
             itemBuilder: (_, index) {
 
-              String fileName = Provider.of<PreferencesProvider>(context, listen:false).preferences.savedFiles[index];
+              ReportFile reportFile = Provider.of<PreferencesProvider>(context, listen: false).preferences.savedFiles[index];
+
+              String fileName = reportFile.fileName;
+              String fileType = reportFile.fileType;
 
               return ListTile(
                 leading: Container(
@@ -630,6 +636,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   maxLines: 1,
                   softwrap: false,
                 ),
+
+                trailing: reportFile.localFilePath != null ? Icon(Icons.download) : Icon(Icons.open_in_new)
                         
               );
             }, 

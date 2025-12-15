@@ -3,9 +3,16 @@ import 'dart:io';
 // ignore_for_file: constant_identifier_names
 
 
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 
+
+
+const Map<String, String> fileTypeDescriptor = {
+  'pdf': 'Portable Document Format',
+  'xlsx': 'Excel Spreadsheet'
+};
 
 
 String formatDate(DateTime dateTime){
@@ -81,6 +88,8 @@ String getAppDocumentsDirPath(){
   const String appFolderName = "SELC_ADMIN";
 
   Directory baseDir;
+
+  if(kIsWeb) return '';
 
   if (Platform.isWindows) {
 

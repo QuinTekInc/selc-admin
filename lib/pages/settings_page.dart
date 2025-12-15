@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -125,9 +126,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     fontWeight: FontWeight.w600,
                   ),
 
-                  if(!Provider.of<SelcProvider>(context).user.isSuperuser) const SizedBox(height: 8),
+                  if(Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER) const SizedBox(height: 8),
 
-                  if(!Provider.of<SelcProvider>(context).user.isSuperuser) CustomText(  
+                  if(Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER) CustomText(
                     'NB: This field is editable by super users only'
                   ),
 
@@ -136,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   //todo: the dropdown button for selecting the current academic semester
                   //this field only editable for only superusers.
                   IgnorePointer(
-                    ignoring: !Provider.of<SelcProvider>(context).user.isSuperuser, 
+                    ignoring: Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER,
                     child: CustomDropdownButton<int>(
                       controller: semesterController,
                       hint: 'Select academic semester',
@@ -168,7 +169,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
 
                     trailing: IgnorePointer(  
-                      ignoring: !Provider.of<SelcProvider>(context).user.isSuperuser,
+                      ignoring: Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER,
                       child: Switch(  
                         value: Provider.of<SelcProvider>(context).enableEvaluations,
                         activeTrackColor: Colors.green.shade400,

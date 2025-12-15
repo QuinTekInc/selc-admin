@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/text.dart';
@@ -307,4 +308,26 @@ class _DashSeeMoreButtonState extends State<DashSeeMoreButton> {
     );
   }
 }
+
+
+
+
+Widget RefreshButton({required VoidCallback onPress}) => IconButton(
+  onPressed: onPress,
+  icon: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+
+      Icon(CupertinoIcons.arrow_2_circlepath, color: Colors.green.shade400,),
+
+      const SizedBox(width: 8,),
+
+      CustomText(
+        'Refresh',
+        fontWeight: FontWeight.w600,
+        textColor: Colors.green.shade400,
+      )
+    ],
+  )
+);
 

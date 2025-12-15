@@ -27,7 +27,7 @@ void main(){
 
 
         ChangeNotifierProvider(
-          create: (_) {
+          create: (_){
             PreferencesProvider prefProvider = PreferencesProvider();
             prefProvider.loadPreferences();
             return prefProvider;

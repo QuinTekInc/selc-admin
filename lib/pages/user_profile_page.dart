@@ -99,7 +99,7 @@ class UserProfilePage extends StatelessWidget {
 
                           DetailContainer(
                             title: 'Role',
-                            detail: Provider.of<SelcProvider>(context).user.isSuperuser ? "Superuser" : "Admin"
+                            detail: Provider.of<SelcProvider>(context).user.userRole.roleString
                           ),
 
                         ],

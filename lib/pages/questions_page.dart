@@ -48,7 +48,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
     selcProvider = Provider.of<SelcProvider>(context, listen: false);
     loadData();
 
-    isSuperuser = selcProvider!.user.isSuperuser;
+    isSuperuser = selcProvider!.user.userRole == UserRole.SUPERUSER;
   }
 
 

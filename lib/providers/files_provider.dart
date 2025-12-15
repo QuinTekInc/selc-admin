@@ -8,6 +8,12 @@ import 'package:selc_admin/components/server_connector.dart' as connector;
 class FilesProvider extends ChangeNotifier{
 
 
+  //files that saved to the local computer
+  Future<List<ReportFile>> getFilesLocalFiles() async {
+
+    return [];
+  }
+
   Future<List<ReportFile>> getReportFiles() async {
 
     final response = await connector.getRequest(endPoint: 'core/all-files/');

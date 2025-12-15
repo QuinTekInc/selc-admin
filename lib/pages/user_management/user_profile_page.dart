@@ -32,7 +32,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   @override
   void initState() {
     super.initState();
-    roleController.value = widget.user.isSuperuser ? "Superuser" : "Admin";
+    roleController.value = widget.user.userRole.roleString;
     isUserActive = widget.user.isActive;
   }
 
@@ -219,7 +219,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
           const SizedBox(height: 8,),
           
-          DetailContainer(title: 'Role', detail: widget.user.isSuperuser ? 'Superuser' : 'Admin'),
+          DetailContainer(title: 'Role', detail: widget.user.userRole.roleString),
 
           const SizedBox(height: 12,),
 
@@ -339,7 +339,7 @@ class ChangeUserRoleSheet extends StatefulWidget {
 class _ChangeUserRoleSheetState extends State<ChangeUserRoleSheet> {
 
 
-  final roleController = DropdownController<String>();
+  final roleController = DropdownController<UserRole>();
   String oldRoleValue = '';
 
   bool disableButton = true;
@@ -348,9 +348,9 @@ class _ChangeUserRoleSheetState extends State<ChangeUserRoleSheet> {
   void initState() {
     super.initState();
 
-    oldRoleValue = widget.user.isSuperuser ? "Superuser" : 'Admin';
+    oldRoleValue = widget.user.userRole.roleString;
     
-    roleController.value = widget.user.isSuperuser ? "Superuser" : 'Admin';
+    roleController.value = widget.user.userRole;
   }
 
   @override
@@ -392,9 +392,9 @@ class _ChangeUserRoleSheetState extends State<ChangeUserRoleSheet> {
 
 
 
-          CustomDropdownButton(
+          CustomDropdownButton<UserRole>(
             controller: roleController, 
-            items: ['Superuser', 'Admin'], 
+            items: [UserRole.SUPERUSER, UserRole.ADMIN],
             onChanged: (newValue) => setState(() => disableButton = newValue == oldRoleValue)
           ),
 

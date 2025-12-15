@@ -160,12 +160,13 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pop(context); //closes the loading alert dialog
       showNoConnectionAlertDialog(context);
 
-    }on Exception catch(exception, stackTrace){
+    }on Exception catch(exception){
 
       Navigator.pop(context); //closes the loading alert dialog
 
-
-      debugPrint(stackTrace.toString());
+      /*
+        potential errors include <Cors header errors when running from webbrowser at the wrong port.>
+       */
 
       showCustomAlertDialog(
         context, 
@@ -176,7 +177,6 @@ class _LoginPageState extends State<LoginPage> {
     }on Error catch(_, stackTrace){
 
       Navigator.pop(context);
-      Navigator.of(context).pop();
 
       debugPrint('${_.toString()}\n${stackTrace.toString()}');
 

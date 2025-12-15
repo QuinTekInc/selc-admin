@@ -656,7 +656,7 @@ class AdminReportExcelExport{
     if(!file.existsSync()){
 
       try{
-        Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(fullFilePath);
+        //Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(fullFilePath);
       }on Exception catch(_){
         //do nothing here
       }

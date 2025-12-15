@@ -97,7 +97,7 @@ class _UsersPageState extends State<UsersPage> {
 
 
 
-             if(Provider.of<SelcProvider>(context).user.isSuperuser) CustomButton.withIcon(
+             if(Provider.of<SelcProvider>(context).user.userRole == UserRole.SUPERUSER) CustomButton.withIcon(
                 'Add User', 
                 icon: Icons.add, 
                 forceIconLeading: true, 
@@ -316,7 +316,7 @@ class _UserManagementRowState extends State<UserManagementRow> {
                   children: [
 
                     CircleAvatar(
-                      backgroundColor: roleColor(widget.user.isSuperuser),
+                      backgroundColor: roleColor(widget.user.userRole),
                       radius: 5,
                     ),
 
@@ -360,8 +360,8 @@ class _UserManagementRowState extends State<UserManagementRow> {
               //todo: role of the user in the system.
               Expanded(
                 child: CustomText(
-                  widget.user.isSuperuser ? 'Super User' : 'Admin/Staff',
-                  textColor: roleColor(widget.user.isSuperuser),
+                  widget.user.userRole.roleString,
+                  textColor: roleColor(widget.user.userRole),
                   fontWeight: FontWeight.w600,
                   textAlignment: TextAlign.center,
                 ),
@@ -376,8 +376,23 @@ class _UserManagementRowState extends State<UserManagementRow> {
 
 
 
-  Color roleColor(bool isSuperUser){
-    return isSuperUser ? Colors.green.shade400 : Colors.blue.shade400;
+  Color roleColor(UserRole userRole){
+    switch(userRole){
+      case UserRole.SUPERUSER:
+        return Colors.green.shade400;
+
+      case UserRole.ADMIN:
+        return Colors.blue.shade400;
+
+
+      case UserRole.LECTURER:
+        return Colors.cyan;
+
+
+      case UserRole.STUDENT:
+      default:
+        return Colors.amber.shade400;
+    }
   }
 }
 
