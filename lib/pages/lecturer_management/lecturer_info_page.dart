@@ -933,6 +933,12 @@ class _LCurrentCourseCellState extends State<LCurrentCourseCell> {
 
 
 
+//average rating at the current semester
+//students suggestion sentiments of the lecturer of overall and current semester (In a graph form){pie chart}
+
+
+
+
 
 //======================================================================
 //CUMMULATIVE COURSE CELL FOR LECTURER
@@ -1242,5 +1248,11 @@ class ClassCourseInfoModalSheet extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
 
 

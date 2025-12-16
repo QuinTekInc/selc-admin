@@ -4,7 +4,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
@@ -14,9 +13,7 @@ import 'package:selc_admin/components/charts/line_chart.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
-import 'package:selc_admin/pages/evaluations/eval_page.dart';
 import 'package:selc_admin/pages/lecturer_management/lecturer_info_page.dart';
-import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
@@ -126,7 +123,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
 
                         Container(
                           width: double.infinity,
-                          height: MediaQuery.of(context).size.height * 0.3,
+                          height: MediaQuery.of(context).size.height * 0.5,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: PreferencesProvider.getColor(context, 'alt-primary-color'),
@@ -140,28 +137,18 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
 
                               HeaderText('Course Performance Trend'),
 
-                              if(isLoading)buildChartPlaceholderContainer(
+                              if(isLoading) Expanded(
                                   child: CircularProgressIndicator()
                               )
-                              else if(!isLoading && cummulativeClassCourses.isEmpty) buildChartPlaceholderContainer(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    CustomText(
-                                      'No Data',
-                                      fontWeight: FontWeight.bold,
-                                      textAlignment: TextAlign.center,
-                                    ),
-
-                                    CustomText(
-                                      'Course performance score over the academic years is visualized here.',
-                                      textAlignment: TextAlign.center,
-                                    )
-                                  ],
+                              else if(!isLoading && cummulativeClassCourses.isEmpty) Expanded(
+                                child: CollectionPlaceholder(
+                                  title: 'No Data!',
+                                  detail: 'Course Performance trend over the academic years appear here.'
                                 )
                               )
-                              else buildTrendLineChart(),
+                              else Expanded(
+                                child: buildTrendLineChart()
+                              ),
                             ]
                           )
                         ),
@@ -221,20 +208,6 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
     );
   }
 
-
-  Container buildChartPlaceholderContainer({required Widget child}) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.5,
-      width: double.infinity,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-        borderRadius: BorderRadius.circular(12)
-      ),
-
-      child: child,
-    );
-  }
 
 
 
@@ -427,7 +400,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                 SizedBox(  
                   width: 150,
                   child: CustomText(  
-                    'Perf. Score',
+                    'Avg Score',
                     textAlignment: TextAlign.center
                   ),
                 )
@@ -515,9 +488,12 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
 
 
 //total number of classes
+//total distinct number of lecturers who have handled this course
 //overall average score of course
 //overall remark of courses
-//total number of class this semester
+
+//total number of classes this semester
+//overall response rate for this semester
+//total number of students taking the course this semester[evaluated]
 //average score of course and remarks this semester
-//number of lecturers handling this course
 //number of lecturers currently handling this course

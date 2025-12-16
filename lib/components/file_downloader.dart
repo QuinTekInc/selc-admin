@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'dart:html' as html;
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/utils.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
+import 'server_connector.dart' as connector;
 
 
 class FileDownloader {
@@ -34,6 +36,23 @@ class FileDownloader {
         }
       },
     );
+
+
+  }
+
+
+
+  static Future<void> webDownload({required ReportFile reportFile}) async {
+    final response = await connector.getRequest(endPoint: reportFile.url);
+
+    final blob = html.Blob([response.bodyBytes]);
+    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+
+    final anchor = html.AnchorElement(href: blobUrl)
+                  ..setAttribute('download', '${reportFile.fileName}${reportFile.fileType}')
+                  ..click();
+
+    html.Url.revokeObjectUrl(blobUrl);
 
 
   }

@@ -1,6 +1,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
@@ -101,7 +102,7 @@ class _FilesPageState extends State<FilesPage> {
 
                         Expanded(  
                           flex: 2,
-                          child: CustomText('Directory'),
+                          child: CustomText('Directory (Or Url)'),
                         ),
 
 
@@ -294,9 +295,6 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
   void handleFileDownload() async {
 
-
-    setState(() => isDownloading = true);
-
     // final progs = [5, 7, 3, 1, 2, 4, 8, 6, 9];
     //
     // for(var prog in progs){
@@ -315,6 +313,15 @@ class _ReportFileCellState extends State<ReportFileCell> {
     //   });
     // }
 
+
+    //first check if we're running on the browser
+    if(kIsWeb){
+      FileDownloader.webDownload(reportFile: widget.reportFile);
+      return;
+    }
+
+
+    setState(() => isDownloading = true);
 
     try{
 
@@ -343,7 +350,6 @@ class _ReportFileCellState extends State<ReportFileCell> {
         contentText: 'There wan error in downloading ${widget.reportFile.fileName}. Please try again'
       );
     }
-
 
 
     setState(() => isDownloading = false);

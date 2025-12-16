@@ -662,3 +662,33 @@ class _DClassCourseCellState extends State<DClassCourseCell> {
   }
 }
 
+
+
+
+//number of lecturers in the department
+//number of students in department
+//number of classes being handled in the semester
+
+
+
+/*
+FOR THE GENERATE REPORT SECTION,
+I will create a simple wizard to let the user select the appropriate parameters
+for the report generation [for both administrator and departmental]
+
+when "admin" report_type is selected, the user will have the chance to  choose the
+desired semester and academic year, to which he want's the report generated.
+
+
+when "department" report_type is selected, the user has options to choose the semester
+and academic year and particular department to which the report will be generated for.
+
+in generating a report for a department at the department_profile screen, the department will only be highlighted,
+and the user will only have to choose the semester and academic year
+
+
+Also actual fully function report generator wizard will be accessible at the "Classes" tab of the system.
+ */
+
+
+//from the school's database, courses are grouped in categories [core, optional]

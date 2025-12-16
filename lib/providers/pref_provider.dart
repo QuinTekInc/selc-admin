@@ -154,16 +154,16 @@ class PreferencesProvider extends ChangeNotifier{
 
   Future<ReportFile?> generateReportFile(Map<String, dynamic> reportParams) async{
 
-    final response = await connector.postRequest(endpoint: 'generate-report/', body: jsonEncode(reportParams));
+    final response = await connector.postRequest(
+        endpoint: 'generate-report/', useCore: true, body: jsonEncode(reportParams));
 
     if(response.statusCode != 200){
       throw Error();
     }
 
+    dynamic responseBody = jsonDecode(response.body);
 
-    //initiate the file download
-
-    return null;
+    return ReportFile.fromJson(responseBody as Map<String, dynamic>);
 
   }
 

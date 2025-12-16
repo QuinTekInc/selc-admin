@@ -2,9 +2,11 @@
 
 
 import 'package:animations/animations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/cc_excel_export.dart';
+import 'package:selc_admin/components/file_downloader.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/utils.dart';
@@ -14,7 +16,6 @@ import 'package:selc_admin/pages/evaluations/suggestions_table.dart';
 import 'package:selc_admin/pages/evaluations/visualization_section.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
-
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import '../../components/report_view.dart';
@@ -661,16 +662,42 @@ class _EvaluationPageState extends State<EvaluationPage> {
   //TODO: implement exporting to various formats.
   void handleExcelExport() async {
 
-    ExcelExporter excelExporter = ExcelExporter(
-      classCourse: widget.classCourse,
-      questionnaireData: evalSummary,
-      categoryData: categoryRemarks,
-      ratingSummary: evalLecturerRatingSummaries,
-      sentimentSummary: suggestionSummaryReport.sentimentSummaries
-    );
+
+    Map<String, dynamic> reportParams = {
+      'report_type': 'class_course',
+      'id': widget.classCourse.classCourseId,
+      'file_type': '.xlsx'
+    };
+
+    //generate the excel report file from the backend
+    ReportFile? reportFile = await Provider.of<PreferencesProvider>(context, listen: false).generateReportFile(reportParams);
+
+    if(reportFile == null) return;
 
 
-    excelExporter.save(context);
+    //initiate file download directly if the system is being ran as a web app.
+    if(kIsWeb){
+      await FileDownloader.webDownload(reportFile: reportFile);
+      return;
+    }
+
+
+    //
+
+
+    debugPrint(reportFile.fileName);
+
+    //after generating the report file, hand it to the download scheduler
+
+    // ExcelExporter excelExporter = ExcelExporter(
+    //   classCourse: widget.classCourse,
+    //   questionnaireData: evalSummary,
+    //   categoryData: categoryRemarks,
+    //   ratingSummary: evalLecturerRatingSummaries,
+    //   sentimentSummary: suggestionSummaryReport.sentimentSummaries
+    // );
+    //
+    // excelExporter.save(context);
 
   }
 

@@ -126,10 +126,11 @@ class _SettingsPageState extends State<SettingsPage> {
                     fontWeight: FontWeight.w600,
                   ),
 
+
                   if(Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER) const SizedBox(height: 8),
 
                   if(Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER) CustomText(
-                    'NB: This field is editable by super users only'
+                    'NB: These fields are editable by superusers only'
                   ),
 
                   const SizedBox(height: 8,),
@@ -145,6 +146,13 @@ class _SettingsPageState extends State<SettingsPage> {
                       onChanged: (newValue) => handleUpdateSetting()//todo: implement selection of academic semester here.
                     ),
                   ),
+
+
+                  const SizedBox(height: 8),
+
+                  //todo: administrator should be able to set start and end date for every semester.
+                  buildStartEndDate(),
+
 
 
 
@@ -402,6 +410,40 @@ class _SettingsPageState extends State<SettingsPage> {
       ],
     );
   }
+
+
+
+  //TODO: fix this later.
+  Widget buildStartEndDate(){
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 8,
+      children: [
+
+
+        CustomText('Start Date: '),
+
+
+        TextButton(
+          onPressed: (){}, //show time start date
+          child: CustomText(DateTime.now().toString(), textColor: Colors.green.shade400, fontWeight: FontWeight.w600,),
+        ),
+
+
+
+        CustomText('End Date: '),
+
+        TextButton(
+          onPressed: (){}, //show time start date
+          child: CustomText(DateTime.now().toString(), textColor: Colors.green.shade400, fontWeight: FontWeight.w600,),
+        ),
+
+      ]
+    );
+  }
+
 
 
 
