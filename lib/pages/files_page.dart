@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
-import 'package:selc_admin/components/file_downloader.dart';
+import 'package:selc_admin/components/donwloader_util/file_downloader.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
@@ -314,18 +314,16 @@ class _ReportFileCellState extends State<ReportFileCell> {
     // }
 
 
-    //first check if we're running on the browser
-    if(kIsWeb){
-      FileDownloader.webDownload(reportFile: widget.reportFile);
-      return;
-    }
-
 
     setState(() => isDownloading = true);
 
     try{
 
-      await FileDownloader.downloadFile(
+      FileDownloader downloader = getDownloader();
+
+
+
+      await downloader.download(
         context: context,
         reportFile: widget.reportFile,
         onProgress: (progress) => setState(() => progressValue = progress)
@@ -337,8 +335,18 @@ class _ReportFileCellState extends State<ReportFileCell> {
         Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(widget.reportFile);
       });
 
-    }on SocketException{
+    }on SocketException {
+
       showNoConnectionAlertDialog(context);
+
+    }on Error catch(err,trace){
+
+      showCustomAlertDialog(
+        context,
+        title: 'Download error',
+        contentText: err.toString()
+      );
+
     }on Exception catch(exception, trace){
 
       debugPrint(exception.toString());

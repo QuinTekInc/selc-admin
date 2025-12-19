@@ -4,6 +4,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
@@ -34,9 +35,12 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
 
   bool isLoading = false;
 
+  Map<String, dynamic> courseInfoMap = {};
+
+  List<dynamic> wCourseInfoList = [];
+
   List<ClassCourse> cummulativeClassCourses = [];
   List<ClassCourse> currentClassCourses = [];
-
 
   @override
   void initState() {
@@ -53,18 +57,40 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
     try{
 
       //first get all the data and store it in the cummulativeClassCourses
-      cummulativeClassCourses = await Provider.of<SelcProvider>(context, listen: false).getCourseInformation(widget.course.courseCode);
+      courseInfoMap = await Provider.of<SelcProvider>(context, listen: false).getCourseInformation(widget.course.courseCode);
 
-      currentClassCourses = cummulativeClassCourses.where(
-        (classCourse) => classCourse.year == DateTime.now().year
-            && classCourse.semester == Provider.of<SelcProvider>(context, listen: false).currentSemester)
-          .toList();
+      initWCourseInfoList();
+
+      cummulativeClassCourses = List<Map<String, dynamic>>.from(courseInfoMap['cummulative_class_courses'])
+                                    .map((jsonMap) => ClassCourse.fromJson(jsonMap)).toList();
+
+      currentClassCourses =  List<Map<String, dynamic>>.from(courseInfoMap['current_class_courses'])
+          .map((jsonMap) => ClassCourse.fromJson(jsonMap)).toList();
 
     }on SocketException catch(_){
       showNoConnectionAlertDialog(context);
     }
 
     setState(() => isLoading = false);
+  }
+
+
+  void initWCourseInfoList(){
+    wCourseInfoList = [
+      ('Total Classes', courseInfoMap['total_classes'].toString(), Icons.school),
+      ('Overall Mean Score', formatDecimal(courseInfoMap['overall_mean_score']), CupertinoIcons.check_mark),
+      ('Overall Percentage Score', formatDecimal(courseInfoMap['overall_percentage_score']), CupertinoIcons.percent),
+      ('Overall Course Remark', courseInfoMap['overall_remark'], Icons.download),
+
+      ('Number of Lecturers', courseInfoMap['c_number_of_lecturers'].toString(), CupertinoIcons.person_alt_circle),
+      ('Mean Score [This Semester]', formatDecimal(courseInfoMap['c_mean_score']), CupertinoIcons.check_mark_circled),
+      ('Percentage Score [This Semester]', formatDecimal(courseInfoMap['c_percentage_score']), Icons.download),
+      ('Remark', courseInfoMap['remark'], Icons.chat_bubble_outline),
+
+      ('Registered Students [This Semester]', courseInfoMap['registered_students'].toString(), Icons.person_outlined),
+      ('Evaluated Students', courseInfoMap['evaluated_students'].toString(), CupertinoIcons.person_crop_circle_badge_checkmark),
+      ('Response Rate', formatDecimal(courseInfoMap['response_rate']), Icons.percent_outlined),
+    ];
   }
 
   @override
@@ -86,92 +112,91 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
           const SizedBox(height: 12,),
 
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 12,
 
-              children: [
+                children: [
 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 12,
+                    children: [
 
-                Column(  
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                      buildCourseNameSection(),
 
-                    buildCourseDetailSection(),
+                      Expanded(
+                        flex: 2,
+                        child: buildCourseInfoGrid()
+                      ),
 
-                    const SizedBox(height: 12,),
+                      Expanded(
+                        flex: 1,
+                          child: buildChartSection()
+                      ),
 
-                    buildCurrentInfoSection(context)
-
-                  ],
-                ),
-
-
-                const SizedBox(width: 12,),
-
-                //todo: where the table will come.
-
-                Expanded(  
-                  child: SingleChildScrollView(
-
-                    child: Column(  
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-
-
-
-                        Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-                            borderRadius: BorderRadius.circular(12)
-                          ),
-
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-
-                              HeaderText('Course Performance Trend'),
-
-                              if(isLoading) Expanded(
-                                  child: CircularProgressIndicator()
-                              )
-                              else if(!isLoading && cummulativeClassCourses.isEmpty) Expanded(
-                                child: CollectionPlaceholder(
-                                  title: 'No Data!',
-                                  detail: 'Course Performance trend over the academic years appear here.'
-                                )
-                              )
-                              else Expanded(
-                                child: buildTrendLineChart()
-                              ),
-                            ]
-                          )
-                        ),
-
-
-                        //show the trend of course performance over the years in a line chart.
-
-                        const SizedBox(height: 12),
-
-
-                        //cummulative course information
-                        buildCummulativeCourseInfoTable()
-                    
-                      ],
-                    ),
+                    ],
                   ),
-                )
 
-              ],
+
+                  //todo: where the table will come.
+                  //cummulative course information
+                  buildCummulativeCourseInfoTable()
+
+                ],
+              ),
             ),
           )
         ],
       ),
+    );
+  }
+
+
+
+
+
+
+  Widget buildChartSection(){
+    return Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.45,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+          borderRadius: BorderRadius.circular(12)
+      ),
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          HeaderText('Course Performance Trend'),
+
+          if(isLoading)  Expanded(
+            child: Center(
+              child: SizedBox(
+                height: 70,
+                width: 70,
+                child: CircularProgressIndicator()
+              )
+            )
+          )
+          else if(!isLoading && cummulativeClassCourses.isEmpty) Expanded(
+            child: CollectionPlaceholder(
+              title: 'No Data!',
+              detail: 'Course Performance trend over the academic years appear here.'
+            )
+          )
+          else Expanded(
+            child: buildTrendLineChart()
+          ),
+        ]
+      )
     );
   }
 
@@ -238,8 +263,14 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
             const SizedBox(height: 8,),
 
             //todo: show circle progress bar when loading
-            if(isLoading) Expanded(  
-              child: Center(child: CircularProgressIndicator(),),
+            if(isLoading)  Expanded(
+              child: Center(
+                child: SizedBox(
+                  height: 70,
+                  width: 70,
+                  child: CircularProgressIndicator()
+                )
+              )
             )
             //todo: show placeholder message when finished loading and the data is empty
             else if(!isLoading && currentClassCourses.isEmpty) Expanded(  
@@ -268,9 +299,6 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                 itemBuilder: (_, index) => LCurrentCourseCell(classCourse: currentClassCourses[index], useLecturerName: true)
               ),
             )
-
-
-
           ],
         ),
       ),
@@ -280,9 +308,10 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
 
 
 
-  Widget buildCourseDetailSection() {
+  Widget buildCourseNameSection() {
     return Container(  
       width: MediaQuery.of(context).size.width * 0.2,
+      height: MediaQuery.of(context).size.height * 0.45,
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
 
       decoration: BoxDecoration(
@@ -291,7 +320,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
       ),
     
       child: Column(  
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         spacing: 8,
@@ -309,20 +338,118 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
     
           DetailContainer(title: 'Course Code', detail: widget.course.courseCode),
     
-
-    
           DetailContainer(title: 'Course Title', detail: widget.course.title),
 
-
-    
-          DetailContainer(title: 'Mean Score / Rating', detail: widget.course.meanScore!.toStringAsFixed(2)),
-
-
-    
-          DetailContainer(title: 'Remark', detail: widget.course.remark!)
-    
         ],
       ),
+    );
+  }
+
+
+
+
+  Widget buildCourseInfoGrid(){
+
+    return Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.45,
+      padding: const EdgeInsets.all(12),
+
+
+      decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+        borderRadius: BorderRadius.circular(12)
+      ),
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12,
+        children: [
+
+          HeaderText("Course Information"),
+
+
+          if(isLoading) Expanded(
+            child: Center(
+              child: SizedBox(
+                height: 70,
+                width: 70,
+                child: CircularProgressIndicator()
+              )
+            )
+          )
+          else Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 300,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                mainAxisExtent: 95
+              ),
+              itemCount: wCourseInfoList.length,
+              itemBuilder: (_, index){
+
+                final wListItem = wCourseInfoList[index];
+
+
+                String title = wListItem.$1 as String;
+                String value = (wListItem.$2).toString();
+                IconData icon = wListItem.$3 as IconData;
+
+                return Container(
+                  padding: const EdgeInsets.all(8),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                    borderRadius: BorderRadius.circular(12)
+                  ),
+
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 8,
+                    children: [
+
+                      CircleAvatar(
+                        radius: 25,
+                        backgroundColor: PreferencesProvider.getColor(context, 'primary-color'),
+                        child: Icon(icon),
+                      ),
+
+
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 8,
+                          children: [
+
+                            CustomText(
+                              title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+
+
+                            CustomText(
+                              value,
+                              fontWeight: FontWeight.w600,
+                            )
+
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                );
+              },
+            )
+          )
+
+        ]
+      )
     );
   }
 
@@ -332,7 +459,6 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
 
   Widget buildCummulativeCourseInfoTable(){
     return Container(
-
       width: double.infinity,
       padding: const EdgeInsets.all(8),
 

@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/cc_excel_export.dart';
-import 'package:selc_admin/components/file_downloader.dart';
+import 'package:selc_admin/components/donwloader_util/file_downloader.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/utils.dart';
@@ -675,14 +675,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
     if(reportFile == null) return;
 
 
-    //initiate file download directly if the system is being ran as a web app.
-    if(kIsWeb){
-      await FileDownloader.webDownload(reportFile: reportFile);
-      return;
-    }
+    FileDownloader downloader = getDownloader();
 
+    downloader.download(reportFile: reportFile, context: context, onProgress: null);
 
-    //
 
 
     debugPrint(reportFile.fileName);

@@ -321,18 +321,17 @@ class SelcProvider with ChangeNotifier{
 
 
 
-  Future<List<ClassCourse>> getCourseInformation(String courseCode) async {
+  Future<Map<String, dynamic>> getCourseInformation(String courseCode) async {
 
     final response = await connector.getRequest(endPoint: 'course-info/$courseCode');
-
 
     if(response.statusCode != 200){
       throw Error();
     }
 
-    List<dynamic> responseBody = jsonDecode(response.body);
+    dynamic responseBody = jsonDecode(response.body);
 
-    return responseBody.map((jsonMap) => ClassCourse.fromJson(jsonMap)).toList();
+    return Map<String, dynamic>.from(responseBody);
   }
 
 
