@@ -215,7 +215,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<void> updateClassCourse(int classCourseId, bool isAcceptingResponse) async {
     final response = await connector.postRequest(
-      endpoint: 'update-class-course/',
+      endpoint: 'update-class-course/$classCourseId',
       body: jsonEncode({'cc_id': classCourseId, 'is_accepting_response': isAcceptingResponse})
     );
 
@@ -690,3 +690,14 @@ class SelcProvider with ChangeNotifier{
 
 
 }
+
+
+
+// Stuff that need to be in memory at all times
+//departments
+//courses
+//questionnaire and their categories
+//users of the system
+
+
+

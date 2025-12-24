@@ -661,7 +661,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
   Widget buildCurrentCourseSection(){
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.3,
+      width: MediaQuery.of(context).size.width * 0.25,
       height: MediaQuery.of(context).size.height * 0.5,
 
       padding: const EdgeInsets.all(12),
@@ -911,6 +911,7 @@ class _LCurrentCourseCellState extends State<LCurrentCourseCell> {
               fontSize: 15,
               fontWeight: FontWeight.w600,
               maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             subtitle: CustomText('Students [Evaluated]: $studentsCount [$evaluatedStudents]'),
           ),

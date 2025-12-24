@@ -26,7 +26,7 @@ class PreferencesProvider extends ChangeNotifier{
   Brightness brightness = Brightness.light;
   Map<String, Color> colorScheme = LIGHT_THEME_COLORS;
 
-  void loadPreferences() async{
+  Future<void> loadPreferences() async{
     preferences = await  Preferences.fromSharedPreferences();
     downloadedFiles = preferences.savedFiles;
     _updateUI(preferences.darkMode);

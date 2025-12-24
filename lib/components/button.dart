@@ -259,7 +259,7 @@ class _NavigationTextButtonsState extends State<NavigationTextButtons> {
 
 
 
-//todo: build the foward arrow button for 
+//todo: build the forward arrow button for 
 class DashSeeMoreButton extends StatefulWidget {
   
   final void Function() onPressed;
@@ -312,7 +312,7 @@ class _DashSeeMoreButtonState extends State<DashSeeMoreButton> {
 
 
 
-Widget RefreshButton({required VoidCallback onPress}) => IconButton(
+Widget refreshButton({required VoidCallback onPress}) => IconButton(
   onPressed: onPress,
   icon: Row(
     mainAxisSize: MainAxisSize.min,

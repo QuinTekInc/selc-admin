@@ -68,7 +68,9 @@ enum QuestionAnswerType{
 
 
 
-String formatDecimal(double number){
+String formatDecimal(dynamic number){
+
+  if(number is int) return number.toString();
 
   int numberInt = number.toInt();
 

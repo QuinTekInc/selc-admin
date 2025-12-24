@@ -93,7 +93,7 @@ class _CoursesPageState extends State<CoursesPage> {
 
 
               //todo: refresh button.
-              RefreshButton(onPress: loadCourseData)
+              refreshButton(onPress: loadCourseData)
             ],
           ),
 

@@ -380,6 +380,11 @@ class ClassCourse{
     return (evaluatedStudentsCount / registeredStudentsCount) * 100;
   }
 
+
+
+
+  @override String toString() => '${course.courseCode}[${course.title}] - ${lecturer.name}';
+
 }
 
 

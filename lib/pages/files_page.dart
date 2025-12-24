@@ -24,6 +24,8 @@ class FilesPage extends StatefulWidget {
 class _FilesPageState extends State<FilesPage> {
 
 
+  bool isLoading = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -34,7 +36,12 @@ class _FilesPageState extends State<FilesPage> {
 
 
   void loadData() async {
-    Provider.of<PreferencesProvider>(context, listen: false).loadPreferences();
+    
+    setState(() => isLoading = true);
+
+    await Provider.of<PreferencesProvider>(context, listen: false).getFilesFromBackend();
+
+    setState(() => isLoading = false);
   }
 
   @override

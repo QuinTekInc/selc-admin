@@ -96,7 +96,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                           ClickableMenuItem(
                             title: 'Deactivate or activate user account', 
-                            subtitle: 'Deactiving user\'s account prevents them  from accessing the application',
+                            subtitle: 'Deactivating user\'s account prevents them  from accessing the application',
                             icon: Icons.power_settings_new_outlined,
                             iconBackgroundColor: widget.user.isActive ? Colors.red.shade400 : Colors.blue.shade600,
                             trailing: Switch(  
@@ -110,13 +110,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           const SizedBox(height: 8,),
 
 
-                          ClickableMenuItem(
+                          if([UserRole.SUPERUSER, UserRole.ADMIN].contains(widget.user.userRole)) ClickableMenuItem(
                             title: 'Change Role', 
                             icon: CupertinoIcons.refresh,
                             iconBackgroundColor: Colors.deepPurple.shade400,
                             subtitle: 'Change the role to give some special permissions to the user',
                             onPressed: () => showCustomModalBottomSheet(
-                              context: context, 
+                              context: context,
                               child: ChangeUserRoleSheet(user: widget.user)
                             ),
                           )
@@ -162,7 +162,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             title: 'Reset user password', 
                             icon: CupertinoIcons.lock,
                             subtitle: 'Clicking on this button resets a user\'s account password to a default general password',
-                            onPressed: (){},
+                            onPressed: handleChangePassword,
                           )
 
                         ],
@@ -395,7 +395,7 @@ class _ChangeUserRoleSheetState extends State<ChangeUserRoleSheet> {
           CustomDropdownButton<UserRole>(
             controller: roleController, 
             items: [UserRole.SUPERUSER, UserRole.ADMIN],
-            onChanged: (newValue) => setState(() => disableButton = newValue == oldRoleValue)
+            onChanged: (newValue) => setState(() => disableButton = oldRoleValue == newValue!)
           ),
 
 

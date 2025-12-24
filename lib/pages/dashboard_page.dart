@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
+import 'package:selc_admin/components/charts/bar_chart.dart';
 import 'package:selc_admin/components/custom_notification_badge.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
@@ -21,6 +22,8 @@ import 'package:selc_admin/pages/user_profile_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
+
+import '../components/charts/pie_chart.dart';
 
 class DashboardPage extends StatefulWidget {
 
@@ -287,6 +290,14 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
 
                           buildSummaryCard(
+                            icon: CupertinoIcons.question,
+                            name: 'Number of Questions',
+                            detail: Provider.of<SelcProvider>(context).generalStat.questionsCount.toString(),
+                            backgroundColor: Colors.blue.shade400
+                          ),
+
+
+                          buildSummaryCard(
                             icon: CupertinoIcons.person,
                             name: 'Lecturers',
                             detail: Provider.of<SelcProvider>(context).generalStat.lecturersCount.toString()
@@ -298,14 +309,6 @@ class _DashboardPageState extends State<DashboardPage> {
                             name: 'Number of Classes',
                             detail: Provider.of<SelcProvider>(context).generalStat.coursesCount.toString(),
                             backgroundColor: Colors.yellow.shade700
-                          ),
-
-
-                          buildSummaryCard(
-                            icon: CupertinoIcons.question,
-                            name: 'Number of Questions',
-                            detail: Provider.of<SelcProvider>(context).generalStat.questionsCount.toString(),
-                            backgroundColor: Colors.blue.shade400
                           ),
 
                           buildSummaryCard(
@@ -353,6 +356,21 @@ class _DashboardPageState extends State<DashboardPage> {
                           spacing: 12,
 
                           children: [
+
+
+                            Row(
+                              spacing: 12,
+                              children: [
+
+                                Expanded(
+                                  child: buildBarChart()
+                                ),
+
+                                Expanded(
+                                    child: buildPieChart()
+                                )
+                              ]
+                            ),
 
 
 
@@ -904,6 +922,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
 
+
   //todo: sample course ratings table.
   Widget buildCourseRatingsTable(BuildContext context){
     return Container(
@@ -1159,6 +1178,118 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
 
+///todo: pie chart for suggestion sentiments
+  Widget buildPieChart(){
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      height: 400,
+      width: 400,
+
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: PreferencesProvider.getColor(context, 'alt-primary-color')
+      ),
+
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          HeaderText('Suggestions Sentiment Info'),
+
+          Expanded(
+            child: CustomPieChart(
+              width: double.infinity,
+              height: double.infinity,
+              //todo: do the rest here.
+            ),
+          )
+        ]
+      )
+
+    );
+  }
+
+
+
+
+
+  //todo: bar chart for overall lecturer ratings
+  Widget buildBarChart(){
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      height: 400,
+      width: 400,
+
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: PreferencesProvider.getColor(context, 'alt-primary-color')
+      ),
+
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          HeaderText('Overall Lecturers Rating'),
+
+          Expanded(
+            child: CustomBarChart(
+              width: double.infinity,
+              height: double.infinity,
+              //todo: do the rest here.
+            ),
+          )
+        ]
+      )
+
+    );
+  }
+
+
+
+  //todo: Pie Chart for the response rate.
+  Widget buildResponseRatePieChart(){
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      height: 400,
+      width: 400,
+
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: PreferencesProvider.getColor(context, 'alt-primary-color')
+      ),
+
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          HeaderText('Overall Response Rate'),
+
+          Expanded(
+            child: CustomPieChart(
+              width: double.infinity,
+              height: double.infinity,
+              //todo: do the rest here.
+            ),
+          )
+        ]
+      )
+
+    );
+  }
+
+
+
+
+
+
   void handleLogout(BuildContext context) async {
 
     showDialog(  
@@ -1168,7 +1299,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
     try{
+
       await Provider.of<SelcProvider>(context, listen: false).logout();
+
       Navigator.pop(context); //close the loading dialog dialog.
 
       Navigator.pushAndRemoveUntil(
@@ -1189,8 +1322,6 @@ class _DashboardPageState extends State<DashboardPage> {
         contentText: 'Make sure you are connected to the internet'
       );
 
-      return;
-
     }on Exception catch(exception){
       Navigator.pop(context); //close the loading dialog
       showCustomAlertDialog(
@@ -1201,6 +1332,7 @@ class _DashboardPageState extends State<DashboardPage> {
     }
 
   }
+
 
 }
 

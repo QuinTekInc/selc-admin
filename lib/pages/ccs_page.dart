@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
+import 'package:selc_admin/components/report_wizard.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/evaluations/eval_page.dart';
@@ -76,7 +77,15 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
 
               Spacer(),
 
-              RefreshButton(onPress: loadData)
+
+              TextButton(
+                onPressed: () => showCustomModalBottomSheet(context: context, isScrollControlled: true,  child: ReportWizard()),
+                child: CustomText('Generate Report', textColor: Colors.green.shade400,)
+              ),
+
+              const SizedBox(width: 12,),
+
+              refreshButton(onPress: loadData)
             ],
           ),
 

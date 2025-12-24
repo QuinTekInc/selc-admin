@@ -218,7 +218,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
           y: cummulativeClassCourses[index].grandMeanScore
         )
       ) + List.generate(
-        150,
+        49,
         (index) {
 
           double gMeanScore = [1, 1.7, 2, 2.1, 2.5, 2, 3.2, 3.6, 4, 4.3, 4.8, 5][Random().nextInt(12)].toDouble();
@@ -412,9 +412,9 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
                     children: [
 
                       CircleAvatar(
-                        radius: 25,
+                        radius: 30,
                         backgroundColor: PreferencesProvider.getColor(context, 'primary-color'),
-                        child: Icon(icon),
+                        child: Icon(icon, color: Colors.green.shade600, size: 25,),
                       ),
 
 
@@ -463,7 +463,7 @@ class _CourseProfilePageState extends State<CourseProfilePage> {
       padding: const EdgeInsets.all(8),
 
       constraints: BoxConstraints(  
-        minHeight: 400
+        minHeight: MediaQuery.of(context).size.height * 0.5
       ),
 
       decoration: BoxDecoration(
