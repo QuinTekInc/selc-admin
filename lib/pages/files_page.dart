@@ -128,7 +128,13 @@ class _FilesPageState extends State<FilesPage> {
                   const SizedBox(height: 8,),
 
 
-                  if(Provider.of<PreferencesProvider>(context).reportFiles.isEmpty) Expanded(
+
+                  if(isLoading) Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator()
+                    )
+                  )
+                  else if(Provider.of<PreferencesProvider>(context).reportFiles.isEmpty) Expanded(
                     child: CollectionPlaceholder(
                       title: 'No Files!',
                       detail: 'All downloaded and \'yet to download\' files appear here.',
@@ -336,11 +342,13 @@ class _ReportFileCellState extends State<ReportFileCell> {
         onProgress: (progress) => setState(() => progressValue = progress)
       );
 
-      setState(() {
-        widget.reportFile.localFilePath = Provider.of<PreferencesProvider>(context, listen: false).preferences.defaultDownloadDirectory;
-        //todo: save to cached files
-        Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(widget.reportFile);
-      });
+
+      //updated the recently downloaded file object's local file path
+      widget.reportFile.localFilePath = Provider.of<PreferencesProvider>(context, listen: false).preferences.defaultDownloadDirectory;
+
+      //save to cached files
+      Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(widget.reportFile);
+
 
     }on SocketException {
 
@@ -356,16 +364,12 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
     }on Exception catch(exception, trace){
 
-      debugPrint(exception.toString());
-      debugPrintStack(stackTrace: trace);
-
       showCustomAlertDialog(
         context,
         title: 'Download Error',
         contentText: 'There wan error in downloading ${widget.reportFile.fileName}. Please try again'
       );
     }
-
 
     setState(() => isDownloading = false);
 

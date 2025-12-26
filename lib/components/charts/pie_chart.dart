@@ -131,7 +131,7 @@ class CustomPieChart extends StatelessWidget {
                   title: pieSections[index].title ?? '',
                   showTitle: true,
 
-                  color: availableColors[index % availableColors.length],
+                  color: pieSections[index].sectionColor ?? availableColors[index % availableColors.length],
                   radius: 100,
 
                   titleStyle: sectionTitleStyle ?? TextStyle(
@@ -179,11 +179,11 @@ class CustomPieChart extends StatelessWidget {
               Container(
                 height: 20,
                 width: 20,
-                color: availableColors[index],
+                color: pieSections[index].sectionColor ?? availableColors[index],
               ),
 
 
-              CustomText(pieSections[index].title ?? '')
+              CustomText(pieSections[index].keyTitle ?? '')
             ],
           );
         }
@@ -198,7 +198,9 @@ class CustomPieSection{
 
   double value;
   String? title;
+  String? keyTitle;
+  Color? sectionColor;
 
-  CustomPieSection({required this.value, this.title});
+  CustomPieSection({required this.value, this.title, this.keyTitle, this.sectionColor});
 }
 

@@ -65,27 +65,27 @@ class _QuestionnaireVisualisationCellState extends State<QuestionnaireVisualisat
     Map<String, dynamic> answerSummary = widget.summary.answerSummary!;
 
 
-    for(int i =0; i < answerSummary.keys.length; i++){
+    for(int i = 0; i < answerSummary.keys.length; i++){
 
       String answer = answerSummary.keys.elementAt(i);
 
       int answerCount = answerSummary[answer];
 
       statRows.add(
-          Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CustomText(answer),
-                Spacer(),
-                CustomText(answerCount.toString())
-              ]
-          )
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomText(answer),
+            Spacer(),
+            CustomText(answerCount.toString())
+          ]
+        )
       );
 
       //todo: create a piechart section
-      final pieSection = CustomPieSection(title:answer, value: answerCount.toDouble(),);
+      final pieSection = CustomPieSection(title: '$answer [$answerCount]', value: answerCount.toDouble(), keyTitle: answer);
       pieSections.add(pieSection);
 
       final barGroup = CustomBarGroup(label: answer, x: i, rods: [Rod(y: answerCount.toDouble())]);

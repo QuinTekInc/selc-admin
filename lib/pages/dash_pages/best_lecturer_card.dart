@@ -24,7 +24,8 @@ Widget buildField(BuildContext context, {required String title, String value = '
         flex: titleSpan,
         child: CustomText(
           title,
-          textColor: PreferencesProvider.getColor(context!, 'placeholder-text-color'),
+          textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+          fontWeight: FontWeight.w600,
         ),
 
       ),
@@ -99,7 +100,7 @@ class BestLecturerCard extends StatelessWidget {
             children: [
               Icon(Icons.ac_unit_outlined, size: 25,),
 
-              HeaderText('Best Lecturer')
+              HeaderText('Highest Rated Lecturer')
             ],
           ),
 
@@ -135,11 +136,11 @@ class BestLecturerCard extends StatelessWidget {
           ),
 
 
-          //number of students
+          //number of students who have rated the lecturer this semester
           buildField(
             context,
-            title: 'No. Students [Evaluated]',
-            value: inflateValue('${lecturerRating!.numberOfStudents} [N/A]') //todo: fix this later.
+            title: 'No. Students (in rating)',
+            value: inflateValue('${lecturerRating!.numberOfStudents}') //todo: fix this later.
           ),
 
 
@@ -153,8 +154,6 @@ class BestLecturerCard extends StatelessWidget {
 
 
           //HeaderText('Rating Summary', fontSize: 15,),
-
-
           if(lecturerRating != null) CustomButton.withText(
             'View profile',
             disable: isLoading,
@@ -242,7 +241,7 @@ class BestCourseCard extends StatelessWidget {
             children: [
               Icon(Icons.ac_unit_outlined, size: 25,),
 
-              HeaderText('Best Course')
+              HeaderText('Highest Rated Course')
             ],
           ),
 

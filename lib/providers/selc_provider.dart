@@ -88,7 +88,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<void> logout() async {
 
-    Response response = await connector.getRequest(endPoint: 'logout/');
+    Response response = await connector.getRequest(endpoint: 'logout/');
     if(response.statusCode != 200){
       throw Exception('Could not logout.');
     }
@@ -125,7 +125,7 @@ class SelcProvider with ChangeNotifier{
 
 
   Future<void> getGeneralSetting() async{
-    final response = await connector.getRequest(endPoint: 'get-general-settings/');
+    final response = await connector.getRequest(endpoint: 'get-general-settings/');
 
     if(response.statusCode  != 200){
       throw Error();
@@ -169,7 +169,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<void> getGeneralCurrentStatistics() async {
 
-    final response = await connector.getRequest(endPoint: 'general-current-stats/');
+    final response = await connector.getRequest(endpoint: 'general-current-stats/');
 
     if(response.statusCode != 200){
       throw Error();
@@ -181,24 +181,41 @@ class SelcProvider with ChangeNotifier{
 
     notifyListeners();
   }
+  
+  
+  //todo: TO BE CONFIGURED FOR WEB SOCKET CONNECTION TO THE BACKEND
+  Future<Map<String, dynamic>> getDashboardGraphData() async {
+    
+    final request = await connector.getRequest(endpoint: 'dashboard-graph-data/');
+    
+    if(request.statusCode != 200){
+      throw Error();
+    }
 
 
-  //get all the class_courses for the current academic year and semester.
+    final responseBody = jsonDecode(request.body);
+
+    return responseBody;
+  }
+
+
+  //todo: all the current ClassCourse being taken in the semester.
   Future<List<ClassCourse>> getCurrentClassCourses() async {
-    final response = await connector.getRequest(endPoint: 'get-all-current-class-courses/');
+    final response = await connector.getRequest(endpoint: 'get-all-current-class-courses/');
 
     if(response.statusCode != 200){
       throw Exception('An Unexpected error occurred. Please try again');
     }
 
     List<dynamic> responseBody = jsonDecode(response.body);
+
     return responseBody.map((jsonMap) => ClassCourse.fromJson(jsonMap)).toList();
   }
 
 
   Future<void> getClassCourses() async {
 
-    final response = await connector.getRequest(endPoint: 'get-class-courses/');
+    final response = await connector.getRequest(endpoint: 'get-class-courses/');
 
     if(response.statusCode != 200){
       throw Exception('An Unexpected error occurred. Please try again');
@@ -228,7 +245,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<DashboardSuggestionSentiment>> getDashSuggestionSentiments() async {
 
-    final response = await connector.getRequest(endPoint: 'get-all-current-class-courses-sentiments/');
+    final response = await connector.getRequest(endpoint: 'get-all-current-class-courses-sentiments/');
 
     if(response.statusCode != 200){
       throw Error();
@@ -245,7 +262,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<DashboardCategoriesSummary>> getDashCategoriesSummary() async {
 
-    final response = await connector.getRequest(endPoint: 'get-all-current-class-courses-categories-summary/');
+    final response = await connector.getRequest(endpoint: 'get-all-current-class-courses-categories-summary/');
 
     if(response.statusCode != 200){
       throw Error();
@@ -260,7 +277,7 @@ class SelcProvider with ChangeNotifier{
 
 
   Future<void> getDepartments() async{
-    Response response = await connector.getRequest(endPoint: 'departments/');
+    Response response = await connector.getRequest(endpoint: 'departments/');
 
     if(response.statusCode != 200){
       throw Exception('An error Occurred.');
@@ -277,7 +294,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<ClassCourse>> getDepartmentClassCourses(int departmentId) async {
 
-    final response = await connector.getRequest(endPoint: 'get-department-class-courses/$departmentId');
+    final response = await connector.getRequest(endpoint: 'get-department-class-courses/$departmentId');
 
     if(response.statusCode != 200) throw Error();
 
@@ -291,7 +308,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<void> getLecturers() async {
 
-    Response response = await connector.getRequest(endPoint: 'lecturers/');
+    Response response = await connector.getRequest(endpoint: 'lecturers/');
 
     if(response.statusCode != 200){
       throw Exception('An error Occurred.');
@@ -308,7 +325,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<ClassCourse>> getLecturerInfo(String lecturerUsername) async {
 
-    Response response = await connector.getRequest(endPoint: 'lecturer-info/$lecturerUsername');
+    Response response = await connector.getRequest(endpoint: 'lecturer-info/$lecturerUsername');
 
     if(response.statusCode != 200){
       throw Error();
@@ -323,7 +340,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<Map<String, dynamic>> getCourseInformation(String courseCode) async {
 
-    final response = await connector.getRequest(endPoint: 'course-info/$courseCode');
+    final response = await connector.getRequest(endpoint: 'course-info/$courseCode');
 
     if(response.statusCode != 200){
       throw Error();
@@ -339,7 +356,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<dynamic>> getClassCourseEvaluation(int classCourseId) async {
 
-    Response response = await connector.getRequest(endPoint: 'class-course-eval-summary/$classCourseId');
+    Response response = await connector.getRequest(endpoint: 'class-course-eval-summary/$classCourseId');
 
 
     if(response.statusCode != 200){
@@ -364,7 +381,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<CategoryRemark>> getCourseEvalCategoryRemark(int classCourseId) async{
 
-    final response = await connector.getRequest(endPoint: 'eval-question-category-remark/$classCourseId');
+    final response = await connector.getRequest(endpoint: 'eval-question-category-remark/$classCourseId');
 
     if(response.statusCode != 200){
       throw Error();
@@ -381,7 +398,7 @@ class SelcProvider with ChangeNotifier{
   Future<SuggestionSummaryReport> getEvaluationSuggestions(int classCourseId) async {
 
 
-    final response =  await connector.getRequest(endPoint: 'eval-suggestions/$classCourseId');
+    final response =  await connector.getRequest(endpoint: 'eval-suggestions/$classCourseId');
 
     if(response.statusCode != 200){
       throw Error();
@@ -397,7 +414,7 @@ class SelcProvider with ChangeNotifier{
 
   //this function is called at a lecturer's detail or information page.
   Future<List<dynamic>> getYearlyLecturerRatingSummary(String username) async {
-    final response = await connector.getRequest(endPoint: 'yearly-average-lrating-summary/$username');
+    final response = await connector.getRequest(endpoint: 'yearly-average-lrating-summary/$username');
 
     if(response.statusCode != 200){
       throw Error();
@@ -411,7 +428,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<EvalLecturerRatingSummary>> getOverallLecturerRatingSummary(String lecturerUsername) async {
     
-    final response = await connector.getRequest(endPoint: 'overall-lrating-summary/$lecturerUsername');
+    final response = await connector.getRequest(endpoint: 'overall-lrating-summary/$lecturerUsername');
 
     if(response.statusCode != 200){
       throw Error();
@@ -426,7 +443,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<EvalLecturerRatingSummary>> getEvalLecturerRatingSummary(int classCourseId) async {
 
-    final response = await connector.getRequest(endPoint: 'eval-lrating-summary/$classCourseId');
+    final response = await connector.getRequest(endpoint: 'eval-lrating-summary/$classCourseId');
 
     if(response.statusCode != 200){
       throw Error();
@@ -444,7 +461,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<void> getQuestionsAndCategories() async{
 
-    Response response = await connector.getRequest(endPoint: 'questions-and-categories/');
+    Response response = await connector.getRequest(endpoint: 'questions-and-categories/');
 
 
     if(response.statusCode != 200) throw Error();
@@ -527,7 +544,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<void> getCourses() async {
 
-    final response = await connector.getRequest(endPoint: 'courses/');
+    final response = await connector.getRequest(endpoint: 'courses/');
 
     if(response.statusCode != 200){ 
       throw Error();
@@ -564,7 +581,7 @@ class SelcProvider with ChangeNotifier{
     Response response;
 
     if(filterBody == null){
-      response = await connector.getRequest(endPoint: 'lecturers-ratings-rank/');
+      response = await connector.getRequest(endpoint: 'lecturers-ratings-rank/');
     }else{
       response = await connector.postRequest(endpoint: 'lecturers-ratings-rank/', body: jsonEncode(filterBody));
     }
@@ -590,7 +607,7 @@ class SelcProvider with ChangeNotifier{
     Response response;
 
     if(filterBody == null){
-      response = await connector.getRequest(endPoint: 'courses-ratings-rank/');
+      response = await connector.getRequest(endpoint: 'courses-ratings-rank/');
     }else{
       response = await connector.postRequest(endpoint: 'courses-ratings-rank/', body: jsonEncode(filterBody));
     }
@@ -616,7 +633,7 @@ class SelcProvider with ChangeNotifier{
   //todo: users management functions
   Future<void> getUsers() async {
 
-    final response = await connector.getRequest(endPoint: 'all-users/');
+    final response = await connector.getRequest(endpoint: 'all-users/');
 
     if(response.statusCode != 200){
       
@@ -675,7 +692,7 @@ class SelcProvider with ChangeNotifier{
 
   Future<List<ReportFile>> getReportFiles() async {
 
-    final response = await connector.getRequest(endPoint: '/report-files');
+    final response = await connector.getRequest(endpoint: '/report-files');
 
     if(response.statusCode != 200){
       throw Error();

@@ -220,7 +220,7 @@ class _ReportWizardState extends State<ReportWizard> {
 
 
 
-  void handleGenerateReport() async {
+  Map<String, dynamic> generateReportParams () {
 
     String reportType = formatReportTypeStr(reportTypeController.value ?? '');
 
@@ -243,11 +243,27 @@ class _ReportWizardState extends State<ReportWizard> {
     }
 
 
+
+    return reportParams;
+
+  }
+
+
+
+
+  void handleGenerateReport() async {
+
+    Map<String, dynamic> reportParams = generateReportParams();
+
+
     ReportFile? reportFile;
 
     try {
+
       reportFile = await Provider.of<PreferencesProvider>(
           context, listen: false).generateReportFile(reportParams);
+
+
     } on SocketException{
       showNoConnectionAlertDialog(context);
       return;
@@ -261,10 +277,28 @@ class _ReportWizardState extends State<ReportWizard> {
       showCustomAlertDialog(context, title: 'Error', contentText: 'Could not generate report. An unknown error occurred.');
     }
 
+
     //download the file immediately after generation
     FileDownloader downloader = getDownloader();
 
-    downloader.download(context: context, reportFile: reportFile!);
+    try{
+
+      await downloader.download(context: context, reportFile: reportFile!);
+
+    }on Exception catch(e, trace){
+
+      print(trace.toString());
+
+      showCustomAlertDialog(
+        context,
+        alertType: AlertType.warning,
+        title: 'Download Error',
+        contentText: e.toString()
+      );
+
+    }
+
+
 
   }
 

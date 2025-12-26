@@ -16,7 +16,7 @@ class FilesProvider extends ChangeNotifier{
 
   Future<List<ReportFile>> getReportFiles() async {
 
-    final response = await connector.getRequest(endPoint: 'core/all-files/');
+    final response = await connector.getRequest(endpoint: 'core/all-files/');
 
     if(response.statusCode != 200){
       throw Exception('An unexpected error occurred. Please try again');

@@ -19,9 +19,9 @@ String concat(String other, {useCore = false}){
 
 
 
-Future<http.Response> getRequest({required String endPoint, dynamic body, useCore=false}) async {
+Future<http.Response> getRequest({required String endpoint, dynamic body, useCore=false}) async {
 
-  final url = Uri.parse(concat(endPoint, useCore: useCore));
+  final url = Uri.parse(concat(endpoint, useCore: useCore));
 
   Map<String, String> headers = {'Content-Type': 'application/json'};
 

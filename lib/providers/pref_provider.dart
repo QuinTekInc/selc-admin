@@ -105,7 +105,7 @@ class PreferencesProvider extends ChangeNotifier{
 
   Future<void> getFilesFromBackend() async {
 
-    final response = await connector.getRequest(endPoint: 'get-all-files/', useCore: true);
+    final response = await connector.getRequest(endpoint: 'get-all-files/', useCore: true);
 
     if(response.statusCode != 200){
       throw Error();
@@ -123,28 +123,29 @@ class PreferencesProvider extends ChangeNotifier{
     reportFiles = responseBody.map((jsonMap){
 
       var matchedFiles = downloadedFiles.where(
-        (rFile) {
+        (rFile){
 
           bool fNameFlag = rFile.fileName == jsonMap['file_name'];
+
           bool fTypeFlag = rFile.fileType == jsonMap['file_type'];
+
           bool urlFlag = rFile.url == jsonMap['file_url'];
 
           bool localPathFlag = rFile.localFilePath != null;
 
-          bool fileExists = File(rFile.fullLocalFilePath()).existsSync();
+          bool fileExists = rFile.isFileExistLocally();
 
-
-          return fNameFlag && fTypeFlag && urlFlag && localPathFlag &&  fileExists;
+          return fNameFlag && fTypeFlag && urlFlag && localPathFlag && fileExists;
         }
       ).toList();
 
-      if(matchedFiles.isNotEmpty && kIsWeb) return matchedFiles.first;
+      if(matchedFiles.isNotEmpty && !kIsWeb) {
+        return matchedFiles.first;
+      }
 
       return ReportFile.fromJson(jsonMap);
 
     }).toList();
-
-
 
     notifyListeners();
 

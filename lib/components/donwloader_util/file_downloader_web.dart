@@ -12,7 +12,7 @@ class WebFileDownloader implements FileDownloader{
 
   @override
   Future<void> download({required ReportFile reportFile, BuildContext? context, void Function(double)? onProgress})async{
-    final response = await connector.getRequest(endPoint: reportFile.url);
+    final response = await connector.getRequest(endpoint: reportFile.url);
 
     final blob = html.Blob([response.bodyBytes]);
     final blobUrl = html.Url.createObjectUrlFromBlob(blob);

@@ -1,6 +1,9 @@
 
 
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:selc_admin/components/utils.dart';
 
 
@@ -731,7 +734,22 @@ class ReportFile{
 
 
 
-  String fullLocalFilePath() => '$localFilePath/$fileName.$fileType';
+  bool isFileExistLocally(){
+
+    if(localFilePath == null || kIsWeb) return false;
+
+    String fullLocalPath = '$localFilePath/$fileName';
+
+    bool flag1 = File(fullLocalPath).existsSync();
+
+    if(flag1) return true;
+
+    fullLocalPath = '$localFilePath/$fileName';
+
+    bool flag2 = File(fullLocalPath).existsSync();
+
+    return flag2;
+  }
 
 
   String getFileName() => '$fileName.$fileType';
@@ -743,4 +761,6 @@ class ReportFile{
     'file_url': url,
     'local_file_path': localFilePath
   };
+
+
 }

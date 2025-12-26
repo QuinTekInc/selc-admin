@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,10 +62,10 @@ class _DashboardPageState extends State<DashboardPage> {
 
     try{
       await selcProvider.getLecturerRatingsRank(
-          filterBody: {
-            'semester': Provider.of<SelcProvider>(context, listen:false).currentSemester,
-            'year': DateTime.now().year
-          }
+        filterBody: {
+          'semester': Provider.of<SelcProvider>(context, listen:false).currentSemester,
+          'year': DateTime.now().year
+        }
       );
     }catch(exception){
 
@@ -280,13 +281,19 @@ class _DashboardPageState extends State<DashboardPage> {
                         mainAxisSize: MainAxisSize.min,
 
                         children: [
-                          //show some summary
+                          //todo: fix this later.
+                          buildSummaryCard(
+                              icon: CupertinoIcons.calendar,
+                              name: 'Academic Year',
+                              detail: Provider.of<SelcProvider>(context).generalStat.currentSemester.toString(), //TODO: fix the problem later.
+                              backgroundColor: Colors.grey.shade600
+                          ),
 
                           buildSummaryCard(
-                            icon: CupertinoIcons.calendar,
+                            icon: CupertinoIcons.calendar_today,
                             name: 'Current Semester',
                             detail: Provider.of<SelcProvider>(context).generalStat.currentSemester.toString(), //TODO: fix the problem later.
-                            backgroundColor: Colors.grey.shade600
+                            backgroundColor: Colors.grey.shade400
                           ),
 
                           buildSummaryCard(
@@ -359,21 +366,25 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               spacing: 12,
                               children: [
 
                                 Expanded(
-                                  child: buildBarChart()
+                                  child: buildResponseRatePieChart()
                                 ),
 
                                 Expanded(
-                                    child: buildPieChart()
+                                    child: buildSuggestionSentimentPieChart()
                                 )
                               ]
                             ),
 
 
-
+                            Center(
+                              child: buildLecturerRatingBarChart()
+                            ),
 
                             // CustomBarChart(
                             //   width: double.infinity,
@@ -414,25 +425,13 @@ class _DashboardPageState extends State<DashboardPage> {
 
                           children: [
 
-
                             BestLecturerCard(isLoading: this.isLRatingsLoading,),
-
 
                             BestCourseCard(isLoading: this.isCRatingsLoading),
 
-
-                            // CustomPieChart(
-                            //   width: 100,
-                            //   height: 100,
-                            //   pieSections: List.generate(5, (index) => CustomPieSection(title: index.toString(), value: Random().nextDouble() * 20),),
-                            // ),
-
-
-                            buildRecentEvaluations(),
-
+                            buildRecentFilesSection(),
 
                             //buildRecentAction(context),
-
 
                           ],
                         ),
@@ -546,14 +545,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
   //todo: function to show recent evaluations
-  Widget buildRecentEvaluations(){
+  Widget buildRecentFilesSection(){
 
-    int filesLength = Provider.of<PreferencesProvider>(context).preferences.savedFiles.length;
+    int filesLength = Provider.of<PreferencesProvider>(context).downloadedFiles.length;
 
     return Container(
       //width: 400,
       padding: const EdgeInsets.all(8),
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.46,
 
       decoration: BoxDecoration(
         //Colors.white
@@ -618,7 +617,7 @@ class _DashboardPageState extends State<DashboardPage> {
             
             itemBuilder: (_, index) {
 
-              ReportFile reportFile = Provider.of<PreferencesProvider>(context, listen: false).preferences.savedFiles[index];
+              ReportFile reportFile = Provider.of<PreferencesProvider>(context, listen: false).downloadedFiles[index];
 
               String fileName = reportFile.fileName;
               String fileType = reportFile.fileType;
@@ -650,15 +649,22 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
                         
                 subtitle: CustomText(
-                  concatDateTime(DateTime.now()),
+                  fileType,
                   maxLines: 1,
                   softwrap: false,
                 ),
 
-                trailing: reportFile.localFilePath != null ? Icon(Icons.download) : Icon(Icons.open_in_new)
+                trailing: IconButton(
+                  tooltip: 'Open',
+                  icon: Icon(Icons.open_in_new),
+
+                  //todo: implement a function to open a file
+                  onPressed: (){},
+                )
                         
               );
-            }, 
+            },
+
             separatorBuilder: (_, index) => SizedBox(height: 8,)
           )
       
@@ -1179,11 +1185,42 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
 ///todo: pie chart for suggestion sentiments
-  Widget buildPieChart(){
+  Widget buildSuggestionSentimentPieChart(){
+
+    final random = Random();
+
+    final sentiments = ['negative', 'neutral', 'positive'];
+    final sectionColors = [Colors.red.shade400, Colors.amber, Colors.green.shade400];
+
+    int population = 2000;
+
+    List<CustomPieSection> sections = [];
+
+    final sentimentDetails = [];
+
+    for(String sentiment in sentiments){
+
+      int randomPopulation = random.nextInt(population);
+      population -= randomPopulation;
+
+      double percentage = (randomPopulation / 2000) * 100;
+
+      sections.add(
+        CustomPieSection(
+          value: percentage,
+          keyTitle: sentiment,
+          title: '${formatDecimal(percentage)}%',
+          sectionColor: sectionColors[sentiments.indexOf(sentiment)]
+        )
+      );
+
+
+      sentimentDetails.add((sentiment, randomPopulation, percentage));
+
+    }
 
     return Container(
       padding: const EdgeInsets.all(12),
-      height: 400,
       width: 400,
 
       decoration: BoxDecoration(
@@ -1195,15 +1232,71 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12,
         children: [
           HeaderText('Suggestions Sentiment Info'),
 
-          Expanded(
-            child: CustomPieChart(
-              width: double.infinity,
-              height: double.infinity,
-              //todo: do the rest here.
-            ),
+          CustomPieChart(
+            backgroundColor: Colors.transparent,
+            width: double.infinity,
+            height: 325,
+            centerSpaceRadius: 16,
+            showKeys: true,
+            pieSections: sections,
+          ),
+
+          HeaderText('Details'),
+
+          ListView.separated(
+            shrinkWrap: true,
+            itemCount: sentimentDetails.length,
+            separatorBuilder: (_, index) => Divider(),
+            itemBuilder: (_, index){
+              return Row(
+                children: [
+
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 3,
+                      children: [
+
+                        Container(
+                          width: 16,
+                          height: 16,
+                          color: sectionColors[index],
+                        ),
+
+                        CustomText(
+                          sentiments[index],
+                        )
+                      ],
+                    ),
+                  ),
+
+
+                  Expanded(
+                    flex: 1,
+                    child: CustomText(
+                      sentimentDetails[index].$2.toString(),
+                      textAlignment: TextAlign.right,
+                    ),
+                  ),
+
+                  Expanded(
+                    flex: 1,
+                    child: CustomText(
+                      '${formatDecimal(sentimentDetails[index].$3)}%',
+                      textAlignment: TextAlign.right,
+                    ),
+                  )
+
+                ],
+              );
+            },
           )
         ]
       )
@@ -1216,32 +1309,160 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
   //todo: bar chart for overall lecturer ratings
-  Widget buildBarChart(){
+  Widget buildLecturerRatingBarChart(){
+
+    int population = 2000;
+
+    final List<Color> rodColors = [Colors.green.shade400, Colors.blue.shade400, Colors.purple.shade400, Colors.amber, Colors.red.shade400];
+
+    final List<CustomBarGroup> barGroups= [];
+
+    final List lRatingInfo = [];
+
+
+
+    for(int i = 5; i >= 1; i--){
+      int randomPopulation = Random().nextInt(population+1);
+      population -= randomPopulation;
+
+      double percentage = (randomPopulation / 2000) * 100;
+
+      barGroups.add(
+        CustomBarGroup(
+          x: i,
+          label: i.toString(),
+          rods: [
+            Rod(
+              y: randomPopulation.toDouble(),
+              rodColor: rodColors[rodColors.length - i]
+            )
+          ]
+        )
+      );
+
+
+      lRatingInfo.add((i, randomPopulation, percentage));
+    }
 
     return Container(
       padding: const EdgeInsets.all(12),
-      height: 400,
-      width: 400,
+      width: double.infinity,
+      //height: 415,
 
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: PreferencesProvider.getColor(context, 'alt-primary-color')
+          color: PreferencesProvider.getColor(context, 'table-background-color')
       ),
 
 
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        spacing: 12,
         children: [
 
           HeaderText('Overall Lecturers Rating'),
 
-          Expanded(
-            child: CustomBarChart(
-              width: double.infinity,
-              height: double.infinity,
-              //todo: do the rest here.
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: [
+
+              Expanded(
+                child: CustomBarChart(
+                  containerBackgroundColor: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                  width: double.infinity,
+                  height: 350,
+                  maxY: 2000,
+                  groups: barGroups,
+                  rodWidth: 50,
+                  rodBorderRadius: BorderRadius.circular(4),
+                ),
+              ),
+
+
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                    borderRadius: BorderRadius.circular(12)
+                  ),
+
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                    children: [
+
+                      HeaderText(
+                        'Details',
+                        textColor: PreferencesProvider.getColor(context, 'placeholder-text-color')
+                      ),
+
+                      const SizedBox(height: 12,),
+
+                      ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: 5,
+                        separatorBuilder: (_, index) => Divider(height: 12),
+                        itemBuilder: (_, index){
+                          return Row(
+
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  spacing: 3,
+                                  children: [
+
+                                    Container(
+                                      width: 16,
+                                      height: 16,
+                                      color: rodColors[index],
+                                    ),
+
+                                    CustomText(
+                                      lRatingInfo[index].$1.toString(),
+                                    )
+                                  ],
+                                ),
+                              ),
+
+
+                              Expanded(
+                                flex: 1,
+                                child: CustomText(
+                                  lRatingInfo[index].$2.toString(),
+                                  textAlignment: TextAlign.right,
+                                ),
+                              ),
+
+                              Expanded(
+                                flex: 1,
+                                child: CustomText(
+                                  '${formatDecimal(lRatingInfo[index].$3)}%',
+                                  textAlignment: TextAlign.right,
+                                ),
+                              )
+                            ],
+
+                          );
+                        },
+                      )
+
+                    ],
+                  ),
+                ),
+              )
+
+
+            ],
           )
         ]
       )
@@ -1254,10 +1475,22 @@ class _DashboardPageState extends State<DashboardPage> {
   //todo: Pie Chart for the response rate.
   Widget buildResponseRatePieChart(){
 
+    int overallReg = 8 * 250;
+    int responseRecv = 450;
+    int totalUnresponse = overallReg - responseRecv;
+
+    double responseRate = (responseRecv / overallReg) * 100;
+    double unresponseRate = 100 - responseRate;
+
+    final rRateItems = [
+      ('Total Registrations', overallReg.toString()),
+      ('Not Responded/ Not Evaluated', totalUnresponse.toString()),
+      ('Total Responses/ Evaluated', responseRecv.toString()),
+      ('Response Rate', '${formatDecimal(responseRate)}%')
+    ];
+
     return Container(
       padding: const EdgeInsets.all(12),
-      height: 400,
-      width: 400,
 
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -1268,17 +1501,62 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        spacing: 8,
         children: [
 
           HeaderText('Overall Response Rate'),
 
-          Expanded(
-            child: CustomPieChart(
-              width: double.infinity,
-              height: double.infinity,
-              //todo: do the rest here.
+          CustomPieChart(
+            backgroundColor: Colors.transparent,
+            width: double.infinity,
+            height: 300,
+            centerSpaceRadius: 20,
+            showKeys: true,
+            //todo: do the rest here.
+            pieSections: [
+
+              CustomPieSection(
+                value: unresponseRate,
+                title: '$unresponseRate %',
+                keyTitle: 'Unevaluated'
+              ),
+
+              CustomPieSection(
+                value: responseRate,
+                title: '$responseRate%',
+                keyTitle: 'Evaluated'
+              )
+            ],
+          ),
+
+
+          HeaderText(
+            'Details',
+            textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+          ),
+
+
+          ListView.separated(
+            itemCount: rRateItems.length,
+            shrinkWrap: true,
+            separatorBuilder: (context, index) => Divider(),
+            itemBuilder: (context, index) => Row(
+              children: [
+                Expanded(
+                  child: CustomText(
+                    rRateItems[index].$1
+                  )
+                ),
+
+                CustomText(
+                  rRateItems[index].$2
+                )
+              ]
             ),
           )
+
+
         ]
       )
 
