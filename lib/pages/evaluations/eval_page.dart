@@ -1,11 +1,12 @@
 
 
 
+import 'dart:io';
+
 import 'package:animations/animations.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:selc_admin/components/cc_excel_export.dart';
+import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/donwloader_util/file_downloader.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/button.dart';
@@ -17,8 +18,6 @@ import 'package:selc_admin/pages/evaluations/visualization_section.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 import 'package:selc_admin/components/cells.dart';
-import 'package:selc_admin/providers/page_provider.dart';
-import '../../components/report_view.dart';
 import 'category_remarks_table.dart';
 
 
@@ -71,8 +70,8 @@ class _EvaluationPageState extends State<EvaluationPage> {
     //collect the questions map from each category into on giant list
     final List<Map<String, dynamic>> questionsMapList =[
       for(final summary in ccSummary)
-        for(final question in summary['questions'] ?? [])
-          question
+        for(final questionMap in summary['questions'] ?? [])
+          questionMap
     ];
 
 
@@ -118,7 +117,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
               //todo: implement exporting current data to xml or csv for manual analysis in excel.
               TextButton(
-                onPressed: handleExcelExport, 
+                onPressed: () => this.handleGenerateClassCourseReport('.xlsx'), 
                 child: Row(  
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -136,7 +135,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
               //todo: implement saving report to pdf.
 
               TextButton(
-                onPressed: handlePDFExport, 
+                onPressed: () => handleGenerateClassCourseReport('.pdf'), 
                 child: Row(  
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -465,8 +464,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
               detail: '${formatDecimal(widget.classCourse.calculateResponseRate())} %'
             ),
 
-
-
           ],
         ),
       )
@@ -526,162 +523,37 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
 
-
-
-
-  //todo: the section that handles the user filtering
-  //you can also call it filter console.
-  Widget buildFilterSection(BuildContext context) {
-    return Card(
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.2,
-        padding: const EdgeInsets.all(8),
-
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-
-          children: [
-
-
-            HeaderText(
-              'Filter',
-              fontSize: 15,
-            ),
-
-            const SizedBox(height: 12,),
-
-
-            CustomCheckBox(
-              value: true,
-              text: 'Show All',
-            ),
-
-            const SizedBox(height: 8,),
-
-            CustomCheckBox(
-              value: false,
-              text: 'Custom Filter'
-            ),
-
-            Divider(),
-
-            CustomText(
-              'Academic Year',
-              fontWeight: FontWeight.w600,
-            ),
-
-            const SizedBox(height: 8,),
-
-            CustomDropdownButton<String>(
-              hint: 'Select Academic Year',
-              controller: DropdownController<String>(),
-              items: List<String>.generate(10, (index) {
-                return '${2011 + index} / ${2011 + index+1}';
-              }),
-              onChanged: (newValue){}
-            ),
-
-
-
-            //todo: select the semester to which that course was learned or offered
-            const SizedBox(height: 12,),
-
-            CustomText(
-              'Semester',
-              fontWeight: FontWeight.w600,
-            ),
-
-            const SizedBox(height: 8,),
-
-            CustomDropdownButton<int>(
-              hint: 'Select Semester',
-              controller: DropdownController<int>(),
-              items: <int>[1, 2],
-              onChanged: (newValue){}
-            ),
-
-
-
-            //todo: the lecturers that taught the course.
-            const SizedBox(height: 12,),
-
-            CustomText(
-              'Lecturer',
-              fontWeight: FontWeight.w600,
-            ),
-
-            const SizedBox(height: 8,),
-
-            CustomDropdownButton<String>(
-              hint: 'Select Lecturer',
-              controller: DropdownController<String>(),
-              items: List<String>.generate(10, (index) => 'Lecturer ${index+1}'),
-              onChanged: (newValue){}
-            ),
-
-
-
-            //todo: the class that learned the course.
-            const SizedBox(height: 12,),
-
-            CustomText(
-              'Class',
-              fontWeight: FontWeight.w600,
-            ),
-
-            const SizedBox(height: 8,),
-
-            CustomDropdownButton<String>(
-              hint: 'Select the class',
-              controller: DropdownController<String>(),
-              items: ['Bsc. Computer Science Level 200', 'Bsc. Computer Science Level 100', 'Hospitality Management'],
-              onChanged: (newValue){}
-            ),
-
-
-            Divider(),
-
-            CustomButton.withText(
-              'Clear',
-              width: double.infinity,
-              onPressed: (){},
-            )
-
-          ],
-        ),
-      ),
-    );
-  }
-
-
-
-
-
   //TODO: implement exporting to various formats.
-  void handleExcelExport() async {
+  void handleGenerateClassCourseReport(String fileType) async {
 
 
     Map<String, dynamic> reportParams = {
       'report_type': 'class_course',
       'id': widget.classCourse.classCourseId,
-      'file_type': '.xlsx'
+      'file_type': fileType
     };
 
-    //generate the excel report file from the backend
-    ReportFile? reportFile = await Provider.of<PreferencesProvider>(context, listen: false).generateReportFile(reportParams);
+    try{
 
-    if(reportFile == null) return;
+      ReportFile? reportFile = await Provider.of<PreferencesProvider>(context, listen: false).generateReportFile(reportParams);
 
+      if(reportFile == null) return;
 
-    FileDownloader downloader = getDownloader();
+      FileDownloader downloader = getDownloader();
 
-    downloader.download(reportFile: reportFile, context: context, onProgress: null);
+      downloader.download(reportFile: reportFile, context: context, onProgress: null);
 
+    }on SocketException{
+      showNoConnectionAlertDialog(context);
+    }on Error catch (e){
+      showCustomAlertDialog(
+        context, 
+        alertType: AlertType.warning, 
+        title: 'Error', 
+        contentText:  e.toString()
+      );
+    }
 
-
-    debugPrint(reportFile.fileName);
 
     //after generating the report file, hand it to the download scheduler
 
@@ -694,22 +566,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
     // );
     //
     // excelExporter.save(context);
-
-  }
-
-
-  void handlePDFExport() async {
-
-    Provider.of<PageProvider>(context, listen: false).pushPage(
-      ReportView(
-        classCourse: widget.classCourse,
-        evaluationSummaries: this.evalSummary,
-        categoryRemarks: this.categoryRemarks,
-        ratingSummary: this.evalLecturerRatingSummaries,
-        sentimentSummary: suggestionSummaryReport.sentimentSummaries,
-      ),
-      'Report View'
-    );
 
   }
 }

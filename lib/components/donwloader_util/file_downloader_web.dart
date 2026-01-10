@@ -17,9 +17,10 @@ class WebFileDownloader implements FileDownloader{
     final blob = html.Blob([response.bodyBytes]);
     final blobUrl = html.Url.createObjectUrlFromBlob(blob);
 
-    final anchor = html.AnchorElement(href: blobUrl)
-      ..setAttribute('download', '${reportFile.fileName}${reportFile.fileType}')
-      ..click();
+    final anchor = html.AnchorElement(href: blobUrl);
+    
+    anchor.setAttribute('download', '${reportFile.fileName}${reportFile.fileType}');
+    anchor.click();
 
     html.Url.revokeObjectUrl(blobUrl);
   }

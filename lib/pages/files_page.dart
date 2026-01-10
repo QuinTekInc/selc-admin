@@ -1,14 +1,11 @@
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
-import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/donwloader_util/file_downloader.dart';
 import 'package:selc_admin/components/text.dart';
-import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
@@ -354,7 +351,7 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
       showNoConnectionAlertDialog(context);
 
-    }on Error catch(err,trace){
+    }on Error catch(err, trace){
 
       showCustomAlertDialog(
         context,
@@ -379,15 +376,23 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
   void handleOpenFile() async {
 
+    //todo: open pdf file with a web brower or a dedicated pdf reader.
+
+    //todo: open spreadsheet file with excel/libre office calc/
+
   }
 
 
   void handleOpenContainingFolder(){
 
+    //todo: open the folder which contains the reoprt file.
+
   }
 
 
   void handleDeleteFile(){
+
+    //todo: delete the report file from the file system
 
   }
 

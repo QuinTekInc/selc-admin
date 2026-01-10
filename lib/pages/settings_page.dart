@@ -30,15 +30,20 @@ class _SettingsPageState extends State<SettingsPage> {
 
  //just don't mind this instanciation
   final semesterController = DropdownController<int>();
+  final academicYearController = TextEditingController();
 
   bool isDisableEvaluations = false;
+  bool isSuperuser = false;
 
   @override
   void initState() {
 
+    isSuperuser  = Provider.of<SelcProvider>(context, listen: false).user.userRole == UserRole.SUPERUSER;
+
 
     isDisableEvaluations = Provider.of<SelcProvider>(context, listen:false).enableEvaluations;
     semesterController.value = Provider.of<SelcProvider>(context, listen:false).currentSemester;
+    academicYearController.text = Provider.of<SelcProvider>(context, listen: false).currentAcademicYear.toString();
 
     _preferencesProvider = Provider.of<PreferencesProvider>(context, listen: false);
 
@@ -55,20 +60,12 @@ class _SettingsPageState extends State<SettingsPage> {
 
       children: [
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0, left: 16),
-              child: HeaderText(
-                'Settings',
-                fontSize: 25,
-              ),
-            )
-
-          ],
+        Padding(
+          padding: const EdgeInsets.only(top: 16.0, left: 16),
+          child: HeaderText(
+            'Settings',
+            fontSize: 25,
+          ),
         ),
 
 
@@ -86,6 +83,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
 
             child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+
               child: Column(  
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,9 +111,28 @@ class _SettingsPageState extends State<SettingsPage> {
                   const SizedBox(height: 8,),
 
                   CustomTextField(
-                    controller: TextEditingController(text: DateTime.now().year.toString()),
+                    controller: academicYearController,
                     enabled: false,
                     hintText: 'Current Academic year',
+                  ),
+
+                  const SizedBox(height: 8),
+                  
+                  
+                  if(Provider.of<SelcProvider>(context).currentAcademicYear < DateTime.now().year) CustomButton.withText(
+                    'Update Year',
+                    onPressed: () => setState(() {
+
+
+                      //INFO: when the academic year changes to use the two-year system, changes semester, we'll have to use the start-end date to update the academic calendar info.
+                      
+                      //set the academic year to the current academic year.
+                      academicYearController.text = DateTime.now().year.toString();
+
+                      //change the semester to one.
+                      semesterController.value = 1;
+
+                    }),
                   ),
 
 
@@ -143,9 +161,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       controller: semesterController,
                       hint: 'Select academic semester',
                       items: [1, 2],
-                      onChanged: (newValue) => handleUpdateSetting()//todo: implement selection of academic semester here.
+                      onChanged: (newValue) => setState((){}) //todo: just update the semester visually 
                     ),
                   ),
+
+
+
 
 
                   const SizedBox(height: 8),
@@ -451,11 +472,14 @@ class _SettingsPageState extends State<SettingsPage> {
   void handleUpdateSetting() async {
 
     try{
-    
-      await Provider.of<SelcProvider>(context, listen:false).updateGeneralSetting(
+
+      final generalSetting = GeneralSetting( 
         currentSemester: semesterController.value!,
+        academicYear: DateTime.now().year,
         disableEvaluations: isDisableEvaluations
       );
+    
+      await Provider.of<SelcProvider>(context, listen:false).updateGeneralSetting(generalSetting);
 
     }catch(e){
       showToastMessage(context, 'Could not update general setting to the database. please try again.');

@@ -108,7 +108,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
               TextButton.icon(
                 icon: Icon(Icons.edit_document, color: Colors.green.shade300, size: 25,),
                 label: CustomText('Generate Report', textColor: Colors.green.shade300, fontSize: 16,),
-                onPressed: (){},
+                onPressed: handleGenerateReport,
               )
             ],
           ),
@@ -440,6 +440,12 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
         ]
       )
     );
+  }
+
+
+
+  void handleGenerateReport() async {
+
   }
 }
 

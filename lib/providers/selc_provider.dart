@@ -27,6 +27,7 @@ class SelcProvider with ChangeNotifier{
 
 
   int currentSemester = 1;
+  int currentAcademicYear = DateTime.now().year;
   bool enableEvaluations = false;
 
   GeneralCurrentStatistics? _generalStat;
@@ -134,6 +135,7 @@ class SelcProvider with ChangeNotifier{
     dynamic responseBody = jsonDecode(response.body);
 
     currentSemester = responseBody['current_semester'];
+    currentAcademicYear = responseBody['academic_year'];
     enableEvaluations = responseBody['enable_evaluations'];
 
     notifyListeners();
@@ -142,12 +144,10 @@ class SelcProvider with ChangeNotifier{
 
 
 
-  Future<void> updateGeneralSetting({required int currentSemester, required bool disableEvaluations}) async{
+  Future<void> updateGeneralSetting(GeneralSetting generalSetting) async{
     final response = await connector.postRequest(
       endpoint: 'update-general-settings/', 
-      body: jsonEncode(
-        GeneralSetting(currentSemester: currentSemester, disableEvaluations: disableEvaluations).toMap()
-      )
+      body: jsonEncode( generalSetting.toMap())
     );
 
     if(response.statusCode != 200){
@@ -155,8 +155,9 @@ class SelcProvider with ChangeNotifier{
     }
 
 
-    this.currentSemester = currentSemester;
-    this.enableEvaluations = disableEvaluations;
+    this.currentSemester = generalSetting.currentSemester;
+    this.currentAcademicYear = generalSetting.academicYear;
+    this.enableEvaluations = generalSetting.disableEvaluations;
 
     getGeneralCurrentStatistics(); //reload the statistics
 

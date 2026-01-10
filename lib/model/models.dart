@@ -11,13 +11,15 @@ import 'package:selc_admin/components/utils.dart';
 //todo: general settings model
 class GeneralSetting{
   final int currentSemester;
+  final int academicYear;
   final bool disableEvaluations;
 
-  GeneralSetting({required this.currentSemester, required this.disableEvaluations});
+  GeneralSetting({required this.currentSemester, required this.academicYear, required this.disableEvaluations});
 
   factory GeneralSetting.fromJson(Map<String, dynamic> jsonMap){
     return GeneralSetting(
         currentSemester: jsonMap['current_semester'],
+        academicYear: jsonMap['academic_year'],
         disableEvaluations: jsonMap['disable_evaluations']
     );
   }
@@ -25,6 +27,7 @@ class GeneralSetting{
 
   Map<String, dynamic> toMap() =>{
     'current_semester': currentSemester,
+    'academic_year': academicYear,
     'disable_evaluations': disableEvaluations
   };
 }
@@ -493,7 +496,7 @@ class CategoryRemark{
 
     return CategoryRemark(
       categoryName: jsonMap['category'],
-      percentageScore: jsonMap['percentage_score'].toDouble() ?? 0,
+      percentageScore: (jsonMap['percentage_score'] as num).toDouble() ?? 0,
       meanScore: (jsonMap['mean_score'] as num).toDouble() ?? 0,
       remark: jsonMap['remark'],
       questions: questions

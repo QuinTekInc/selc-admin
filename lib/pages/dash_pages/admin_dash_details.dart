@@ -10,11 +10,9 @@ import 'package:selc_admin/components/admin_excel_export.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
-import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/dash_pages/dash_tables/course_performance_table.dart';
 import 'package:selc_admin/pages/dash_pages/dash_tables/suggestion_sentiments_table.dart';
-import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
 import 'dash_tables/lecturer_ratings_table.dart';
