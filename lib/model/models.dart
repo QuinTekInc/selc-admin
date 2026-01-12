@@ -496,8 +496,8 @@ class CategoryRemark{
 
     return CategoryRemark(
       categoryName: jsonMap['category'],
-      percentageScore: (jsonMap['percentage_score'] as num).toDouble() ?? 0,
-      meanScore: (jsonMap['mean_score'] as num).toDouble() ?? 0,
+      percentageScore: (jsonMap['percentage_score'] as num).toDouble(),
+      meanScore: (jsonMap['mean_score'] as num).toDouble(),
       remark: jsonMap['remark'],
       questions: questions
     );

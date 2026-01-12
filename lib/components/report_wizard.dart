@@ -15,13 +15,13 @@ import 'package:selc_admin/providers/selc_provider.dart';
 
 class ReportWizard extends StatefulWidget {
 
-  String? reportType;
-  int? id;
-  String? fileType;
-  int? semester;
-  int? year; 
+  final String? reportType;
+  final int? id;
+  final String? fileType;
+  final int? semester;
+  final int? year; 
 
-  ReportWizard({super.key, this.reportType, this.id, this.fileType, this.semester, this.year});
+  const ReportWizard({super.key, this.reportType, this.id, this.fileType, this.semester, this.year});
 
   @override
   State<ReportWizard> createState() => _ReportWizardState();

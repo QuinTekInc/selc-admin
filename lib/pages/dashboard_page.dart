@@ -44,6 +44,9 @@ class _DashboardPageState extends State<DashboardPage> {
   SelcProvider? _selcProvider;
   SelcProvider get selcProvider => _selcProvider!;
 
+  //this data is grabbed using the web channel serivce
+  Map<String, dynamic> dashboardGraphData = {};
+
   @override
   void initState() {
     super.initState();
@@ -364,6 +367,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
                           children: [
 
+
+                            //todo: this part needs to be put inside a stream builder to load data from the websocket
 
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -1187,6 +1192,9 @@ class _DashboardPageState extends State<DashboardPage> {
 ///todo: pie chart for suggestion sentiments
   Widget buildSuggestionSentimentPieChart(){
 
+
+    final sentimentSummaryMap = Map<String, dynamic>.from(dashboardGraphData['sentiment_summary']);
+
     final random = Random();
 
     final sentiments = ['negative', 'neutral', 'positive'];
@@ -1310,6 +1318,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   //todo: bar chart for overall lecturer ratings
   Widget buildLecturerRatingBarChart(){
+
+    final ratingSummaryMap = Map<String, dynamic>.from(dashboardGraphData['lecturer_rating_summary']);
 
     int population = 2000;
 
@@ -1474,6 +1484,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   //todo: Pie Chart for the response rate.
   Widget buildResponseRatePieChart(){
+
+    final responseRateMap = Map<String, dynamic>.from(dashboardGraphData['reponse_rate_summary']);
 
     int overallReg = 8 * 250;
     int responseRecv = 450;

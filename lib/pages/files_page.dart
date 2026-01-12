@@ -331,8 +331,6 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
       FileDownloader downloader = getDownloader();
 
-
-
       await downloader.download(
         context: context,
         reportFile: widget.reportFile,
@@ -351,7 +349,7 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
       showNoConnectionAlertDialog(context);
 
-    }on Error catch(err, trace){
+    }on Error catch(err, _){
 
       showCustomAlertDialog(
         context,
@@ -359,7 +357,7 @@ class _ReportFileCellState extends State<ReportFileCell> {
         contentText: err.toString()
       );
 
-    }on Exception catch(exception, trace){
+    }on Exception catch(exception, _){
 
       showCustomAlertDialog(
         context,

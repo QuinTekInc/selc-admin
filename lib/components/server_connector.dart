@@ -5,6 +5,8 @@ import 'dart:async';
 
 import 'package:selc_admin/components/preferences_util.dart';
 
+import 'package:web_socket_channel/web_socket_channel.dart';
+
 
 const String baseUrl = 'http://127.0.0.1:8000';
 //const String base_url = 'https://selc-backend.onrender.com';
@@ -58,3 +60,21 @@ Future<http.Response> postRequest({required String endpoint, required Object bod
     body: body
   );
 }
+
+
+
+
+
+
+class WebSocketService{
+
+  final wsURL = Uri.parse('ws://127.0.0.1:800/admin-api/ws/admin-dasboard');
+  late WebSocketChannel websocket;
+
+  WebSocketService(){
+    websocket  = WebSocketChannel.connect(wsURL);
+  }
+
+
+}
+
