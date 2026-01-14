@@ -100,19 +100,7 @@ class _UsersPageState extends State<UsersPage> {
                 flex: 2,
                 child: UserFilterSection(  
                   controller: roleFilterController,
-                  onChanged: (filters){
-                    setState((){
-
-                      if(filters.isEmpty) return;
-
-                      if(searchController.text.isEmpty){
-                        filteredUsers = Provider.of<SelcProvider>(context, listen: false).users.where(
-                          (user) => filters.contains(user.userRole)).toList();
-                      }else{
-                        filteredUsers = filteredUsers.where((user) => filters.contains(user.userRole)).toList();
-                      }
-                    });
-                  },
+                  onChanged: (filters) => handleFilter(),
                 )
               ),
 
@@ -252,12 +240,15 @@ class _UsersPageState extends State<UsersPage> {
     if(searchController.text.isEmpty){
 
       if(roleFilterController.filters.isEmpty){
-        setState(() => filteredUsers = Provider.of<SelcProvider>(context, listen: false).users);
+        filteredUsers = Provider.of<SelcProvider>(context, listen: false).users;
       }else{
         filteredUsers = Provider.of<SelcProvider>(context, listen: false).users.where(
           (user) => roleFilterController.filters.contains(user.userRole)
         ).toList();
       }
+
+
+      setState((){});
 
       
       return;
@@ -452,9 +443,9 @@ class _UserFilterSectionState extends State<UserFilterSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 48,
       width: double.infinity,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration( 
         borderRadius: BorderRadius.circular(12),
         color: PreferencesProvider.getColor(context, 'alt-primary-color')
@@ -472,11 +463,18 @@ class _UserFilterSectionState extends State<UserFilterSection> {
           ),
     
           CustomText(  
-            'Filter By: ',
+            'Filter By Roles: ',
             fontWeight: FontWeight.w600,
           ),
 
-          for(UserRole userRole in userRoles) buildRoleChip(userRole)
+          for(UserRole userRole in userRoles) RoleFilterChip(  
+            userRole: userRole,
+            selected: widget.controller.contains(userRole),
+            onPressed:() => setState((){
+              widget.controller.addOrRemoveFilter(userRole);
+              widget.onChanged(widget.controller.filters);
+            })
+          )
     
         ]
       )
@@ -484,50 +482,70 @@ class _UserFilterSectionState extends State<UserFilterSection> {
   }
 
 
+}
 
-  Widget buildRoleChip(UserRole userRole){
 
-    bool containsRole = widget.controller.contains(userRole);
 
-    return GestureDetector(
-      onTap: (){ 
+class RoleFilterChip extends StatefulWidget {
 
-        if(!containsRole) {
-          widget.controller.add(userRole);
-          containsRole = true;
-        } else {
-          widget.controller.remove(userRole);
-          containsRole = false;
-        }
+  final UserRole userRole;
+  final VoidCallback onPressed;
+  final bool selected;
 
-        widget.onChanged(widget.controller.filters);
+  const RoleFilterChip({super.key, required this.userRole, required this.selected, required this.onPressed});
 
-        setState((){});
-      },
-      child: Container(
+  @override
+  State<RoleFilterChip> createState() => _RoleFilterChipState();
+}
 
-        padding: const EdgeInsets.all(8),
-        alignment: Alignment.center,
+class _RoleFilterChipState extends State<RoleFilterChip> {
 
-        decoration: BoxDecoration( 
-          color: containsRole ? Colors.green : PreferencesProvider.getColor(context, 'alt-primary-color-2'),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            width: 0.5, 
-            color: containsRole ? Colors.white : PreferencesProvider.getColor(context, 'placeholder-text-color'),
-          )
-        ),
+  late Color backgroundColor;
+  late Color defaultColor;
+  
+  final selectedColor = Colors.green.shade400;
 
-        child: CustomText(
-          formatRoleString(userRole.roleString),
-          textColor: containsRole ? Colors.white : null,
-          fontSize: 12,
-        ),
-      ),
-      
-    );
+  @override
+  void initState() {
+    super.initState();
+
+    defaultColor = PreferencesProvider.getColor(context, 'alt-primary-color-2', listen: false);
+    
+    backgroundColor = widget.selected ? selectedColor : defaultColor;
   }
 
+  @override
+  Widget build(BuildContext context) {
+
+    return  MouseRegion(
+      onHover: (mouseEvent) => setState(() => backgroundColor = widget.selected ? selectedColor : Colors.green.shade100),
+      onExit: (mouseEvent) => setState(() => backgroundColor = widget.selected ? selectedColor : defaultColor),
+      child: GestureDetector(
+        onTap:  widget.onPressed,
+
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          alignment: Alignment.center,
+      
+          decoration: BoxDecoration( 
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              width: 0.5, 
+              color: widget.selected ? Colors.white : PreferencesProvider.getColor(context, 'placeholder-text-color'),
+            )
+          ),
+      
+          child: CustomText(
+            formatRoleString(widget.userRole.roleString),
+            textColor: widget.selected ? Colors.white : null,
+            fontSize: 12,
+          ),
+        ),
+        
+      ),
+    );
+  }
 
   String formatRoleString(String roleString){
     final firstLetter = roleString[0].toUpperCase();
@@ -542,6 +560,16 @@ class RoleFilterController{
   final List<UserRole> filters = [];
 
   bool contains(UserRole userRole) => filters.contains(userRole);
+
+  void addOrRemoveFilter(UserRole userRole){
+
+    if(filters.contains(userRole)){
+      filters.remove(userRole);
+    }else{
+      filters.add(userRole);
+    }
+
+  }
 
   void add(UserRole userRole) {
 
