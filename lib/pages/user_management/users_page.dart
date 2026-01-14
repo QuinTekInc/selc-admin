@@ -4,6 +4,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
@@ -26,6 +27,8 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
 
   final searchController = TextEditingController();
+  final roleFilterController = RoleFilterController();
+
   List<User> filteredUsers = [];
 
   bool isLoading = false;
@@ -82,8 +85,8 @@ class _UsersPageState extends State<UsersPage> {
 
             children: [
 
-              SizedBox(  
-                width: MediaQuery.of(context).size.width * 0.45,
+              Expanded(  
+                flex: 1,
                 child: CustomTextField(  
                   controller: searchController,
                   hintText: 'Search Users',
@@ -93,11 +96,29 @@ class _UsersPageState extends State<UsersPage> {
               ),
 
 
-              Spacer(),
+              Expanded(
+                flex: 2,
+                child: UserFilterSection(  
+                  controller: roleFilterController,
+                  onChanged: (filters){
+                    setState((){
+
+                      if(filters.isEmpty) return;
+
+                      if(searchController.text.isEmpty){
+                        filteredUsers = Provider.of<SelcProvider>(context, listen: false).users.where(
+                          (user) => filters.contains(user.userRole)).toList();
+                      }else{
+                        filteredUsers = filteredUsers.where((user) => filters.contains(user.userRole)).toList();
+                      }
+                    });
+                  },
+                )
+              ),
 
 
 
-             if(Provider.of<SelcProvider>(context).user.userRole == UserRole.SUPERUSER) CustomButton.withIcon(
+              CustomButton.withIcon(
                 'Add User', 
                 icon: Icons.add, 
                 forceIconLeading: true, 
@@ -229,8 +250,16 @@ class _UsersPageState extends State<UsersPage> {
   void handleFilter(){
 
     if(searchController.text.isEmpty){
-      setState(() => filteredUsers = Provider.of<SelcProvider>(context, listen: false).users);
 
+      if(roleFilterController.filters.isEmpty){
+        setState(() => filteredUsers = Provider.of<SelcProvider>(context, listen: false).users);
+      }else{
+        filteredUsers = Provider.of<SelcProvider>(context, listen: false).users.where(
+          (user) => roleFilterController.filters.contains(user.userRole)
+        ).toList();
+      }
+
+      
       return;
     }
 
@@ -402,4 +431,129 @@ class _UserManagementRowState extends State<UserManagementRow> {
 
 
 
+
+
+
+class UserFilterSection extends StatefulWidget {
+
+  final RoleFilterController controller;
+  final void Function(List<UserRole>) onChanged;
+
+  const UserFilterSection({super.key, required this.controller, required this.onChanged});
+
+  @override
+  State<UserFilterSection> createState() => _UserFilterSectionState();
+}
+
+class _UserFilterSectionState extends State<UserFilterSection> {
+
+  final userRoles = UserRole.values;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      width: double.infinity,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration( 
+        borderRadius: BorderRadius.circular(12),
+        color: PreferencesProvider.getColor(context, 'alt-primary-color')
+      ),
+      child: Row(  
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 8,
+        children: [
+    
+          Icon(  
+            CupertinoIcons.color_filter,
+            size: 35,
+            color: Colors.green.shade400
+          ),
+    
+          CustomText(  
+            'Filter By: ',
+            fontWeight: FontWeight.w600,
+          ),
+
+          for(UserRole userRole in userRoles) buildRoleChip(userRole)
+    
+        ]
+      )
+    );
+  }
+
+
+
+  Widget buildRoleChip(UserRole userRole){
+
+    bool containsRole = widget.controller.contains(userRole);
+
+    return GestureDetector(
+      onTap: (){ 
+
+        if(!containsRole) {
+          widget.controller.add(userRole);
+          containsRole = true;
+        } else {
+          widget.controller.remove(userRole);
+          containsRole = false;
+        }
+
+        widget.onChanged(widget.controller.filters);
+
+        setState((){});
+      },
+      child: Container(
+
+        padding: const EdgeInsets.all(8),
+        alignment: Alignment.center,
+
+        decoration: BoxDecoration( 
+          color: containsRole ? Colors.green : PreferencesProvider.getColor(context, 'alt-primary-color-2'),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            width: 0.5, 
+            color: containsRole ? Colors.white : PreferencesProvider.getColor(context, 'placeholder-text-color'),
+          )
+        ),
+
+        child: CustomText(
+          formatRoleString(userRole.roleString),
+          textColor: containsRole ? Colors.white : null,
+          fontSize: 12,
+        ),
+      ),
+      
+    );
+  }
+
+
+  String formatRoleString(String roleString){
+    final firstLetter = roleString[0].toUpperCase();
+    return '$firstLetter${roleString.substring(1)}';
+  }
+}
+
+
+
+class RoleFilterController{
+
+  final List<UserRole> filters = [];
+
+  bool contains(UserRole userRole) => filters.contains(userRole);
+
+  void add(UserRole userRole) {
+
+    if(filters.contains(userRole)) return;
+
+    filters.add(userRole);
+  }
+
+  void remove(UserRole userRole) => filters.remove(userRole);
+
+  void clear(){
+    filters.clear();
+  }
+}
 
