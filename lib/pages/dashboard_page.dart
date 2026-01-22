@@ -1,6 +1,5 @@
 
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/charts/bar_chart.dart';
 import 'package:selc_admin/components/custom_notification_badge.dart';
+import 'package:selc_admin/components/server_connector.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
@@ -60,6 +60,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
   void loadLRatingsRank() async {
+
     setState(() => isLRatingsLoading = true);
 
 
@@ -67,7 +68,7 @@ class _DashboardPageState extends State<DashboardPage> {
       await selcProvider.getLecturerRatingsRank(
         filterBody: {
           'semester': Provider.of<SelcProvider>(context, listen:false).currentSemester,
-          'year': DateTime.now().year
+          'year': Provider.of<SelcProvider>(context, listen: false).currentAcademicYear
         }
       );
     }catch(exception){
@@ -90,7 +91,7 @@ class _DashboardPageState extends State<DashboardPage> {
     await selcProvider.getCourseRatingsRank(
       filterBody: {
         'semester': Provider.of<SelcProvider>(context, listen: false).currentSemester,
-        'year': DateTime.now().year
+        'year': Provider.of<SelcProvider>(context, listen: false).currentAcademicYear
       }
     );
 
@@ -244,7 +245,6 @@ class _DashboardPageState extends State<DashboardPage> {
             ],
           ),
 
-
           Expanded(
             flex: 2,
 
@@ -350,7 +350,6 @@ class _DashboardPageState extends State<DashboardPage> {
 
                   const SizedBox(height: 12,),
 
-
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -369,44 +368,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
                             //todo: this part needs to be put inside a stream builder to load data from the websocket
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              spacing: 12,
-                              children: [
-
-                                Expanded(
-                                  child: buildResponseRatePieChart()
-                                ),
-
-                                Expanded(
-                                    child: buildSuggestionSentimentPieChart()
-                                )
-                              ]
-                            ),
-
-
-                            Center(
-                              child: buildLecturerRatingBarChart()
-                            ),
-
-                            // CustomBarChart(
-                            //   width: double.infinity,
-                            //   height: MediaQuery.of(context).size.height * 0.6,
-                            //   chartTitle: 'Recent Evaluations',
-                            //   groups: List<CustomBarGroup>.generate(
-                            //     10,
-                            //     (int index) => CustomBarGroup(
-                            //       x: index+1,
-                            //       rods: List<Rod>.generate(
-                            //         1,
-                            //         (int _) => Rod(y: Random().nextDouble() * 20)
-                            //       )
-                            //     )
-                            //   ),
-                            // ),
-
+                            DashboardGraphSection(),
 
                             buildLecturerRatingsTable(context),
 
@@ -1189,18 +1151,211 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
 
-///todo: pie chart for suggestion sentiments
-  Widget buildSuggestionSentimentPieChart(){
+  void handleLogout(BuildContext context) async {
+
+    showDialog(  
+      context: context, 
+      builder: (_) => LoadingDialog(message: 'Logging Out.....Please wait',)
+    );
 
 
-    final sentimentSummaryMap = Map<String, dynamic>.from(dashboardGraphData['sentiment_summary']);
+    try{
 
-    final random = Random();
+      await Provider.of<SelcProvider>(context, listen: false).logout();
+
+      Navigator.pop(context); //close the loading dialog dialog.
+
+      Navigator.pushAndRemoveUntil(
+        context, 
+        MaterialPageRoute(
+          builder: (_) => LoginPage(),
+        ),
+        (route) => false
+      );
+
+    }on SocketException catch(_){
+
+      Navigator.pop(context); //close the loading dialog
+
+      showCustomAlertDialog(
+        context, 
+        title: 'Logout Error', 
+        contentText: 'Make sure you are connected to the internet'
+      );
+
+    }on Exception catch(exception){
+      Navigator.pop(context); //close the loading dialog
+      showCustomAlertDialog(
+        context, 
+        title: 'Error', 
+        contentText: exception.toString()
+      );
+    }
+
+  }
+
+
+}
+
+
+
+
+//total number of unique courses being handled in the semester
+//total number of class courses
+//total number of lecturers
+
+
+//todo: shows all the graph for all the data recieved this semester.
+class DashboardGraphSection extends StatefulWidget {
+
+  const DashboardGraphSection({super.key});
+
+  @override
+  State<DashboardGraphSection> createState() => _DashboardGraphSectionState();
+}
+
+class _DashboardGraphSectionState extends State<DashboardGraphSection> {
+
+  final WebSocketService websocketService = WebSocketService(consumerEndpoint: 'ws/selc-admin/dashboard/');
+
+  @override void dispose(){
+    websocketService.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  StreamBuilder(  
+      stream: websocketService.dataStream,
+      builder: (context, snapshot){
+
+        switch(snapshot.connectionState){
+          case ConnectionState.waiting: 
+            return Container(
+              width: double.infinity, 
+              height: MediaQuery.of(context).size.height * 0.6,
+              alignment: Alignment.center,
+
+              decoration: BoxDecoration( 
+                borderRadius: BorderRadius.circular(12),
+                color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+              ),
+
+              child: CircularProgressIndicator(),
+            );
+
+          default: 
+            break;
+        }
+
+
+
+        if(snapshot.hasError){
+          return Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.6,
+            alignment: Alignment.center,
+
+            decoration: BoxDecoration(  
+              borderRadius: BorderRadius.circular(12),
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+            ),
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              spacing: 8,
+              children: [
+
+                Icon(Icons.warning_rounded, color: Colors.red.shade400, size: 100),
+
+                CustomText(  
+                  'Could not load chart data',
+                  fontWeight: FontWeight.w600, 
+                  fontSize: 16
+                ),
+
+
+                SizedBox(
+                  width: 350,
+                  child: CustomText(
+                    'Error: ${snapshot.error}',
+                    textAlignment: TextAlign.center,
+                  )
+                ),
+
+                CustomButton.withText(  
+                  'Refresh',
+                  onPressed: () => websocketService.connect(), //connect again when there is an error
+                )
+              ],
+            ),
+          );
+        }
+
+
+
+        if(!snapshot.hasData){
+          return Center(  
+            child: CustomText('No data received from server'),
+          );
+        }
+
+
+        Map<String, dynamic> graphData = Map<String, dynamic>.from(snapshot.data);
+
+        return Column(  
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 12,
+          children: [
+
+            //todo: the various graphs
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 12,
+              children: [
+
+                Expanded(
+                  child: buildResponseRatePieChart(
+                    Map<String, dynamic>.from(graphData['registration_summary'])
+                  )
+                ),
+
+                Expanded(
+                  child: buildSuggestionSentimentPieChart(
+                    Map<String, dynamic>.from(graphData['sentiment_summary'])
+                  )
+                )
+              ]
+            ),
+
+
+            Center(
+              child: buildLecturerRatingBarChart(
+                Map<String, dynamic>.from(graphData['lecturer_rating'])
+              )
+            ),
+
+          ]
+        );
+      }
+    );
+
+  }
+
+
+
+  ///todo: pie chart for suggestion sentiments
+  Widget buildSuggestionSentimentPieChart(Map<String, dynamic> sentimentSummary){
+
 
     final sentiments = ['negative', 'neutral', 'positive'];
     final sectionColors = [Colors.red.shade400, Colors.amber, Colors.green.shade400];
-
-    int population = 2000;
 
     List<CustomPieSection> sections = [];
 
@@ -1208,10 +1363,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
     for(String sentiment in sentiments){
 
-      int randomPopulation = random.nextInt(population);
-      population -= randomPopulation;
+      int ratingCount = sentimentSummary[sentiment];
 
-      double percentage = (randomPopulation / 2000) * 100;
+      double percentage = sentimentSummary['${sentiment}_percentage'];
 
       sections.add(
         CustomPieSection(
@@ -1223,7 +1377,7 @@ class _DashboardPageState extends State<DashboardPage> {
       );
 
 
-      sentimentDetails.add((sentiment, randomPopulation, percentage));
+      sentimentDetails.add((sentiment, ratingCount, percentage));
 
     }
 
@@ -1315,13 +1469,10 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
 
-
   //todo: bar chart for overall lecturer ratings
-  Widget buildLecturerRatingBarChart(){
+  Widget buildLecturerRatingBarChart(Map<String, dynamic> ratingSummary){
 
-    final ratingSummaryMap = Map<String, dynamic>.from(dashboardGraphData['lecturer_rating_summary']);
-
-    int population = 2000;
+    int totalRated = 0;
 
     final List<Color> rodColors = [Colors.green.shade400, Colors.blue.shade400, Colors.purple.shade400, Colors.amber, Colors.red.shade400];
 
@@ -1332,10 +1483,12 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
     for(int i = 5; i >= 1; i--){
-      int randomPopulation = Random().nextInt(population+1);
-      population -= randomPopulation;
+    
+      int ratingCount = ratingSummary[i.toString()];
 
-      double percentage = (randomPopulation / 2000) * 100;
+      totalRated += ratingCount;
+    
+      double percentage = ratingSummary['rating_${i}_percentage'];
 
       barGroups.add(
         CustomBarGroup(
@@ -1343,7 +1496,7 @@ class _DashboardPageState extends State<DashboardPage> {
           label: i.toString(),
           rods: [
             Rod(
-              y: randomPopulation.toDouble(),
+              y: ratingCount.toDouble(),
               rodColor: rodColors[rodColors.length - i]
             )
           ]
@@ -1351,7 +1504,7 @@ class _DashboardPageState extends State<DashboardPage> {
       );
 
 
-      lRatingInfo.add((i, randomPopulation, percentage));
+      lRatingInfo.add((i, ratingCount, percentage));
     }
 
     return Container(
@@ -1385,7 +1538,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   containerBackgroundColor: PreferencesProvider.getColor(context, 'alt-primary-color'),
                   width: double.infinity,
                   height: 350,
-                  maxY: 2000,
+                  maxY: totalRated.toDouble(),
                   groups: barGroups,
                   rodWidth: 50,
                   rodBorderRadius: BorderRadius.circular(4),
@@ -1483,15 +1636,17 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
   //todo: Pie Chart for the response rate.
-  Widget buildResponseRatePieChart(){
+  Widget buildResponseRatePieChart(Map<String, dynamic> responseRateSummary){
 
-    final responseRateMap = Map<String, dynamic>.from(dashboardGraphData['reponse_rate_summary']);
+    int overallReg = responseRateSummary['total_registrations'];
+    int responseRecv = responseRateSummary['evaluated_registrations'];
 
-    int overallReg = 8 * 250;
-    int responseRecv = 450;
+    //find the number of those who not yet evaluated
     int totalUnresponse = overallReg - responseRecv;
 
-    double responseRate = (responseRecv / overallReg) * 100;
+    double responseRate = responseRateSummary['response_rate'];
+
+    //percentage of those who have not yet evaluated.
     double unresponseRate = 100 - responseRate;
 
     final rRateItems = [
@@ -1530,14 +1685,16 @@ class _DashboardPageState extends State<DashboardPage> {
 
               CustomPieSection(
                 value: unresponseRate,
-                title: '$unresponseRate %',
-                keyTitle: 'Unevaluated'
+                title: '${formatDecimal(unresponseRate)} %',
+                keyTitle: 'Unevaluated',
+                sectionColor: Colors.red.shade400
               ),
 
               CustomPieSection(
                 value: responseRate,
-                title: '$responseRate%',
-                keyTitle: 'Evaluated'
+                title: '${formatDecimal(responseRate)} %',
+                keyTitle: 'Evaluated',
+                sectionColor: Colors.green.shade400
               )
             ],
           ),
@@ -1575,60 +1732,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-
-
-
-
-
-  void handleLogout(BuildContext context) async {
-
-    showDialog(  
-      context: context, 
-      builder: (_) => LoadingDialog(message: 'Logging Out.....Please wait',)
-    );
-
-
-    try{
-
-      await Provider.of<SelcProvider>(context, listen: false).logout();
-
-      Navigator.pop(context); //close the loading dialog dialog.
-
-      Navigator.pushAndRemoveUntil(
-        context, 
-        MaterialPageRoute(
-          builder: (_) => LoginPage(),
-        ),
-        (route) => false
-      );
-
-    }on SocketException catch(_){
-
-      Navigator.pop(context); //close the loading dialog
-
-      showCustomAlertDialog(
-        context, 
-        title: 'Logout Error', 
-        contentText: 'Make sure you are connected to the internet'
-      );
-
-    }on Exception catch(exception){
-      Navigator.pop(context); //close the loading dialog
-      showCustomAlertDialog(
-        context, 
-        title: 'Error', 
-        contentText: exception.toString()
-      );
-    }
-
-  }
-
-
 }
 
 
-
-
-//total number of unique courses being handled in the semester
-//total number of class courses
-//total number of lecturers

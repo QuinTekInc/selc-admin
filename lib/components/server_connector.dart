@@ -1,15 +1,17 @@
 
 
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
 import 'package:selc_admin/components/preferences_util.dart';
+import 'package:web_socket_client/web_socket_client.dart';
 
-import 'package:web_socket_channel/web_socket_channel.dart';
 
-
-const String baseUrl = 'http://127.0.0.1:8000';
+const String baseUrl = 'http://127.0.0.1:8000'; //rename to httpUrl
 //const String base_url = 'https://selc-backend.onrender.com';
+
 
 
 String concat(String other, {useCore = false}){
@@ -18,6 +20,7 @@ String concat(String other, {useCore = false}){
   
   return '$baseUrl/admin-api/$other';
 }
+
 
 
 
@@ -68,11 +71,57 @@ Future<http.Response> postRequest({required String endpoint, required Object bod
 
 class WebSocketService{
 
-  final wsURL = Uri.parse('ws://127.0.0.1:800/admin-api/ws/admin-dasboard');
-  late WebSocketChannel websocket;
+  late WebSocket _websocket;
 
-  WebSocketService(){
-    websocket  = WebSocketChannel.connect(wsURL);
+  final StreamController<Map<String, dynamic>> _streamController = StreamController<Map<String, dynamic>>.broadcast();
+
+  Stream get dataStream =>  _streamController.stream;
+
+  final String consumerEndpoint;
+
+  WebSocketService({required this.consumerEndpoint}){
+    connect();
+  }
+
+  String _buildUrl(String endpoint){
+    return 'ws://127.0.0.1:8000/$endpoint';
+  }
+
+
+  void connect() async {
+
+    String token = await getAuthorizationToken();
+
+    final wsURL = Uri.parse(_buildUrl(consumerEndpoint));
+
+    try{
+      _websocket = WebSocket(wsURL, headers: {'Authorization': 'Token ${token.trim()}'});
+
+      _websocket.messages.listen(
+        (message) {
+          // Assuming the incoming message is a JSON string
+          final Map<String, dynamic> data =  jsonDecode(message);
+
+          _streamController.add(data);
+
+        }, 
+        onError: (error) async  {
+          _streamController.addError(error);
+          await _streamController.close();
+        },
+
+        onDone: () => _websocket.close()
+      );
+
+    }catch(error){
+      throw Error();
+    }
+  }
+
+
+  void dispose(){
+    _websocket.close();
+    _streamController.close();
   }
 
 

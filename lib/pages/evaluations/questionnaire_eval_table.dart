@@ -11,89 +11,73 @@ class QuestionnaireEvalTable extends StatelessWidget {
 
   final List<CourseEvaluationSummary> evaluationSummaries;
 
-  final BorderRadius? borderRadius;
-
   const QuestionnaireEvalTable({
     super.key,
     required this.evaluationSummaries,
-    this.borderRadius
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 12),
+    return TableContainer(
+    
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
 
           //todo:table column headers for the question evaluations.
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(8),
-
-            decoration: BoxDecoration(
-              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-              borderRadius: BorderRadius.circular(12)
-            ),
-
-
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                Expanded(
-                  flex: 3,
-                  child: CustomText(
-                    'Question',
-                    fontWeight: FontWeight.w600,
-                  ),
+          TableHeaderContainer(
+            headerChildren: [
+          
+              Expanded(
+                flex: 3,
+                child: CustomText(
+                  'Question',
+                  fontWeight: FontWeight.w600,
                 ),
-
-
-                Expanded(
-                  child: CustomText(
-                    'Answer Type',
-                    fontWeight: FontWeight.w600
-                  ),
+              ),
+          
+          
+              Expanded(
+                child: CustomText(
+                  'Answer Type',
+                  fontWeight: FontWeight.w600
                 ),
-
-                Expanded(
-                  flex: 2,
-                  child: CustomText(
-                    'Answer Variations',
-                    fontWeight: FontWeight.w600
-                  ),
+              ),
+          
+              Expanded(
+                flex: 2,
+                child: CustomText(
+                  'Answer Variations',
+                  fontWeight: FontWeight.w600
                 ),
-
-
-                const SizedBox(
-                  width: 130,
-                  child: CustomText(
-                    'Mean Score',
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+          
+          
+              const SizedBox(
+                width: 130,
+                child: CustomText(
+                  'Mean Score',
+                  fontWeight: FontWeight.w600,
                 ),
-
-                const SizedBox(
-                  width: 135,
-                  child: CustomText(
-                    'Percentage (%)',
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+          
+              const SizedBox(
+                width: 135,
+                child: CustomText(
+                  'Percentage (%)',
+                  fontWeight: FontWeight.w600,
                 ),
-
-                Expanded(
-                  child: CustomText(
-                    'Answer Type',
-                    fontWeight: FontWeight.w600
-                  ),
+              ),
+          
+              Expanded(
+                child: CustomText(
+                  'Answer Type',
+                  fontWeight: FontWeight.w600
                 ),
-
-              ],
-            ),
+              ),
+          
+            ],
           ),
 
 

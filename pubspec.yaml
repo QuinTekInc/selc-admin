@@ -27,7 +27,7 @@ dependencies:
   excel: ^4.0.6
   contextmenu: ^3.0.0
   dio: ^5.9.0
-  web_socket_channel: ^3.0.3
+  web_socket_client: ^0.2.1
   
 
 dev_dependencies:

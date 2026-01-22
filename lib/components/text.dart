@@ -548,3 +548,80 @@ class CustomVerticalDivider extends StatelessWidget {
 }
 
 
+
+
+
+class TableContainer extends StatelessWidget {
+  
+  final EdgeInsets padding;
+  final EdgeInsets margin;
+  final double? height; 
+  final double width;
+
+  final Widget child;
+
+  const TableContainer({
+    super.key, 
+    this.padding = const EdgeInsets.all(8),
+    this.margin = EdgeInsets.zero,
+    this.height,
+    this.width = double.infinity,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(  
+      padding: const EdgeInsets.all(8),
+      width: double.infinity,
+      
+      decoration: BoxDecoration(  
+        borderRadius: BorderRadius.circular(12),
+        color: PreferencesProvider.getColor(context, 'table-background-color')
+      ),
+
+      child: child,
+    );
+  }
+}
+
+
+
+
+class TableHeaderContainer extends StatelessWidget {
+
+  final List<Widget> headerChildren;
+  
+  final MainAxisAlignment mainAxisAlignment;
+  final CrossAxisAlignment crossAxisAlignment;
+  final double spacing;
+
+  const TableHeaderContainer({
+    super.key, 
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.spacing = 0,
+    this.headerChildren = const[]
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(  
+      padding: const EdgeInsets.all(8),
+      width: double.infinity,
+      
+      decoration: BoxDecoration(  
+        borderRadius: BorderRadius.circular(12),
+        color: PreferencesProvider.getColor(context, 'table-header-color')
+      ),
+
+      child: Row(  
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment,
+        spacing: spacing,
+        children: headerChildren,
+      ),
+    );
+  }
+}
+

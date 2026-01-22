@@ -188,16 +188,6 @@ class AdminReportExcelExport{
       ..value = TextCellValue('Thematic Areas of Evaluation (Core Areas or Categories)')
       ..cellStyle = headerCellStyle;
 
-
-
-    final List<String> headers = [
-      'Lecturer',
-      'Department',
-      'Course Title',
-      'Course Code',
-    ];
-
-
     //todo: here wee have to write the headers by hand
 
 

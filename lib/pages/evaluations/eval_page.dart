@@ -12,6 +12,7 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/pages/evaluations/cc_program_detail.dart';
 import 'package:selc_admin/pages/evaluations/questionnaire_eval_table.dart';
 import 'package:selc_admin/pages/evaluations/suggestions_table.dart';
 import 'package:selc_admin/pages/evaluations/visualization_section.dart';
@@ -40,7 +41,8 @@ class _EvaluationPageState extends State<EvaluationPage> {
   List<CourseEvaluationSummary> evalSummary = [];
   List<CategoryRemark> categoryRemarks = [];
   List<EvaluationSuggestion> evaluationSuggestions = [];
-  //List<SuggestionSentimentSummary> sentimentSummaries = [];
+  
+  List<CCProgramInfo> ccProgramsInfo = [];
 
   late SuggestionSummaryReport suggestionSummaryReport;
 
@@ -65,30 +67,49 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
     setState(() => isLoading = true);
 
-    List<dynamic> ccSummary = await Provider.of<SelcProvider>(context, listen: false).getClassCourseEvaluation(widget.classCourse.classCourseId);
+    try{
 
-    //collect the questions map from each category into on giant list
-    final List<Map<String, dynamic>> questionsMapList =[
-      for(final summary in ccSummary)
-        for(final questionMap in summary['questions'] ?? [])
-          questionMap
-    ];
+    
+
+      List<dynamic> ccSummary = await Provider.of<SelcProvider>(context, listen: false).getClassCourseEvaluation(widget.classCourse.classCourseId);
+
+      //collect the questions map from each category into on giant list
+      final List<Map<String, dynamic>> questionsMapList =[
+        for(final summary in ccSummary)
+          for(final questionMap in summary['questions'] ?? [])
+            questionMap
+      ];
 
 
-    //convert them to a list of "CourseEvaluationSummary" objects
-    evalSummary = questionsMapList.map(
-            (jsonMap) => CourseEvaluationSummary.fromJson(jsonMap))
-            .toList();
+      //convert them to a list of "CourseEvaluationSummary" objects
+      evalSummary = questionsMapList.map(
+              (jsonMap) => CourseEvaluationSummary.fromJson(jsonMap))
+              .toList();
 
-    //extract the category remarks into list of "CategoryRemark" objects
-    categoryRemarks = ccSummary.map((jsonMap) => CategoryRemark.fromJson(jsonMap)).toList();
+      //extract the category remarks into list of "CategoryRemark" objects
+      categoryRemarks = ccSummary.map((jsonMap) => CategoryRemark.fromJson(jsonMap)).toList();
 
-    suggestionSummaryReport =  await Provider.of<SelcProvider>(context, listen: false).getEvaluationSuggestions(widget.classCourse.classCourseId);
+      suggestionSummaryReport =  await Provider.of<SelcProvider>(context, listen: false).getEvaluationSuggestions(widget.classCourse.classCourseId);
 
-    evalLecturerRatingSummaries = await Provider.of<SelcProvider>(context, listen: false).getEvalLecturerRatingSummary(widget.classCourse.classCourseId);
+      evalLecturerRatingSummaries = await Provider.of<SelcProvider>(context, listen: false).getEvalLecturerRatingSummary(widget.classCourse.classCourseId);
 
-    // sentimentSummaries = suggestionSummaryReport.sentimentSummaries;
-    // evaluationSuggestions = suggestionSummaryReport.suggestions;
+      ccProgramsInfo = await Provider.of<SelcProvider>(context, listen: false).getCCProgramsInfo(widget.classCourse.classCourseId);
+
+    }on SocketException{
+
+      showNoConnectionAlertDialog(context);
+
+    }on Error catch (e){
+
+      showCustomAlertDialog(
+        context,
+        alertType: AlertType.warning,
+        title: 'Error',
+        contentText: e.toString()
+      );
+
+    }
+
 
     setState(() => isLoading = false);
   }
@@ -201,7 +222,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                     child: DefaultTabController(
                       initialIndex: 0,
-                      length: 4,
+                      length: 5,
 
                       child: Column(
                         children: [
@@ -262,6 +283,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                                   Tab(
                                     text: 'Suggestions',
+                                  ),
+
+                                  Tab(  
+                                    text: 'Individual Classes'
                                   )
 
                                 ]
@@ -311,19 +336,25 @@ class _EvaluationPageState extends State<EvaluationPage> {
     if(selectedTab == 0){
       return QuestionnaireEvalTable(
         evaluationSummaries: evalSummary,
-        borderRadius: BorderRadius.zero,
       );
     }
 
 
     else if(selectedTab == 1) {
-      return QuestionnaireVisualSection(evaluationSummaries: evalSummary);
+      return QuestionnaireVisualSection(
+        evaluationSummaries: evalSummary
+      );
     }
 
     else if(selectedTab == 2){
       return CategoryRemarksTable(
         categoryRemarks: categoryRemarks,
-        borderRadius: BorderRadius.zero,
+      );
+    }
+
+    else if(selectedTab == 4){
+      return CCProgramDetailSection(  
+        programDetail: ccProgramsInfo
       );
     }
 

@@ -44,7 +44,7 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
   }
 
   void loadData() async {
-    setState(() => isLoading = false);
+    setState(() => isLoading = true);
 
     try{
 
@@ -56,7 +56,7 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
       showNoConnectionAlertDialog(context);
     }
 
-    setState(() => isLoading = true);
+    setState(() => isLoading = false);
   }
 
   @override
@@ -189,8 +189,13 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
                   ),
 
 
+                  if(isLoading)Expanded(  
+                    child: Center(  
+                      child: CircularProgressIndicator()
+                    )
+                  )
                   ///listview builder for the class courses items
-                  Expanded(
+                  else Expanded(
                     child: ListView.builder(
                       itemCount: filteredClassCourses.length,
                       itemBuilder: (_, index) => ClassCourseCell(classCourse: filteredClassCourses[index])

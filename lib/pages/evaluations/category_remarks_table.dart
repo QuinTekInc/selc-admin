@@ -3,25 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
-import 'package:selc_admin/providers/pref_provider.dart';
 
 
 class CategoryRemarksTable extends StatelessWidget {
 
   final List<CategoryRemark> categoryRemarks;
-  final BorderRadius? borderRadius;
 
   const CategoryRemarksTable({
     super.key,
     required this.categoryRemarks,
-    this.borderRadius
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
 
+    return TableContainer(
+      
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,69 +26,50 @@ class CategoryRemarksTable extends StatelessWidget {
 
         children: [
 
-          // HeaderText(
-          //     'Category Remarks',
-          //     fontSize: 15
-          // ),
-
-
           const SizedBox(height: 8,),
 
           //todo: category remarks table headers
-          Container(
-            padding: const EdgeInsets.all(8),
-            width: double.infinity,
+          TableHeaderContainer(
+            headerChildren: [
 
-            decoration: BoxDecoration(
-                color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-                borderRadius: BorderRadius.circular(12)
-            ),
-
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-
-              children: [
-
-                Expanded(
-                  flex: 2,
-                  child: CustomText(
-                    'Question Category',
-                    fontWeight: FontWeight.w600,
-                  ),
+              Expanded(
+                flex: 2,
+                child: CustomText(
+                  'Question Category',
+                  fontWeight: FontWeight.w600,
                 ),
+              ),
 
 
-                Expanded(
-                  child: CustomText(
-                    'Avg. Score',
-                    fontWeight: FontWeight.w600,
-                    textAlignment: TextAlign.center,
-                  ),
+              Expanded(
+                child: CustomText(
+                  'Avg. Score',
+                  fontWeight: FontWeight.w600,
+                  textAlignment: TextAlign.center,
                 ),
+              ),
 
 
 
-                Expanded(
-                  child: CustomText(
-                    'Percentage Score(%)',
-                    fontWeight: FontWeight.w600,
-                    textAlignment: TextAlign.center,
-                  ),
+              Expanded(
+                child: CustomText(
+                  'Percentage Score(%)',
+                  fontWeight: FontWeight.w600,
+                  textAlignment: TextAlign.center,
                 ),
+              ),
 
 
-                Expanded(
-                  flex: 1,
-                  child: CustomText(
-                    'Remarks',
-                    fontWeight: FontWeight.w600,
-                  ),
-                )
-              ],
-            ),
+              Expanded(
+                flex: 1,
+                child: CustomText(
+                  'Remarks',
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            ],
           ),
-
+        
 
           //todo: category remarks table rows.
           Expanded(

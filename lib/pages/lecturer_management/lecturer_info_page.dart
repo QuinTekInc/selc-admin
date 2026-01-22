@@ -1126,6 +1126,11 @@ class ClassCourseInfoModalSheet extends StatelessWidget {
         ('Semester', classCourse.semester.toString()),
       ],
 
+      [
+        ('Level', classCourse.level),
+        ('Programs', classCourse.programs.length.toString())
+      ],
+
       ('Number on roll', classCourse.registeredStudentsCount.toString()),
 
       [

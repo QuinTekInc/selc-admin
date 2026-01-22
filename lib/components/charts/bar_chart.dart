@@ -267,7 +267,7 @@ class CustomBarChart extends StatelessWidget {
           // ),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
-            toY: 20, //set the background y to the maximum y value of the entire graph,
+            toY: maxY, //set the background y to the maximum y value of the entire graph,
             //Colors.grey.shade100
             color: PreferencesProvider.getColor(context, 'table-background-color')
           )

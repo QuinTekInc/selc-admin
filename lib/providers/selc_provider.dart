@@ -380,9 +380,9 @@ class SelcProvider with ChangeNotifier{
 
 
 
-  Future<List<CategoryRemark>> getCourseEvalCategoryRemark(int classCourseId) async{
+  Future<List<CCProgramInfo>> getCCProgramsInfo(int classCourseId) async{
 
-    final response = await connector.getRequest(endpoint: 'eval-question-category-remark/$classCourseId');
+    final response = await connector.getRequest(endpoint: 'class-course-detail-by-program/$classCourseId');
 
     if(response.statusCode != 200){
       throw Error();
@@ -391,7 +391,7 @@ class SelcProvider with ChangeNotifier{
 
     List<dynamic> responseBody = jsonDecode(response.body);
 
-    return responseBody.map((jsonMap) => CategoryRemark.fromJson(jsonMap)).toList();
+    return responseBody.map((jsonMap) => CCProgramInfo.fromJson(jsonMap)).toList();
   } 
 
 

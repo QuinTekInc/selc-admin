@@ -382,7 +382,6 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
 
   void handleOpenContainingFolder(){
-
     //todo: open the folder which contains the reoprt file.
 
   }

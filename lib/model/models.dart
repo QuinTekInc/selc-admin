@@ -326,10 +326,10 @@ class Course{
 class ClassCourse{
 
   int classCourseId;
+  String level;
   int semester;
   int year;
   int credits;
-  String klass;
   Lecturer lecturer;
   Course course;
   bool isAcceptingResponse;
@@ -339,12 +339,13 @@ class ClassCourse{
   String? remark;
   int registeredStudentsCount;
   int evaluatedStudentsCount;
+  List<String> programs; 
 
   ClassCourse({
     required this.classCourseId,
+    this.level = '',
     required this.semester,
     required this.year,
-    required this.klass,
     required this.course,
     required this.credits,
     required this.lecturer,
@@ -354,7 +355,8 @@ class ClassCourse{
     this.lecturerRating = 0,
     this.remark,
     this.registeredStudentsCount = 0,
-    this.evaluatedStudentsCount = 0
+    this.evaluatedStudentsCount = 0,
+    this.programs = const []
   });
 
 
@@ -362,10 +364,10 @@ class ClassCourse{
 
     return ClassCourse(
       classCourseId: jsonMap['cc_id'],
+      level: jsonMap['level'] ?? '',
       semester: jsonMap['semester'],
       year: jsonMap['year'],
       credits: jsonMap['credit_hours'],
-      klass: jsonMap['class'] ?? 'A',
       course: Course.fromJson(jsonMap['course']),
       lecturer: Lecturer.fromJson(jsonMap['lecturer']),
       isAcceptingResponse: jsonMap['is_accepting_response'],
@@ -374,7 +376,8 @@ class ClassCourse{
       remark: jsonMap['remark'],
       lecturerRating: jsonMap['lecturer_course_rating'].toDouble() ?? 0,
       registeredStudentsCount: jsonMap['number_of_registered_students'],
-      evaluatedStudentsCount: jsonMap['number_of_evaluated_students']
+      evaluatedStudentsCount: jsonMap['number_of_evaluated_students'],
+      programs: List<String>.from(jsonMap['programs'] ?? [])
     );
   }
 
@@ -459,6 +462,46 @@ class CourseEvaluationSummary{
 
   @override String toString() => '$question -> ${answerType.typeString}';
 
+}
+
+
+
+class CCProgramInfo{
+
+  String program; 
+  
+  int registeredStudentsCount; 
+  int evaluatedStudentsCount; 
+  double responseRate; 
+  double meanScore; 
+  double percentageScore; 
+  String remark; 
+  double lecturerRating;
+
+  CCProgramInfo({
+    required this.program,
+    this.registeredStudentsCount = 0,
+    this.evaluatedStudentsCount = 0,
+    this.responseRate = 0,
+    this.meanScore = 0,
+    this.percentageScore = 0,
+    this.remark = '',
+    this.lecturerRating = 0
+  });
+
+
+  factory CCProgramInfo.fromJson(Map<String, dynamic> jsonMap){
+    return CCProgramInfo(
+      program: jsonMap['program'],
+      registeredStudentsCount: (jsonMap['number_of_registered_students'] as num).toInt(),
+      evaluatedStudentsCount: (jsonMap['number_of_evaluated_students'] as num).toInt(),
+      responseRate: (jsonMap['response_rate'] as num).toDouble(),
+      meanScore: (jsonMap['mean_score'] as num).toDouble(),
+      percentageScore: (jsonMap['percentage_score'] as num).toDouble(),
+      remark: jsonMap['remark'],
+      lecturerRating: (jsonMap['lecturer_rating'] as num).toDouble()
+    );
+  }
 }
 
 
