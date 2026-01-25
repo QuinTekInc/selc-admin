@@ -276,11 +276,9 @@ class _EvaluationPageState extends State<EvaluationPage> {
                                     text: 'Visualisations'
                                   ),
 
-
                                   Tab(
                                     text: 'Category Remarks',
                                   ),
-
 
                                   Tab(
                                     text: 'Suggestions',
@@ -313,19 +311,15 @@ class _EvaluationPageState extends State<EvaluationPage> {
                               child: buildSelectedWidget()
                             ),
                           )
-
-
                         ],
                       ),
 
                     ),
                   ),
                 )
-            
               ],
             ),
           )
-          
         ],
       ),
     );
