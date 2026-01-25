@@ -40,7 +40,6 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
   List<CourseEvaluationSummary> evalSummary = [];
   List<CategoryRemark> categoryRemarks = [];
-  List<EvaluationSuggestion> evaluationSuggestions = [];
   
   List<CCProgramInfo> ccProgramsInfo = [];
 
@@ -99,7 +98,9 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
       showNoConnectionAlertDialog(context);
 
-    }on Error catch (e){
+    }on Error catch (e, stackTrace){
+
+      debugPrintStack(label: e.toString(), stackTrace: stackTrace);
 
       showCustomAlertDialog(
         context,
@@ -341,8 +342,12 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
 
     else if(selectedTab == 1) {
-      return QuestionnaireVisualSection(
-        evaluationSummaries: evalSummary
+      return VisualizationSection(
+        lecturerRating: widget.classCourse.lecturerRating,
+        questionEvaluations: evalSummary,
+        categorySummaries: categoryRemarks,
+        ratingSummary: evalLecturerRatingSummaries,
+        sentimentSummary: suggestionSummaryReport.sentimentSummaries,
       );
     }
 

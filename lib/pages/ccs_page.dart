@@ -89,32 +89,14 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
             ],
           ),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 12,
-            children: [
-
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.45,
-                child: CustomTextField(
-                  controller: searchController,
-                  hintText: 'Search by year, semester, course code, title, lecturer, department .....',
-                  leadingIcon: Icons.search,
-                  onChanged: handleSearchFilter,
-                ),
-              ),
-
-
-              CustomButton.withIcon(
-                'Filter',
-                onPressed: (){},
-                forceIconLeading: true,
-                width: 90,
-                icon: Icons.filter_alt_sharp
-              )
-
-            ],
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            child: CustomTextField(
+              controller: searchController,
+              hintText: 'Search by year, semester, course code, title, lecturer, department .....',
+              leadingIcon: Icons.search,
+              onChanged: handleSearchFilter,
+            ),
           ),
 
 
@@ -212,6 +194,7 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
       )
     );
   }
+
 
 
 

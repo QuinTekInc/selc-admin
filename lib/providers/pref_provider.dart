@@ -1,7 +1,6 @@
 
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +26,10 @@ class PreferencesProvider extends ChangeNotifier{
   Map<String, Color> colorScheme = LIGHT_THEME_COLORS;
 
   Future<void> loadPreferences() async{
+
     preferences = await  Preferences.fromSharedPreferences();
     downloadedFiles = preferences.savedFiles;
     _updateUI(preferences.darkMode);
-
 
     getFilesFromBackend();
   }

@@ -9,6 +9,8 @@ import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
+import 'package:open_filex/open_filex.dart';
+
 
 
 class FilesPage extends StatefulWidget {
@@ -374,21 +376,26 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
   void handleOpenFile() async {
 
-    //todo: open pdf file with a web brower or a dedicated pdf reader.
-
+    
+    //todo: open the folder which contains the reoprt file.
+    //todo: open pdf file with a web browser or a dedicated pdf reader.
     //todo: open spreadsheet file with excel/libre office calc/
 
   }
 
 
-  void handleOpenContainingFolder(){
-    //todo: open the folder which contains the reoprt file.
+  void handleOpenContainingFolder() async {
+    
+    await OpenFilex.open(
+      widget.reportFile.localFilePath!,
+      type: widget.reportFile.fileType
+    );
+    
 
   }
 
 
   void handleDeleteFile(){
-
     //todo: delete the report file from the file system
 
   }

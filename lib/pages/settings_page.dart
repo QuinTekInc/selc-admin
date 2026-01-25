@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/text.dart';
+import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
@@ -28,24 +29,42 @@ class _SettingsPageState extends State<SettingsPage> {
   PreferencesProvider get preferencesProvider => _preferencesProvider!;
 
 
+  SelcProvider? _selcProvider;
+  SelcProvider get selcProvider => _selcProvider!;
+
+
  //just don't mind this instanciation
   final semesterController = DropdownController<int>();
   final academicYearController = TextEditingController();
 
+  final dateTextController = TextEditingController();
+
   bool isDisableEvaluations = false;
   bool isSuperuser = false;
+
+
+  DateTime? semesterEndDate;
 
   @override
   void initState() {
 
-    isSuperuser  = Provider.of<SelcProvider>(context, listen: false).user.userRole == UserRole.SUPERUSER;
+    _selcProvider = Provider.of<SelcProvider>(context, listen: false);
 
+    isSuperuser  = selcProvider.user.userRole == UserRole.SUPERUSER;
 
-    isDisableEvaluations = Provider.of<SelcProvider>(context, listen:false).enableEvaluations;
-    semesterController.value = Provider.of<SelcProvider>(context, listen:false).currentSemester;
-    academicYearController.text = Provider.of<SelcProvider>(context, listen: false).currentAcademicYear.toString();
+    isDisableEvaluations = selcProvider.enableEvaluations;
 
+    semesterController.value = selcProvider.generalSetting.currentSemester;
+
+    academicYearController.text = selcProvider.generalSetting.academicYear.toString();
+
+    semesterEndDate = selcProvider.generalSetting.semesterEndDate;
+  
+    dateTextController.text = semesterEndDate != null ? formatDate(semesterEndDate!) : 'Not Set';
+
+  
     _preferencesProvider = Provider.of<PreferencesProvider>(context, listen: false);
+    
 
     super.initState();
   }
@@ -148,7 +167,44 @@ class _SettingsPageState extends State<SettingsPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
 
-        buildSettingsTitle(icon: Icons.calendar_month, title: 'Academic Calendar'),
+        Row(
+          children: [
+            buildSettingsTitle(icon: Icons.calendar_month, title: 'Academic Calendar'),
+
+            Spacer(), 
+
+
+            if(selcProvider.generalSetting.requireUpdateCalendar && selcProvider.user.userRole == UserRole.SUPERUSER) TextButton.icon(
+
+              icon: Icon(Icons.update, color: Colors.green.shade400,),
+
+              label: CustomText(
+                'Update Academic Calendar',
+                textColor: Colors.green.shade400,
+                fontSize: 15,
+              ),
+
+              onPressed: () => setState(() {
+                //INFO: when the academic year changes to use the two-year system, changes semester, we'll have to use the start-end date to update the academic calendar info.
+                
+                //set the academic year to the current academic year.
+                if(semesterController.value == 2){
+                  academicYearController.text = DateTime.now().year.toString();
+                }
+
+                semesterController.value = semesterController.value == 2 ? 1 : 2;
+                
+                showCustomAlertDialog(  
+                  context, 
+                  title: 'Update Calendar',
+                  contentText: 'You will have to update the "Semester End Date" before you save. \n'
+                    'You can update the Semester End Date by clicking on the green text button blow the semester entry'
+                );
+
+              }),
+            ),
+          ],
+        ),
         
         const SizedBox(height: 8,),
         
@@ -156,7 +212,7 @@ class _SettingsPageState extends State<SettingsPage> {
           'Helps to retrieve information related to the current academic calendar (the academic year and semester)'
         ),
 
-        if(Provider.of<SelcProvider>(context).user.userRole == UserRole.SUPERUSER) RichText(  
+        if(selcProvider.user.userRole == UserRole.SUPERUSER) RichText(  
           text: TextSpan( 
             text: 'Note: ',
             style: TextStyle(
@@ -184,7 +240,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
 
         CustomText(
-          'Current Year',
+          'Current Academic Year',
           fontWeight: FontWeight.w600,
         ),
 
@@ -197,25 +253,6 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
 
         const SizedBox(height: 8),
-        
-        
-        if(Provider.of<SelcProvider>(context).currentAcademicYear < DateTime.now().year) CustomButton.withText(
-          'Update Year',
-          onPressed: () => setState(() {
-            //INFO: when the academic year changes to use the two-year system, changes semester, we'll have to use the start-end date to update the academic calendar info.
-            
-            //set the academic year to the current academic year.
-            academicYearController.text = DateTime.now().year.toString();
-
-            //change the semester to one.
-            semesterController.value = 1;
-
-          }),
-        ),
-
-
-        const SizedBox(height: 8,),
-
 
         CustomText(
           'Current Semester',
@@ -227,13 +264,63 @@ class _SettingsPageState extends State<SettingsPage> {
         //todo: the dropdown button for selecting the current academic semester
         //this field only editable for only superusers.
         IgnorePointer(
-          ignoring: Provider.of<SelcProvider>(context).user.userRole != UserRole.SUPERUSER,
+          ignoring: selcProvider.user.userRole != UserRole.SUPERUSER,
           child: CustomDropdownButton<int>(
             controller: semesterController,
             hint: 'Select academic semester',
             items: [1, 2],
             onChanged: (newValue) => setState((){}) //todo: just update the semester visually 
           ),
+        ),
+
+        const SizedBox(height: 8,),
+
+
+        //tood: widget to send the date for a semester
+        CustomText(  
+          'Semester End Date: ',
+          fontWeight: FontWeight.w600,
+        ), 
+
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 12,
+
+          children: [
+
+            SizedBox(  
+              width: MediaQuery.of(context).size.width * 0.3,
+              child: CustomTextField(  
+                controller: dateTextController,
+                enabled: false,
+                hintText: 'Semester End date',
+              )
+            ),
+            
+            
+            IgnorePointer(  
+              ignoring: selcProvider.user.userRole != UserRole.SUPERUSER,
+              child: IconButton(
+                icon: Icon(Icons.calendar_month_outlined, color: Colors.green.shade400,),
+                tooltip: 'Click to change date',
+                onPressed: () async {
+                  semesterEndDate = await showDatePicker(
+                    context: context, 
+                    initialDate: semesterEndDate ?? DateTime.now(), 
+                    firstDate: DateTime.now().subtract(const Duration(days: 365 * 5)), 
+                    lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
+                    helpText: 'Select the date the current semester will end.'
+                  );
+            
+                  setState((){
+                    dateTextController.text = formatDate(semesterEndDate!);
+                  });
+                }, //show time start date
+              ),
+            ),
+          ],
         ),
 
 
@@ -477,7 +564,8 @@ class _SettingsPageState extends State<SettingsPage> {
       final generalSetting = GeneralSetting( 
         currentSemester: semesterController.value!,
         academicYear: int.parse(academicYearController.text),
-        disableEvaluations: isDisableEvaluations
+        enableEvaluations: isDisableEvaluations,
+        semesterEndDate: semesterEndDate ??  DateTime.now()
       );
     
       await Provider.of<SelcProvider>(context, listen:false).updateGeneralSetting(generalSetting);

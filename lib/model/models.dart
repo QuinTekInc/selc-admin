@@ -12,15 +12,27 @@ import 'package:selc_admin/components/utils.dart';
 class GeneralSetting{
   final int currentSemester;
   final int academicYear;
-  final bool disableEvaluations;
+  final bool enableEvaluations;
+  final DateTime semesterEndDate;
+  
+  bool requireUpdateCalendar;
+  
 
-  GeneralSetting({required this.currentSemester, required this.academicYear, required this.disableEvaluations});
+  GeneralSetting({
+    required this.currentSemester, 
+    required this.academicYear, 
+    required this.enableEvaluations, 
+    required this.semesterEndDate,
+    this.requireUpdateCalendar = false
+  });
 
   factory GeneralSetting.fromJson(Map<String, dynamic> jsonMap){
     return GeneralSetting(
-        currentSemester: jsonMap['current_semester'],
-        academicYear: jsonMap['academic_year'],
-        disableEvaluations: jsonMap['disable_evaluations']
+      currentSemester: jsonMap['current_semester'],
+      academicYear: jsonMap['academic_year'],
+      enableEvaluations: jsonMap['enable_evaluations'],
+      semesterEndDate: DateTime.parse(jsonMap['semester_end_date']),
+      requireUpdateCalendar: jsonMap['require_update_calendar'] ?? false,
     );
   }
 
@@ -28,7 +40,7 @@ class GeneralSetting{
   Map<String, dynamic> toMap() =>{
     'current_semester': currentSemester,
     'academic_year': academicYear,
-    'disable_evaluations': disableEvaluations
+    'enable_evaluations': enableEvaluations
   };
 }
 
@@ -180,10 +192,10 @@ class Question{
 
   factory Question.fromJson(Map<String, dynamic> jsonMap){
     return Question(
-        questionId: jsonMap['id'],
-        category: Category.fromJson(jsonMap['category']),
-        question: jsonMap['question'],
-        answerType: QuestionAnswerType.fromString(jsonMap['answer_type'])
+      questionId: jsonMap['id'],
+      category: Category.fromJson(jsonMap['category']),
+      question: jsonMap['question'],
+      answerType: QuestionAnswerType.fromString(jsonMap['answer_type'])
     );
   }
 
@@ -607,14 +619,18 @@ class EvaluationSuggestion{
 
   final double rating;
   final String suggestion;
+  final String sentiment;
+  final String program;
 
-  EvaluationSuggestion({required this.rating, required this.suggestion});
+  EvaluationSuggestion({required this.rating, required this.suggestion, required this.sentiment, required this.program});
 
 
   factory EvaluationSuggestion.fromJson(Map<String, dynamic> jsonMap){
     return EvaluationSuggestion(
-        rating: jsonMap['rating'].toDouble(),
-        suggestion: jsonMap['suggestion']
+      rating: (jsonMap['rating'] as num).toDouble(),
+      suggestion: jsonMap['suggestion'],
+      sentiment: jsonMap['sentiment'],
+      program: jsonMap['program']
     );
   }
 

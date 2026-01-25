@@ -105,7 +105,7 @@ class SuggestionsTable extends StatelessWidget {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: summaryReport.suggestions.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (_, index) => buildSuggestionCell(context, index),
+                      itemBuilder: (_, index) => SuggestionCell(suggestion: summaryReport.suggestions[index],),
                     ),
                   ),
                 ],
@@ -304,14 +304,48 @@ class SuggestionsTable extends StatelessWidget {
     );
   }
 
+  
 
 
 
-  Widget buildSuggestionCell(BuildContext context, int index) {
+  Widget buildStars(int n) => Row(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.start,
+    spacing: 3,
+    children: List<Widget>.generate(
+      n,
+      (index) => Icon(Icons.star_rounded, color: Colors.amber, size: 28,)
+    )
+  );
 
-    EvaluationSuggestion suggestion = summaryReport.suggestions[index];
 
-    return Container(
+
+  Widget buildEmptyPlaceholder() {
+    return Expanded(
+      child: CollectionPlaceholder(
+        detail: 'All students\' suggestions appear here.'
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+class SuggestionCell extends StatelessWidget {
+
+  final EvaluationSuggestion suggestion;
+
+  const SuggestionCell({super.key, required this.suggestion});
+
+  @override
+  Widget build(BuildContext context) {
+    return  Container(
       padding: const EdgeInsets.all(12),
 
       constraints: BoxConstraints(
@@ -343,14 +377,37 @@ class SuggestionsTable extends StatelessWidget {
                 child: Icon(CupertinoIcons.person, color: Colors.white)
               ),
 
-              RatingStars(
-                rating: suggestion.rating,
-                transparentBackground: true,
-                zeroPadding: true,
-                spacing: 1,
+
+              Column(  
+                mainAxisAlignment: MainAxisAlignment.start, 
+                crossAxisAlignment: CrossAxisAlignment.start, 
+                mainAxisSize: MainAxisSize.min,
+                children: [
+
+                  CustomText(suggestion.program, fontWeight: FontWeight.w600,),
+
+
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 8,
+                    children: [
+                      RatingStars(
+                        rating: suggestion.rating,
+                        transparentBackground: true,
+                        zeroPadding: true,
+                        spacing: 1,
+                      ),
+                      
+                      CustomText('(${formatDecimal(suggestion.rating)})', fontWeight: FontWeight.w600,),
+                    ],
+                  )
+
+
+                ],
               ),
 
-              CustomText('(${formatDecimal(suggestion.rating)})', fontWeight: FontWeight.w600,)
             ],
           ),
 
@@ -358,35 +415,49 @@ class SuggestionsTable extends StatelessWidget {
 
           CustomText(
             suggestion.suggestion
+          ),
+
+
+          const Divider(),
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: RichText(  
+              text: TextSpan(
+                text: 'Sentiment: ',
+            
+                style: TextStyle(  
+                  fontFamily: 'Poppins', 
+                  color: PreferencesProvider.getColor(context, 'text-color'),
+                  fontWeight: FontWeight.w600
+                ),
+            
+                children: [
+                  
+                  TextSpan(
+                    text: suggestion.sentiment,
+                    style: TextStyle(
+                      color: sentimentColors[suggestion.sentiment],
+                      fontWeight: FontWeight.normal
+                    )
+                  )
+                ]
+              ),
+            ),
           )
         ],
       ),
 
     );
   }
-  
 
 
-
-  Widget buildStars(int n) => Row(
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.start,
-    spacing: 3,
-    children: List<Widget>.generate(
-      n,
-      (index) => Icon(Icons.star_rounded, color: Colors.amber, size: 28,)
-    )
-  );
-
-
-
-  Widget buildEmptyPlaceholder() {
-    return Expanded(
-      child: CollectionPlaceholder(
-        detail: 'All students\' suggestions appear here.'
-      ),
-    );
-  }
+  Map<String, Color>  get sentimentColors => {
+    'negative': Colors.red.shade400,
+    'neutral': Colors.amber,
+    'positive': Colors.green.shade400
+  };
 }
+
+
 

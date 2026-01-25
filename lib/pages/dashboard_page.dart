@@ -67,8 +67,8 @@ class _DashboardPageState extends State<DashboardPage> {
     try{
       await selcProvider.getLecturerRatingsRank(
         filterBody: {
-          'semester': Provider.of<SelcProvider>(context, listen:false).currentSemester,
-          'year': Provider.of<SelcProvider>(context, listen: false).currentAcademicYear
+          'semester': Provider.of<SelcProvider>(context, listen:false).generalSetting.currentSemester,
+          'year': Provider.of<SelcProvider>(context, listen: false).generalSetting.academicYear,
         }
       );
     }catch(exception){
@@ -90,8 +90,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
     await selcProvider.getCourseRatingsRank(
       filterBody: {
-        'semester': Provider.of<SelcProvider>(context, listen: false).currentSemester,
-        'year': Provider.of<SelcProvider>(context, listen: false).currentAcademicYear
+        'semester': Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester,
+        'year': Provider.of<SelcProvider>(context, listen: false).generalSetting.academicYear,
       }
     );
 
@@ -1216,7 +1216,7 @@ class DashboardGraphSection extends StatefulWidget {
 
 class _DashboardGraphSectionState extends State<DashboardGraphSection> {
 
-  final WebSocketService websocketService = WebSocketService(consumerEndpoint: 'ws/selc-admin/dashboard/');
+  final WebSocketService websocketService = WebSocketService(consumerEndpoint: 'ws/admin-dashboard/');
 
   @override void dispose(){
     websocketService.dispose();

@@ -39,7 +39,7 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
   void initState() {
     super.initState();
     academicYearController.value = DateTime.now().year;
-    semesterController.value = Provider.of<SelcProvider>(context, listen:false).currentSemester;
+    semesterController.value = Provider.of<SelcProvider>(context, listen:false).generalSetting.currentSemester;
   }
 
 
@@ -128,7 +128,7 @@ class _LecturerRatingsPageState extends State<LecturerRatingsPage> {
                               });
 
                               
-                              semesterController.value = Provider.of<SelcProvider>(context, listen: false).currentSemester;
+                              semesterController.value = Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester;
                               academicYearController.value = DateTime.now().year;
                               
                               loadLecturerRatingsData(

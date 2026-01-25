@@ -41,7 +41,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
   void initState() {
     super.initState();
     
-    semesterController.value = Provider.of<SelcProvider>(context, listen: false).currentSemester;
+    semesterController.value = Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester;
     academicYearController.value = DateTime.now().year; //set the year controller's value to the current academic year
   }
 
@@ -141,7 +141,7 @@ class _CourseRatingsPageState extends State<CourseRatingsPage> {
                                 filterSelected = false;
                               });
 
-                              semesterController.value = Provider.of<SelcProvider>(context, listen: false).currentSemester;
+                              semesterController.value = Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester;
                               academicYearController.value = DateTime.now().year;
 
                               loadCourseRankingsData(filterMap: {

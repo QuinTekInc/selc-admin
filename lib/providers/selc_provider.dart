@@ -26,8 +26,9 @@ class SelcProvider with ChangeNotifier{
   List<User> users = [];
 
 
-  int currentSemester = 1;
-  int currentAcademicYear = DateTime.now().year;
+  GeneralSetting? _generalSetting;
+  GeneralSetting get generalSetting => _generalSetting!;
+
   bool enableEvaluations = false;
 
   GeneralCurrentStatistics? _generalStat;
@@ -134,9 +135,7 @@ class SelcProvider with ChangeNotifier{
 
     dynamic responseBody = jsonDecode(response.body);
 
-    currentSemester = responseBody['current_semester'];
-    currentAcademicYear = responseBody['academic_year'];
-    enableEvaluations = responseBody['enable_evaluations'];
+    _generalSetting = GeneralSetting.fromJson(responseBody as Map<String, dynamic>);
 
     notifyListeners();
   }
@@ -155,13 +154,14 @@ class SelcProvider with ChangeNotifier{
     }
 
 
-    this.currentSemester = generalSetting.currentSemester;
-    this.currentAcademicYear = generalSetting.academicYear;
-    this.enableEvaluations = generalSetting.disableEvaluations;
 
-    getGeneralCurrentStatistics(); //reload the statistics
+    _generalSetting = generalSetting;
+
 
     notifyListeners();
+
+    getGeneralCurrentStatistics(); //reload the statistics without the await keyword
+
   }
 
 
@@ -406,6 +406,8 @@ class SelcProvider with ChangeNotifier{
     }
 
     Map<String, dynamic> responseBody = jsonDecode(response.body);
+
+    print(responseBody);
 
     SuggestionSummaryReport suggestionsReport = SuggestionSummaryReport.fromJson(responseBody);
     

@@ -67,8 +67,8 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
       classCourses = await Provider.of<SelcProvider>(context, listen: false).getDepartmentClassCourses(widget.department.departmentId);
 
       currentCoursesCount = classCourses.where((classCourse) =>
-                                classCourse.semester == Provider.of<SelcProvider>(context, listen: false).currentSemester &&
-                                classCourse.year == DateTime.now().year).length;
+                              classCourse.semester == Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester &&
+                              classCourse.year == Provider.of<SelcProvider>(context, listen: false).generalSetting.academicYear).length;
     } on SocketException {
       showNoConnectionAlertDialog(context);
 
@@ -563,7 +563,7 @@ class _DClassCourseCellState extends State<DClassCourseCell> {
     // TODO: implement initState
 
     bool isCurrentYear = widget.classCourse.year == DateTime.now().year;
-    bool isCurrentSemester = widget.classCourse.semester == Provider.of<SelcProvider>(context, listen: false).currentSemester;
+    bool isCurrentSemester = widget.classCourse.semester == Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester;
 
     isCurrentCourse = isCurrentSemester && isCurrentYear;
 
