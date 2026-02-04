@@ -15,6 +15,7 @@ import 'package:selc_admin/pages/lecturer_management/lecturer_info_page.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 
+import '../../components/report_wizard.dart';
 import '../../components/text.dart';
 import '../../providers/page_provider.dart' show PageProvider;
 
@@ -445,6 +446,17 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
 
   void handleGenerateReport() async {
+
+    showCustomModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      child: ReportWizard(
+        reportType: 'Department',
+        id: widget.department.departmentId,
+        semester: Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester,
+        year: Provider.of<SelcProvider>(context, listen: false).generalSetting.academicYear,
+      )
+    );
 
   }
 }

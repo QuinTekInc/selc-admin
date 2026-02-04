@@ -7,7 +7,7 @@ import 'package:selc_admin/model/models.dart';
 
 class CategoryRemarksTable extends StatelessWidget {
 
-  final List<CategoryRemark> categoryRemarks;
+  final List<CategoryEvaluation> categoryRemarks;
 
   const CategoryRemarksTable({
     super.key,
@@ -79,7 +79,7 @@ class CategoryRemarksTable extends StatelessWidget {
                 separatorBuilder: (_, index) => Divider(),
 
                 itemBuilder: (_, index) {
-                  CategoryRemark categoryRemark = categoryRemarks[index];
+                  CategoryEvaluation categoryRemark = categoryRemarks[index];
                   return buildCategoryReportRow(categoryRemark);
                 }
             ),
@@ -92,7 +92,7 @@ class CategoryRemarksTable extends StatelessWidget {
 
 
 
-  Widget buildCategoryReportRow(CategoryRemark categoryRemark){
+  Widget buildCategoryReportRow(CategoryEvaluation categoryRemark){
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(

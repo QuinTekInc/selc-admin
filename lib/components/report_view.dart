@@ -12,7 +12,7 @@ class ReportView extends StatelessWidget {
 
   final ClassCourse classCourse;
   final List<CourseEvaluationSummary> evaluationSummaries;
-  final List<CategoryRemark> categoryRemarks;
+  final List<CategoryEvaluation> categoryRemarks;
   final List<EvalLecturerRatingSummary> ratingSummary;
   final List<SuggestionSentimentSummary> sentimentSummary;
 

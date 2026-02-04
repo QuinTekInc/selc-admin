@@ -379,9 +379,11 @@ class _ClassCourseCellState extends State<ClassCourseCell> {
       return;
     }on SocketException{
       showToastMessage(context, 'No Connection!. Please make sure you are connected to the internet.');
-    }on Error{
+    }on Error catch(error, stackTrace){
       showToastMessage(context, 'An unexpected error occurred. Could not update Class Course.');
-    }
+      debugPrint(error.toString());
+      debugPrint(stackTrace.toString());
+    } 
 
     setState(() {
       widget.classCourse.isAcceptingResponse = !newValue;

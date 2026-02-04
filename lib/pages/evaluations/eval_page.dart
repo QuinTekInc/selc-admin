@@ -39,7 +39,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
   int selectedTab = 0;
 
   List<CourseEvaluationSummary> evalSummary = [];
-  List<CategoryRemark> categoryRemarks = [];
+  List<CategoryEvaluation> categoryRemarks = [];
   
   List<CCProgramInfo> ccProgramsInfo = [];
 
@@ -86,7 +86,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
               .toList();
 
       //extract the category remarks into list of "CategoryRemark" objects
-      categoryRemarks = ccSummary.map((jsonMap) => CategoryRemark.fromJson(jsonMap)).toList();
+      categoryRemarks = ccSummary.map((jsonMap) => CategoryEvaluation.fromJson(jsonMap)).toList();
 
       suggestionSummaryReport =  await Provider.of<SelcProvider>(context, listen: false).getEvaluationSuggestions(widget.classCourse.classCourseId);
 
@@ -358,13 +358,12 @@ class _EvaluationPageState extends State<EvaluationPage> {
     }
 
 
-    return SuggestionsTable(
+    return SuggestionsSection(
       summaryReport: suggestionSummaryReport, 
       lecturerRating: evalLecturerRatingSummaries,
       courseLRating: widget.classCourse.lecturerRating,
     );
   }
-
 
 
   //course information section

@@ -9,7 +9,6 @@ import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/pages/lecturer_management/lecturer_info_page.dart';
-import 'package:selc_admin/pages/lecturer_management/lecturer_info_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
 

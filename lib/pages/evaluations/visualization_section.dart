@@ -14,7 +14,7 @@ class VisualizationSection extends StatefulWidget {
 
   final double lecturerRating;
 
-  final List<CategoryRemark> categorySummaries;
+  final List<CategoryEvaluation> categorySummaries;
   final List<CourseEvaluationSummary> questionEvaluations;
   final List<EvalLecturerRatingSummary> ratingSummary;
 
@@ -103,7 +103,7 @@ class _VisualizationSectionState extends State<VisualizationSection> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: PreferencesProvider.getColor(context, 'primary-color'),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: HeaderText(evalDataKey),
@@ -115,21 +115,24 @@ class _VisualizationSectionState extends State<VisualizationSection> {
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                childCount: evalData[evalDataKey]!.length,
-                    (context, index){
-                  final card = evalData[evalDataKey]![index];
 
-                  return card;
-                },
-
-              ),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
                 mainAxisExtent: 525,
               ),
+
+              delegate: SliverChildBuilderDelegate(
+                childCount: evalData[evalDataKey]!.length,
+                (_, index){
+                  final card = evalData[evalDataKey]![index];
+
+                  return card;
+                },
+
+              ),
+
             ),
           ),
 
@@ -217,138 +220,135 @@ class _QuestionnaireCardState extends State<QuestionnaireCard> {
 
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      widthFactor: 0.6,
-      child: Container(
-        padding: const EdgeInsets.all(12),
+    return Container(
+      padding: const EdgeInsets.all(12),
 
-          decoration: BoxDecoration(
-            color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300, width: 1.5)
-          ),
+        decoration: BoxDecoration(
+          color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300, width: 1.5)
+        ),
 
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            spacing: 8,
-            children: [
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
+          children: [
 
-              Row(
-                spacing: 8,
-                children: [
+            Row(
+              spacing: 8,
+              children: [
 
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    height: 50,
-                    width: 50,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: PreferencesProvider.getColor(context, 'table-background-color'),
-                        borderRadius: BorderRadius.circular(12)
-                    ),
-                    child: CustomText(
-                      widget.questionnaireNumber.toString(),
-                      textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      textAlignment: TextAlign.center,
-                    ),
-                  ),
-
-
-                  Expanded(
-                      child: CustomText(
-                          widget.summary.question,
-                          fontSize: 15
-                      )
-                  ),
-
-                  SizedBox(
-                    height: 45,
-                    child: VerticalDivider(
-                      width: 0,
-                      thickness: 1.5,
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  height: 50,
+                  width: 50,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
                       color: PreferencesProvider.getColor(context, 'table-background-color'),
-                    ),
+                      borderRadius: BorderRadius.circular(12)
                   ),
-
-
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CustomText(
-                        'Answer type',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
-
-                      CustomText(
-                        widget.summary.answerType.typeString,
-                        fontSize: 13,
-                        textColor: Colors.green.shade400,
-                      )
-                    ],
-                  )
-                ]
-              ),
-
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: FractionallySizedBox(
-                    widthFactor: 0.4,
-                    child: CustomDropdownButton(
-                        controller: chartTypeController,
-                        hint: 'Select Chart Type',
-                        items: chartTypes,
-                        onChanged: (newValue) => setState((){})
-                    ),
-                  )
-              ),
-
-
-              //todo: chart
-              buildCellChartSection(),
-
-
-              Align(
-                alignment: Alignment.centerRight,
-                child: FractionallySizedBox(
-                  widthFactor: 0.4,
-
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-
-                      buildQuestionnaireField(
-                          title: 'Mean Score',
-                          detail: formatDecimal(widget.summary.meanScore)
-                      ),
-
-                      buildQuestionnaireField(
-                          title: 'Percentage Score(%)',
-                          detail: formatDecimal(widget.summary.meanScore)
-                      ),
-
-
-                      buildQuestionnaireField(
-                          title: 'Remark',
-                          detail: widget.summary.remark,
-                          detailWeight: FontWeight.w600
-                      ),
-
-                    ]
+                  child: CustomText(
+                    widget.questionnaireNumber.toString(),
+                    textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    textAlignment: TextAlign.center,
                   ),
                 ),
-              )
-            ]
 
-        )
+
+                Expanded(
+                  child: CustomText(
+                    widget.summary.question,
+                    fontSize: 15
+                  )
+                ),
+
+                SizedBox(
+                  height: 45,
+                  child: VerticalDivider(
+                    width: 0,
+                    thickness: 1.5,
+                    color: PreferencesProvider.getColor(context, 'table-background-color'),
+                  ),
+                ),
+
+
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomText(
+                      'Answer type',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+
+                    CustomText(
+                      widget.summary.answerType.typeString,
+                      fontSize: 13,
+                      textColor: Colors.green.shade400,
+                    )
+                  ],
+                )
+              ]
+            ),
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: 0.4,
+                child: CustomDropdownButton(
+                  controller: chartTypeController,
+                  hint: 'Select Chart Type',
+                  items: chartTypes,
+                  onChanged: (newValue) => setState((){})
+                ),
+              )
+            ),
+
+
+            //todo: chart
+            buildCellChartSection(),
+
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: 0.4,
+
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    buildQuestionnaireField(
+                      title: 'Mean Score',
+                      detail: formatDecimal(widget.summary.meanScore)
+                    ),
+
+                    buildQuestionnaireField(
+                      title: 'Percentage Score(%)',
+                      detail: formatDecimal(widget.summary.meanScore)
+                    ),
+
+
+                    buildQuestionnaireField(
+                      title: 'Remark',
+                      detail: widget.summary.remark,
+                      detailWeight: FontWeight.w600
+                    ),
+
+                  ]
+                ),
+              ),
+            )
+          ]
 
       )
+
     );
   }
 
@@ -395,6 +395,9 @@ class _QuestionnaireCardState extends State<QuestionnaireCard> {
       axisNameStyle: TextStyle(color: PreferencesProvider.getColor(context, 'text-color')),
       axisLabelStyle: TextStyle(color: PreferencesProvider.getColor(context, 'placeholder-text-color')),
       groups: customBarGroups,
+      barSpace: 12,
+      rodWidth: 50,
+      rodBorderRadius: BorderRadius.zero,
     );
 
   }
@@ -424,7 +427,8 @@ class _QuestionnaireCardState extends State<QuestionnaireCard> {
 
 
 
-class LecturerRatingCard extends StatelessWidget {
+
+class LecturerRatingCard extends StatefulWidget {
 
   final double lecturerRating;
   final List<EvalLecturerRatingSummary> ratingSummary;
@@ -432,12 +436,78 @@ class LecturerRatingCard extends StatelessWidget {
   const LecturerRatingCard({super.key, required this.lecturerRating, required this.ratingSummary});
 
   @override
+  State<LecturerRatingCard> createState() => _LecturerRatingCardState();
+}
+
+class _LecturerRatingCardState extends State<LecturerRatingCard> {
+
+  final List<String> chartTypes = ['Text Stat', 'Pie Chart', 'Bar Chart'];
+  final List<Color> ratingColors = [Colors.green.shade400, Colors.blue.shade400, Colors.amber, Colors.purple.shade400, Colors.red.shade400];
+
+  final chartTypeController = DropdownController<String>();
+
+  final List<CustomPieSection> pieSections = [];
+  final List<CustomBarGroup> barGroups = [];
+
+
+  @override
+  void initState(){
+
+    super.initState();
+
+
+    chartTypeController.value = chartTypes[0];
+
+    int counter = 0;
+
+    for(var summaryItem in widget.ratingSummary){
+
+      String ratingStr = summaryItem.rating.toString();
+      int ratingCount = summaryItem.ratingCount;
+      double ratingPercent = summaryItem.percentage;
+
+      pieSections.add(
+        CustomPieSection(
+          keyTitle: ratingStr,
+          title: '$ratingCount [${formatDecimal(ratingPercent)}%]',
+          value: (ratingPercent / 100) * 360,
+          sectionColor: ratingColors[counter]
+        )
+      );
+
+
+      barGroups.add(
+        CustomBarGroup(
+          x: counter,
+          label: ratingStr,
+          rods: [
+            Rod(y: ratingCount.toDouble(), rodColor: ratingColors[counter])
+          ]
+        )
+      );
+
+      counter++;
+
+    }
+
+
+  }
+
+
+  @override
+  void dispose(){
+    super.dispose();
+
+    barGroups.clear;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       width: MediaQuery.of(context).size.width * 0.5,
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade300)
       ),
@@ -464,10 +534,13 @@ class LecturerRatingCard extends StatelessWidget {
                 width: 50,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey.shade200
+                  color: PreferencesProvider.getColor(context, 'table-background-color')
                 ),
 
-                child: Icon(Icons.star, color: Colors.grey.shade500)
+                child: Icon(
+                  Icons.star,
+                  color: PreferencesProvider.getColor(context, 'placeholder-text-color')
+                )
               ),
 
               CustomText(
@@ -478,8 +551,12 @@ class LecturerRatingCard extends StatelessWidget {
               Spacer(),
 
               SizedBox(
-                  height: 45,
-                  child: VerticalDivider(width: 0, thickness: 1.5,)
+                height: 45,
+                child: VerticalDivider(
+                  width: 0,
+                  thickness: 1.5,
+                  color: PreferencesProvider.getColor(context, 'table-background-color'),
+                )
               ),
 
               Column(
@@ -489,14 +566,14 @@ class LecturerRatingCard extends StatelessWidget {
 
                 children: [
                   CustomText(
-                      'AnswerType',
-                      fontWeight: FontWeight.w600,
-                      textColor: Colors.grey.shade600
+                    'AnswerType',
+                    fontWeight: FontWeight.w600,
+                    textColor: Colors.grey.shade600
                   ),
 
                   CustomText(
-                      'Rating',
-                      textColor: Colors.green.shade400
+                    'Rating',
+                    textColor: Colors.green.shade400
                   )
                 ]
               )
@@ -504,95 +581,119 @@ class LecturerRatingCard extends StatelessWidget {
           ),
 
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
 
-              Expanded(
-                flex: 2,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 8,
-                    children: List.generate(
-                      ratingSummary.length,
-                        (index) => Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 8,
-                        children: [
-
-                          Expanded(
-                              child: buildStars(ratingSummary[index].rating)
-                          ),
-
-                          SizedBox(
-                            width: 140,
-                            child:  CustomText(
-                              '${ratingSummary[index].percentage}%',
-                              fontSize: 15,
-                            ),
-                          ),
-
-                          SizedBox(
-                            width: 140,
-                            child:  CustomText(
-                              '${ratingSummary[index].ratingCount}',
-                              fontSize: 15,
-                            ),
-                          )
-
-                        ]
-                      )
-                    ),
-                  )
-                ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FractionallySizedBox(
+              widthFactor: 0.4,
+              child: CustomDropdownButton(
+                controller: chartTypeController,
+                hint: 'Select Chart Type',
+                items: chartTypes,
+                onChanged: (newValue) => setState((){})
               ),
+            )
+          ),
 
 
-              SizedBox(
-                width: 200,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Icon(
-                          Icons.star_rounded,
-                          color: Colors.yellow,
-                          size: 150,
-                        ),
 
-                        CustomText(
-                          formatDecimal(lecturerRating),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          textColor: Colors.grey.shade700,
-                        )
-                      ]
-                    ),
-
-
-                    CustomText(
-                        'Average rating of lecturer for this course',
-                        textAlignment: TextAlign.center
-                    )
-                  ],
-                ),
-              )
-            ],
-          )
+          if(chartTypeController.value == chartTypes[0])Center(
+            child: buildTextChart()
+          )else if(chartTypeController.value == chartTypes[1]) buildPieChart()
+          else buildBarChart()
         ]
       )
     );
   }
 
+  Row buildTextChart() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
 
+        Expanded(
+          flex: 2,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 8,
+              children: List.generate(
+                widget.ratingSummary.length,
+                  (index) => Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 8,
+                  children: [
+
+                    Expanded(
+                      flex: 2,
+                        child: buildStars(widget.ratingSummary[index].rating)
+                    ),
+
+
+                    SizedBox(
+                      width: 130,
+                      child:  CustomText(
+                        '${widget.ratingSummary[index].ratingCount}',
+                        fontSize: 15,
+                      ),
+                    ),
+
+
+                    SizedBox(
+                      width: 130,
+                      child:  CustomText(
+                        '${widget.ratingSummary[index].percentage}%',
+                        fontSize: 15,
+                      ),
+                    ),
+
+                  ]
+                )
+              ),
+            )
+          ),
+        ),
+
+
+        SizedBox(
+          width: 200,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(
+                    Icons.star_rounded,
+                    color: Colors.yellow,
+                    size: 150,
+                  ),
+
+                  CustomText(
+                    formatDecimal(widget.lecturerRating),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    textColor: Colors.grey.shade700,
+                  )
+                ]
+              ),
+
+
+              CustomText(
+                  'Average rating of lecturer for this course',
+                  textAlignment: TextAlign.center
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
 
   //build a specified number of stars in a row
   Widget buildStars(int n) => Row(
@@ -605,13 +706,37 @@ class LecturerRatingCard extends StatelessWidget {
       (index) => Icon(Icons.star_rounded, color: Colors.yellow, size: 28,)
     )
   );
+
+
+
+  Widget buildPieChart(){
+    return CustomPieChart(
+      backgroundColor: Colors.transparent,
+      pieSections: pieSections,
+      width: double.infinity,
+      height: 250,
+      showKeys: true,
+    );
+  }
+
+
+
+  Widget buildBarChart(){
+    return CustomBarChart(
+      containerBackgroundColor: Colors.transparent,
+      width: double.infinity,
+      rodWidth: 60,
+      height: 350,
+      groups: barGroups,
+    );
+  }
 }
 
 
 
 
 
-class SuggestionSentimentVisual extends StatelessWidget {
+class SuggestionSentimentVisual extends StatefulWidget {
 
   final List<SuggestionSentimentSummary> sentimentSummary;
 
@@ -620,6 +745,42 @@ class SuggestionSentimentVisual extends StatelessWidget {
     required this.sentimentSummary
   });
 
+  @override
+  State<SuggestionSentimentVisual> createState() => _SuggestionSentimentVisualState();
+}
+
+class _SuggestionSentimentVisualState extends State<SuggestionSentimentVisual> {
+
+  final List<String> chartTypes = ['Text Stat', 'Pie Chart',];
+
+  final chartTypeController = DropdownController<String>();
+
+  final List<Color> sentimentColors = [Colors.red.shade400, Colors.amber, Colors.green.shade400];
+
+  final List<CustomPieSection> pieSections = [];
+  
+
+
+  @override
+  void initState(){
+
+    super.initState();
+
+    chartTypeController.value = chartTypes[0];
+    
+    for(SuggestionSentimentSummary summary in widget.sentimentSummary){
+      pieSections.add( 
+        CustomPieSection(  
+          keyTitle: summary.sentiment,
+          title: '${summary.sentimentCount} [${formatDecimal(summary.sentimentPercent)}%]',
+          value: (summary.sentimentPercent / 100) * 360,
+          sectionColor: sentimentColors[widget.sentimentSummary.indexOf(summary)]
+        )
+      );
+    }
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -628,9 +789,9 @@ class SuggestionSentimentVisual extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.5,
 
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300),
-          color: Colors.grey.shade50
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        color: PreferencesProvider.getColor(context, 'alt-primary-color')
       ),
 
       child: Column(
@@ -653,10 +814,13 @@ class SuggestionSentimentVisual extends StatelessWidget {
                 width: 50,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: Colors.grey.shade200
+                    color: PreferencesProvider.getColor(context, 'table-background-color')
                 ),
 
-                child: Icon(Icons.chat_bubble, color: Colors.grey.shade500,)
+                child: Icon(
+                  Icons.chat_bubble,
+                  color: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+                )
               ),
 
               CustomText(
@@ -667,8 +831,10 @@ class SuggestionSentimentVisual extends StatelessWidget {
               Spacer(),
 
               SizedBox(
-                  height: 35,
-                  child: VerticalDivider()
+                height: 35,
+                child: VerticalDivider(
+                  color: PreferencesProvider.getColor(context, 'table-background-color'),
+                )
               ),
 
 
@@ -693,58 +859,98 @@ class SuggestionSentimentVisual extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          FractionallySizedBox(
-            widthFactor: 0.5,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 8,
-
-              children: List<Widget>.generate(
-                sentimentSummary.length,
-                (int index) {
-
-                  String sentiment = sentimentSummary[index].sentiment;
-                  int count = sentimentSummary[index].sentimentCount;
-                  double percent = sentimentSummary[index].sentimentPercent;
-
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-
-                      Expanded(
-                        flex: 2,
-                        child: CustomText(
-                            sentiment,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15
-                        ),
-                      ),
-
-                      Expanded(
-                        child: CustomText(
-                            count.toString(),
-                            fontSize: 15,
-                            textAlignment: TextAlign.center
-                        ),
-                      ),
-
-                      Expanded(
-                        child: CustomText(
-                          '$percent %',
-                          fontSize: 15,
-                          textAlignment: TextAlign.center,
-                        ),
-                      )
-
-                    ]
-                  );
-                }
-              )
+          Align(
+            alignment: Alignment.centerRight,
+            child: FractionallySizedBox(
+              widthFactor: 0.4,
+              child: CustomDropdownButton(
+                controller: chartTypeController,
+                hint: 'Select Chart Type',
+                items: chartTypes,
+                onChanged: (newValue) => setState((){})
+              ),
             )
-          )
+          ),
+
+          if(chartTypeController.value == chartTypes[0])buildTextChart()
+          else buildPieChart()
         ]
       )
+    );
+  }
+
+
+
+  FractionallySizedBox buildTextChart() {
+    return FractionallySizedBox(
+      widthFactor: 0.5,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 8,
+
+        children: List<Widget>.generate(
+          widget.sentimentSummary.length,
+          (int index) {
+
+            String sentiment = widget.sentimentSummary[index].sentiment;
+            int count = widget.sentimentSummary[index].sentimentCount;
+            double percent = widget.sentimentSummary[index].sentimentPercent;
+
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+
+                Container(
+                  height: 20,
+                  width: 20,
+                  color: sentimentColors[index],
+                ),
+
+                Expanded(
+                  flex: 2,
+                  child: CustomText(
+                      sentiment,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15
+                  ),
+                ),
+
+                Expanded(
+                  child: CustomText(
+                      count.toString(),
+                      fontSize: 15,
+                      textAlignment: TextAlign.center
+                  ),
+                ),
+
+                Expanded(
+                  child: CustomText(
+                    '$percent %',
+                    fontSize: 15,
+                    textAlignment: TextAlign.center,
+                  ),
+                )
+
+              ]
+            );
+          }
+        )
+      )
+    );
+  }
+
+
+
+
+
+  CustomPieChart buildPieChart(){
+    return CustomPieChart(
+      pieSections: pieSections,
+      backgroundColor: Colors.transparent,
+      showKeys: true,
+      width: double.infinity,
+      height: 350,
     );
   }
 }

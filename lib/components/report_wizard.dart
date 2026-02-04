@@ -2,7 +2,9 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
@@ -19,7 +21,7 @@ class ReportWizard extends StatefulWidget {
   final int? id;
   final String? fileType;
   final int? semester;
-  final int? year; 
+  final int? year;
 
   const ReportWizard({super.key, this.reportType, this.id, this.fileType, this.semester, this.year});
 
@@ -316,6 +318,7 @@ class _ReportWizardState extends State<ReportWizard> {
 
     if(reportFile == null){
       showCustomAlertDialog(context, title: 'Error', contentText: 'Could not generate report. An unknown error occurred.');
+      return;
     }
 
 
@@ -324,11 +327,58 @@ class _ReportWizardState extends State<ReportWizard> {
 
     try{
 
-      await downloader.download(context: context, reportFile: reportFile!);
+
+      if(!kIsWeb){
+        showDialog( 
+          context: context, 
+          builder: (_) => LoadingDialog(
+            message: 'Downloading report file please wait',
+          )
+        );
+      }
+
+      await downloader.download(context: context, reportFile: reportFile);
+
+      if(!kIsWeb) {
+        Navigator.pop(context); //close the loading dialog
+
+
+        //show a success dialog
+        showCustomAlertDialog( 
+          context, 
+          alertType: AlertType.success,
+          title: 'File Download',
+          contentText: 'Report file has been downloaded.',
+          controls: [
+            
+            TextButton(
+              child: CustomText(  
+                'Show File',
+                fontWeight: FontWeight.w600,
+                textColor: Colors.green.shade400,
+              ), 
+
+              onPressed: () async {
+
+                Navigator.pop(context); //closes the current alert dialog
+
+                await OpenFilex.open(
+                  reportFile!.localFilePath!,
+                  type: reportFile.fileType
+                );
+              }
+            ), 
+
+          ]
+        );
+      }
 
     }on Exception catch(e, trace){
-
-      print(trace.toString());
+    
+      debugPrintStack(
+        label: e.toString(),
+        stackTrace: trace
+      );
 
       showCustomAlertDialog(
         context,
@@ -345,7 +395,6 @@ class _ReportWizardState extends State<ReportWizard> {
   String formatReportTypeStr(String typeStr){
     //replace whitespace with underscore
     typeStr = typeStr.toLowerCase().replaceAll(' ', '_');
-
     return typeStr;
   }
 

@@ -36,7 +36,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
   bool isLoading = false;
 
-  List<Question> filteredQuestions = [];
+  List<Questionnaire> filteredQuestions = [];
   List<Category> filteredCategories = [];
   
   bool isSuperuser = false;
@@ -308,7 +308,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                             itemCount: filteredQuestions.length,
                             itemBuilder: (_, index){
 
-                              Question question = filteredQuestions[index];
+                              Questionnaire question = filteredQuestions[index];
 
                               return QuestionCell(
                                 question: question,
@@ -364,7 +364,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
 
 
-  void handleQuestionModalSheet({Question? question})=> showCustomModalBottomSheet(
+  void handleQuestionModalSheet({Questionnaire? question})=> showCustomModalBottomSheet(
     context: context, 
     isDismissible: false,
     isScrollControlled: true,
@@ -391,11 +391,11 @@ class _QuestionsPageState extends State<QuestionsPage> {
 class AddQuestionPage extends StatefulWidget {
 
   final bool inEditMode;
-  final Question? question;
+  final Questionnaire? question;
 
   const AddQuestionPage({super.key, this.inEditMode = false, this.question});
 
-  factory AddQuestionPage.openEdit({required Question question}){
+  factory AddQuestionPage.openEdit({required Questionnaire question}){
     return AddQuestionPage(
       inEditMode: true,
       question: question,

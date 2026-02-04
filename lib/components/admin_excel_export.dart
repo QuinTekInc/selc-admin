@@ -321,7 +321,7 @@ class AdminReportExcelExport{
       //now to populate the values for the various categories.
       int colIndex = 4;
 
-      for(CategoryRemark catRemark in catSummary.categoryRemarks){
+      for(CategoryEvaluation catRemark in catSummary.categoryRemarks){
 
         sheet.cell(
           CellIndex.indexByColumnRow(columnIndex: colIndex, rowIndex: rowIndex))

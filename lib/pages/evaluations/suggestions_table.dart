@@ -2,20 +2,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:selc_admin/components/cells.dart';
-import 'package:selc_admin/components/charts/bar_chart.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
 import '../../components/text.dart';
 
-class SuggestionsTable extends StatelessWidget {
+class SuggestionsSection extends StatelessWidget {
 
   final SuggestionSummaryReport summaryReport;
   final List<EvalLecturerRatingSummary> lecturerRating;
   final double courseLRating;
 
-  SuggestionsTable({super.key, required this.summaryReport, required this.lecturerRating, required this.courseLRating});
+  SuggestionsSection({super.key, required this.summaryReport, required this.lecturerRating, required this.courseLRating});
 
   final sentimentColors = [Colors.red.shade400, Colors.amber, Colors.green.shade400];
 
@@ -24,96 +23,14 @@ class SuggestionsTable extends StatelessWidget {
 
 
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16),
 
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-
-
-
-          if(summaryReport.suggestions.isEmpty)buildEmptyPlaceholder()
-          else Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 12,
-                children: [
-
-
-                  Row(  
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 12,
-                    children: [
-
-                      Expanded(  
-                        child: CustomBarChart(
-                          containerBackgroundColor: PreferencesProvider.getColor(context, 'alt-primary-color'),
-                          height: MediaQuery.of(context).size.height * 0.463,
-                          leftAxisTitle: 'Frequency',
-                          bottomAxisTitle: 'Sentiment',
-                          axisNameStyle: TextStyle( 
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                            color: PreferencesProvider.getColor(context, 'text-color')
-                          ),
-                          axisLabelStyle: TextStyle( 
-                            fontFamily: 'Poppins',
-                            color: PreferencesProvider.getColor(context, 'placeholder-text-color')
-                          ),
-
-                          groups: List<CustomBarGroup>.generate(  
-                            summaryReport.sentimentSummaries.length,
-                            (index) {
-                              SuggestionSentimentSummary sentimentSummary = summaryReport.sentimentSummaries[index];
-                              final rod = Rod(y: sentimentSummary.sentimentCount.toDouble(), rodColor: sentimentColors[index]);
-                              return CustomBarGroup(x: index+1, label: sentimentSummary.sentiment, rods: [rod]);
-                            }
-                          ),
-
-                        ),
-                      ),
-
-
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        spacing: 12,
-                        children: [
-                          buildSentimentTable(context),
-
-                          buildRatingsTable(context)
-                        ],
-                      )
-
-                    ],
-                  ),
-
-                  const SizedBox(height: 16,),
-
-                  HeaderText('Students Suggestions'),
-                  
-                  FractionallySizedBox(
-                    widthFactor: 0.6,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: summaryReport.suggestions.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (_, index) => SuggestionCell(suggestion: summaryReport.suggestions[index],),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
-      )
+      child: (summaryReport.suggestions.isEmpty) ? buildEmptyPlaceholder() :
+        ListView.separated(
+          itemCount: summaryReport.suggestions.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          itemBuilder: (_, index) => SuggestionCell(suggestion: summaryReport.suggestions[index],),
+        ),
     );
 
   }
@@ -347,10 +264,11 @@ class SuggestionCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return  Container(
       padding: const EdgeInsets.all(12),
+      width: MediaQuery.of(context).size.width * 0.35,
 
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width * 0.45,
-        minWidth: MediaQuery.of(context).size.width * 0.45
+        maxWidth: MediaQuery.of(context).size.width * 0.35,
+        minWidth: MediaQuery.of(context).size.width * 0.35
       ),
 
       decoration: BoxDecoration(

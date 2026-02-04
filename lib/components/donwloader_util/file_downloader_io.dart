@@ -19,24 +19,33 @@ class IOFileDownloader implements FileDownloader {
 
     final dirPath = Provider.of<PreferencesProvider>(context!, listen: false).preferences.defaultDownloadDirectory;
 
-    final filePath = '$dirPath/${reportFile.fileName}';
+    final filePath = '$dirPath/${reportFile.fileName}.${reportFile.fileType}';
+    
 
+    try{
 
+      await dio.download(
+        reportFile.url,
+        filePath,
+        deleteOnError: false,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            if(onProgress != null) onProgress(received / total);
+          }
+        },
+      );
 
-    await dio.download(
-      reportFile.url,
-      filePath,
-      onReceiveProgress: (received, total) {
-        if (total != -1) {
-          onProgress!(received / total);
-        }
-      },
-    );
+      //once it has finished downloading, we save the local file path 
+      reportFile.localFilePath = filePath;
 
+      Provider.of<PreferencesProvider>(context, listen: false).addSavedFile(reportFile);
 
+    }on DioException catch (e){
+      rethrow;
+    }
+    
   }
 }
-
 
 
 FileDownloader createDownloader() => IOFileDownloader();

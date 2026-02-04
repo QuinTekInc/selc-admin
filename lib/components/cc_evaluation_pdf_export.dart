@@ -16,7 +16,7 @@ final headerDecoration = pw.BoxDecoration(color: PdfColors.grey200,);
 Future<void> generateReportPdf(BuildContext context, {
   required ClassCourse classCourse,
   required List<CourseEvaluationSummary> evaluationSummaries,
-  required List<CategoryRemark> categoryRemarks,
+  required List<CategoryEvaluation> categoryRemarks,
   required List<EvalLecturerRatingSummary> ratingSummary,
   required List<SuggestionSentimentSummary> sentimentSummary,
 }) async {
@@ -366,7 +366,7 @@ pw.Widget buildQuestionnaireTable(List<CourseEvaluationSummary> summaries) {
 
 
 
-pw.Widget buildCategoryTable(List<CategoryRemark> remarks) {
+pw.Widget buildCategoryTable(List<CategoryEvaluation> remarks) {
   return pw.TableHelper.fromTextArray(
     headers: ['Core Area (Category)', 'Mean Score', 'Percentage Score', 'Remarks'],
     data: remarks.map((r) => [

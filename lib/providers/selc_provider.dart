@@ -17,7 +17,7 @@ class SelcProvider with ChangeNotifier{
 
   List<Department> departments = [];
   List<Lecturer> lecturers = [];
-  List<Question> questions = [];
+  List<Questionnaire> questions = [];
   List<Category> categories = [];
   List<Course> courses = [];
   List<LecturerRating> lecturersRatings = [];
@@ -473,7 +473,7 @@ class SelcProvider with ChangeNotifier{
     Map<String, dynamic> responseBody = jsonDecode(response.body);
 
     List<dynamic> questionsMapList = responseBody['questions'];
-    questions = questionsMapList.map((jsonMap) => Question.fromJson(jsonMap)).toList();
+    questions = questionsMapList.map((jsonMap) => Questionnaire.fromJson(jsonMap)).toList();
     
 
     List<dynamic> categoriesMapList = responseBody['categories'];
@@ -536,7 +536,7 @@ class SelcProvider with ChangeNotifier{
 
     dynamic responseBody = jsonDecode(response.body);
 
-    Question question = Question.fromJson(responseBody);
+    Questionnaire question = Questionnaire.fromJson(responseBody);
     questions.add(question);
 
     notifyListeners();

@@ -180,18 +180,18 @@ enum UserRole{
 
 
 //todo: questionnaire
-class Question{
+class Questionnaire{
 
   int questionId;
   Category category;
   String question;
   QuestionAnswerType? answerType;
 
-  Question({required this.questionId, required this.category, required this.question, required this.answerType});
+  Questionnaire({required this.questionId, required this.category, required this.question, required this.answerType});
 
 
-  factory Question.fromJson(Map<String, dynamic> jsonMap){
-    return Question(
+  factory Questionnaire.fromJson(Map<String, dynamic> jsonMap){
+    return Questionnaire(
       questionId: jsonMap['id'],
       category: Category.fromJson(jsonMap['category']),
       question: jsonMap['question'],
@@ -521,7 +521,7 @@ class CCProgramInfo{
 
 //todo: category remarks for evaluations
 //todo: rename this class to "EvaluationCategoryRemark"
-class CategoryRemark{
+class CategoryEvaluation{
 
   final String categoryName;
   final double percentageScore;
@@ -529,7 +529,7 @@ class CategoryRemark{
   final String remark;
   final List<String> questions;
 
-  CategoryRemark({
+  CategoryEvaluation({
     required this.categoryName,
     this.percentageScore = 0,
     required this.meanScore,
@@ -538,18 +538,15 @@ class CategoryRemark{
   });
 
 
-  factory CategoryRemark.fromJson(Map<String, dynamic> jsonMap){
-    List<String> questions;
+  factory CategoryEvaluation.fromJson(Map<String, dynamic> jsonMap){
 
-    try{
-      questions = List<String>.from(jsonMap['questions']);
-    }on Error catch(_){
-      questions = [];
+    List<String> questions = [];
+
+    for(dynamic qMap in List<dynamic>.from(jsonMap['questions'])){
+      questions.add(Map<String, dynamic>.from(qMap)['question']);
     }
 
-
-
-    return CategoryRemark(
+    return CategoryEvaluation(
       categoryName: jsonMap['category'],
       percentageScore: (jsonMap['percentage_score'] as num).toDouble(),
       meanScore: (jsonMap['mean_score'] as num).toDouble(),
@@ -742,7 +739,7 @@ class DashboardCategoriesSummary{
   final String lecturerName;
   final String department;
   final Course course;
-  final List<CategoryRemark> categoryRemarks;
+  final List<CategoryEvaluation> categoryRemarks;
 
 
   DashboardCategoriesSummary({required this.lecturerName, required this.department, required this.course, required this.categoryRemarks});
@@ -751,11 +748,11 @@ class DashboardCategoriesSummary{
 
   factory DashboardCategoriesSummary.fromJson(Map<String, dynamic> jsonMap){
 
-    List<CategoryRemark> categoryRemarks = [];
+    List<CategoryEvaluation> categoryRemarks = [];
 
     if(jsonMap['categories_summary'] != null){
-      categoryRemarks = List<CategoryRemark>.from(jsonMap['categories_summary']!.map(
-              (summaryMap) => CategoryRemark.fromJson(summaryMap)).toList());
+      categoryRemarks = List<CategoryEvaluation>.from(jsonMap['categories_summary']!.map(
+              (summaryMap) => CategoryEvaluation.fromJson(summaryMap)).toList());
     }
 
     return DashboardCategoriesSummary(
@@ -796,7 +793,7 @@ class ReportFile{
 
 
 
-  bool isFileExistLocally(){
+  bool get isFileExistLocally{
 
     if(localFilePath == null || kIsWeb) return false;
 
@@ -823,6 +820,19 @@ class ReportFile{
     'file_url': url,
     'local_file_path': localFilePath
   };
+
+
+
+
+  @override
+  bool operator == (Object other) {
+
+    if(other is! ReportFile) return false;
+
+    ReportFile rFile = other;
+
+    return fileName == rFile.fileName && fileType == rFile.fileType && url == rFile.url; 
+  }
 
 
 }

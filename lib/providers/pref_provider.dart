@@ -17,7 +17,6 @@ class PreferencesProvider extends ChangeNotifier{
 
   List<ReportFile> downloadedFiles = [];
 
-
   List<ReportFile> reportFiles = [];
 
 
@@ -76,9 +75,19 @@ class PreferencesProvider extends ChangeNotifier{
 
   void addSavedFile(ReportFile reportFile){
 
-    downloadedFiles.add(reportFile);
+    List<ReportFile> matchedFiles = downloadedFiles.where(
+      (element) => element.fileName == reportFile.fileName && element.fileType == reportFile.fileType && element.url == reportFile.url)
+      .toList();
+
+    if(matchedFiles.isNotEmpty){
+      int index = downloadedFiles.indexOf(matchedFiles.first);
+      downloadedFiles[index] = reportFile;
+    }else{
+      downloadedFiles.add(reportFile);
+    }
 
     preferences.savedFiles = downloadedFiles;
+    
     Preferences.save(preferences);
 
     notifyListeners();
@@ -113,9 +122,15 @@ class PreferencesProvider extends ChangeNotifier{
 
     List<dynamic> responseBody = jsonDecode(response.body);
 
-    if(responseBody.isEmpty){
+    if(responseBody.isEmpty && !kIsWeb){
       reportFiles = downloadedFiles;
       notifyListeners();
+      return;
+    }
+
+
+    if(kIsWeb){
+      reportFiles = responseBody.map((jsonMap) => ReportFile.fromJson(jsonMap)).toList();
       return;
     }
 
@@ -132,13 +147,13 @@ class PreferencesProvider extends ChangeNotifier{
 
           bool localPathFlag = rFile.localFilePath != null;
 
-          bool fileExists = rFile.isFileExistLocally();
+          bool fileExists = rFile.isFileExistLocally;
 
           return fNameFlag && fTypeFlag && urlFlag && localPathFlag && fileExists;
         }
       ).toList();
 
-      if(matchedFiles.isNotEmpty && !kIsWeb) {
+      if(matchedFiles.isNotEmpty) {
         return matchedFiles.first;
       }
 

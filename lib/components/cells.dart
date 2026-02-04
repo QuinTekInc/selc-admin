@@ -97,7 +97,7 @@ class CategoryCell extends StatelessWidget {
 //todo: Question list cell
 class QuestionCell extends StatelessWidget {
 
-  final Question question;
+  final Questionnaire question;
   final VoidCallback onEditPressed;
   final VoidCallback onDeletePressed;
 

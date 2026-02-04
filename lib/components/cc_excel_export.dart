@@ -13,7 +13,7 @@ class ExcelExporter{
 
   final ClassCourse classCourse;
   final List<CourseEvaluationSummary> questionnaireData;
-  final List<CategoryRemark> categoryData;
+  final List<CategoryEvaluation> categoryData;
   final List<EvalLecturerRatingSummary> ratingSummary;
   final List<SuggestionSentimentSummary> sentimentSummary;
 
@@ -252,7 +252,7 @@ class ExcelExporter{
 
     int rowIndex = 1; // because row 0 = headers
 
-    for (CategoryRemark entry in categoryData) {
+    for (CategoryEvaluation entry in categoryData) {
 
       String categoryName = entry.categoryName;
       List<String> questions = entry.questions; // <-- use actual questions
