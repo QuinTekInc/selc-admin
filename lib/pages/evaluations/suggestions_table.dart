@@ -22,15 +22,24 @@ class SuggestionsSection extends StatelessWidget {
   Widget build(BuildContext context) {
 
 
+    if(summaryReport.suggestions.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: buildEmptyPlaceholder(),
+      );
+    }
+
+
     return Padding(
       padding: const EdgeInsets.all(16),
 
-      child: (summaryReport.suggestions.isEmpty) ? buildEmptyPlaceholder() :
-        ListView.separated(
-          itemCount: summaryReport.suggestions.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
-          itemBuilder: (_, index) => SuggestionCell(suggestion: summaryReport.suggestions[index],),
+      child: ListView.separated(
+        itemCount: summaryReport.suggestions.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        itemBuilder: (_, index) => SuggestionCell(
+          suggestion: summaryReport.suggestions[index],
         ),
+      ),
     );
 
   }
@@ -103,8 +112,6 @@ class SuggestionsSection extends StatelessWidget {
               ],
             ),
           )
-
-          
         ],
       ),
     
