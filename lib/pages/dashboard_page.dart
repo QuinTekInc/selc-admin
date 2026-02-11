@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/charts/bar_chart.dart';
 import 'package:selc_admin/components/custom_notification_badge.dart';
+import 'package:selc_admin/components/stat_graph_section.dart';
 import 'package:selc_admin/components/server_connector.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
@@ -368,7 +370,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
 
                             //todo: this part needs to be put inside a stream builder to load data from the websocket
-                            DashboardGraphSection(),
+                            DashboardGraphSection(websocketEndpoint: 'ws/admin-dashboard/',),
 
                             buildLecturerRatingsTable(context),
 
@@ -514,7 +516,7 @@ class _DashboardPageState extends State<DashboardPage> {
   //todo: function to show recent evaluations
   Widget buildRecentFilesSection(){
 
-    int filesLength = Provider.of<PreferencesProvider>(context).downloadedFiles.length;
+    int filesLength = Provider.of<PreferencesProvider>(context).reportFiles.length;
 
     return Container(
       //width: 400,
@@ -584,7 +586,7 @@ class _DashboardPageState extends State<DashboardPage> {
             
             itemBuilder: (_, index) {
 
-              ReportFile reportFile = Provider.of<PreferencesProvider>(context, listen: false).downloadedFiles[index];
+              ReportFile reportFile = Provider.of<PreferencesProvider>(context, listen: false).reportFiles[index];
 
               String fileName = reportFile.fileName;
               String fileType = reportFile.fileType;
@@ -624,9 +626,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 trailing: IconButton(
                   tooltip: 'Open',
                   icon: Icon(Icons.open_in_new),
-
                   //todo: implement a function to open a file
-                  onPressed: (){},
+                  onPressed: () => OpenFilex.open(reportFile.localFilePath!, type: reportFile.fileType)
                 )
                         
               );
@@ -1208,7 +1209,10 @@ class _DashboardPageState extends State<DashboardPage> {
 //todo: shows all the graph for all the data recieved this semester.
 class DashboardGraphSection extends StatefulWidget {
 
-  const DashboardGraphSection({super.key});
+  final String websocketEndpoint;
+  final bool Function(Map<String, dynamic>)? streamValidator;
+
+  const DashboardGraphSection({super.key, required this.websocketEndpoint, this.streamValidator});
 
   @override
   State<DashboardGraphSection> createState() => _DashboardGraphSectionState();
@@ -1216,7 +1220,12 @@ class DashboardGraphSection extends StatefulWidget {
 
 class _DashboardGraphSectionState extends State<DashboardGraphSection> {
 
-  final WebSocketService websocketService = WebSocketService(consumerEndpoint: 'ws/admin-dashboard/');
+  late final WebSocketService websocketService;
+
+  @override void initState(){
+    super.initState();
+    websocketService = WebSocketService(consumerEndpoint: widget.websocketEndpoint, streamValidator: widget.streamValidator);
+  }
 
   @override void dispose(){
     websocketService.dispose();
@@ -1302,47 +1311,9 @@ class _DashboardGraphSectionState extends State<DashboardGraphSection> {
           );
         }
 
-
         Map<String, dynamic> graphData = Map<String, dynamic>.from(snapshot.data);
 
-        return Column(  
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          spacing: 12,
-          children: [
-
-            //todo: the various graphs
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 12,
-              children: [
-
-                Expanded(
-                  child: buildResponseRatePieChart(
-                    Map<String, dynamic>.from(graphData['registration_summary'])
-                  )
-                ),
-
-                Expanded(
-                  child: buildSuggestionSentimentPieChart(
-                    Map<String, dynamic>.from(graphData['sentiment_summary'])
-                  )
-                )
-              ]
-            ),
-
-
-            Center(
-              child: buildLecturerRatingBarChart(
-                Map<String, dynamic>.from(graphData['lecturer_rating'])
-              )
-            ),
-
-          ]
-        );
+        return GraphSection(graphData: graphData);
       }
     );
 
@@ -1724,7 +1695,6 @@ class _DashboardGraphSectionState extends State<DashboardGraphSection> {
               ]
             ),
           )
-
 
         ]
       )

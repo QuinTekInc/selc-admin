@@ -91,15 +91,19 @@ class GeneralCurrentStatistics{
 class Department{
   final int departmentId;
   final String departmentName;
+  final int numberOfStudents;
+  final int numberOfLecturers;
 
 
-  Department({required this.departmentId, required this.departmentName});
+  Department({required this.departmentId, required this.departmentName, this.numberOfStudents = 0, this.numberOfLecturers = 0});
 
 
   factory Department.fromJson(Map<String, dynamic> jsonMap){
     return Department(
-        departmentId: jsonMap['department_id'],
-        departmentName: jsonMap['department_name']
+      departmentId: jsonMap['department_id'],
+      departmentName: jsonMap['department_name'],
+      numberOfStudents: jsonMap['number_of_students'] ?? 0,
+      numberOfLecturers: jsonMap['number_of_lecturers']
     );
   }
 

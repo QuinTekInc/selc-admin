@@ -22,6 +22,9 @@ class FilesPage extends StatefulWidget {
 
 class _FilesPageState extends State<FilesPage> {
 
+  final searchController = TextEditingController();
+
+  List<ReportFile> filteredReportFiles = [];
 
   bool isLoading = false;
 
@@ -30,17 +33,7 @@ class _FilesPageState extends State<FilesPage> {
     // TODO: implement initState
     super.initState();
 
-    loadData();
-  }
-
-
-  void loadData() async {
-    
-    setState(() => isLoading = true);
-
-    await Provider.of<PreferencesProvider>(context, listen: false).getFilesFromBackend();
-
-    setState(() => isLoading = false);
+    filteredReportFiles = Provider.of<PreferencesProvider>(context, listen: false).reportFiles;
   }
 
   @override
@@ -61,9 +54,10 @@ class _FilesPageState extends State<FilesPage> {
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.4,
             child: CustomTextField(  
-              controller: TextEditingController(),
+              controller: searchController,
               hintText: 'Search Files',
               leadingIcon: Icons.search,
+              onChanged: (newValue) => handleSearch()
             ),
           ),
 
@@ -108,9 +102,8 @@ class _FilesPageState extends State<FilesPage> {
 
                         Expanded(  
                           flex: 2,
-                          child: CustomText('Directory (Or Url)'),
+                          child: CustomText('File Path'),
                         ),
-
 
 
                         SizedBox(
@@ -118,14 +111,11 @@ class _FilesPageState extends State<FilesPage> {
                           child: CustomText('Action', textAlignment: TextAlign.center,),
                         ),
 
-
-
                       ],
                     ),
                   ),
 
                   const SizedBox(height: 8,),
-
 
 
                   if(isLoading) Expanded(
@@ -136,7 +126,7 @@ class _FilesPageState extends State<FilesPage> {
                   else if(Provider.of<PreferencesProvider>(context).reportFiles.isEmpty) Expanded(
                     child: CollectionPlaceholder(
                       title: 'No Files!',
-                      detail: 'All downloaded and \'yet to download\' files appear here.',
+                      detail: 'Downloaded report files appear here.',
                     )
                   )
                   else Expanded(
@@ -163,6 +153,28 @@ class _FilesPageState extends State<FilesPage> {
     );
   }
 
+
+
+  void handleSearch(){
+
+    String text = searchController.text.toLowerCase();
+
+    if(text.isEmpty){
+      setState((){
+        filteredReportFiles = Provider.of<PreferencesProvider>(context, listen: false).reportFiles;
+      });
+      return;
+    }
+
+
+
+    setState(() {
+      filteredReportFiles = Provider.of<PreferencesProvider>(context, listen: false).reportFiles
+          .where((reportFile) => reportFile.fileName.toLowerCase().contains(text) ||
+          reportFile.fileType.toLowerCase().contains(text)).toList();
+    });
+
+  }
 
 }
 
@@ -376,28 +388,24 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
   void handleOpenFile() async {
 
-    
-    //todo: open the folder which contains the reoprt file.
-    //todo: open pdf file with a web browser or a dedicated pdf reader.
-    //todo: open spreadsheet file with excel/libre office calc/
+
+    await OpenFilex.open(
+        widget.reportFile.localFilePath!,
+        type: widget.reportFile.fileType
+    );
 
   }
 
 
   void handleOpenContainingFolder() async {
-    
-    await OpenFilex.open(
-      widget.reportFile.localFilePath!,
-      type: widget.reportFile.fileType
-    );
-    
+
 
   }
 
 
-  void handleDeleteFile(){
+  void handleDeleteFile() async {
     //todo: delete the report file from the file system
-
+    Provider.of<PreferencesProvider>(context, listen: false).deleteReportFile(widget.reportFile);
   }
 
 }

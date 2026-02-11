@@ -19,6 +19,7 @@ import '../providers/pref_provider.dart';
 
 
 class ClassCoursesPage extends StatefulWidget {
+
   const ClassCoursesPage({super.key});
 
   @override
@@ -49,7 +50,6 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
     try{
 
       await Provider.of<SelcProvider>(context, listen: false).getClassCourses();
-
       filteredClassCourses = Provider.of<SelcProvider>(context, listen: false).classCourses;
 
     }on SocketException{
@@ -170,13 +170,23 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
                     ),
                   ),
 
-
+                  ///listview builder for the class courses items
                   if(isLoading)Expanded(  
                     child: Center(  
                       child: CircularProgressIndicator()
                     )
                   )
-                  ///listview builder for the class courses items
+                  else if(filteredClassCourses.isEmpty && searchController.text.isNotEmpty)Expanded(
+                    child: CollectionPlaceholder(
+                      detail: 'Search Information not found'
+                    )
+                  )
+                  else if(filteredClassCourses.isEmpty && Provider.of<SelcProvider>(context).classCourses.isEmpty)Expanded(
+                    child: CollectionPlaceholder.withRefresh(
+                      detail: 'No class courses found. Please try again',
+                      onPressed: loadData,
+                    )
+                  )
                   else Expanded(
                     child: ListView.builder(
                       itemCount: filteredClassCourses.length,
@@ -188,8 +198,6 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
               )
             ),
           )
-
-
         ],
       )
     );
@@ -229,6 +237,7 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
 
 
 
+//todo: rename this widget to "ClassCourseTableRow"
 class ClassCourseCell extends StatefulWidget {
 
   final ClassCourse classCourse;
@@ -239,8 +248,8 @@ class ClassCourseCell extends StatefulWidget {
   State<ClassCourseCell> createState() => _ClassCourseCellState();
 }
 
-class _ClassCourseCellState extends State<ClassCourseCell> {
 
+class _ClassCourseCellState extends State<ClassCourseCell> {
 
   bool acceptingResponse = false;
 
@@ -296,6 +305,8 @@ class _ClassCourseCellState extends State<ClassCourseCell> {
           ),
 
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
 
               //year

@@ -72,14 +72,14 @@ Future<http.Response> postRequest({required String endpoint, required Object bod
 class WebSocketService{
 
   late WebSocket _websocket;
-
   final StreamController<Map<String, dynamic>> _streamController = StreamController<Map<String, dynamic>>.broadcast();
 
   Stream get dataStream =>  _streamController.stream;
 
   final String consumerEndpoint;
+  final bool Function(Map<String, dynamic>)? streamValidator;
 
-  WebSocketService({required this.consumerEndpoint}){
+  WebSocketService({required this.consumerEndpoint, this.streamValidator}){
     connect();
   }
 
@@ -102,7 +102,15 @@ class WebSocketService{
           // Assuming the incoming message is a JSON string
           final Map<String, dynamic> data =  jsonDecode(message);
 
-          _streamController.add(data);
+          if(streamValidator != null){
+
+            if(streamValidator!(data)){
+              _streamController.add(data);
+            }
+
+          }else{
+            _streamController.add(data);
+          }
 
         }, 
         onError: (error) async  {
@@ -123,7 +131,6 @@ class WebSocketService{
     _websocket.close();
     _streamController.close();
   }
-
 
 }
 

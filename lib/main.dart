@@ -52,7 +52,7 @@ class SelcAdminApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          brightness: Provider.of<PreferencesProvider>(context,).brightness
+          brightness: Provider.of<PreferencesProvider>(context).brightness
       ),
       home: LoginPage()
     );

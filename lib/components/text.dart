@@ -500,7 +500,27 @@ class CollectionPlaceholder extends StatelessWidget {
   final String? title;
   final String detail;
 
-  const CollectionPlaceholder({super.key, this.title, required this.detail});
+  final VoidCallback? onPressed;
+  final bool isRefreshable;
+
+  CollectionPlaceholder({
+    super.key,
+    this.title,
+    required this.detail,
+    this.isRefreshable = false,
+    this.onPressed
+  });
+
+
+  factory CollectionPlaceholder.withRefresh({
+    String? title, required String detail, required VoidCallback onPressed}){
+    return CollectionPlaceholder(
+      title: title,
+      detail: detail,
+      isRefreshable: true,
+      onPressed: onPressed,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -508,6 +528,7 @@ class CollectionPlaceholder extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
+        spacing: 8,
         children: [
 
           if(title != null)CustomText(
@@ -520,6 +541,16 @@ class CollectionPlaceholder extends StatelessWidget {
             detail,
             textAlignment: TextAlign.center,
           ),
+
+
+          if(isRefreshable) TextButton(
+            onPressed: onPressed ?? (){},
+            child: CustomText(
+              'Refresh',
+              textColor: Colors.green.shade400,
+              fontWeight: FontWeight.w600,
+            ),
+          )
         ],
       ),
     

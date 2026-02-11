@@ -1,6 +1,7 @@
 
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,6 @@ class PreferencesProvider extends ChangeNotifier{
 
   Preferences preferences = Preferences();
 
-  List<ReportFile> downloadedFiles = [];
-
   List<ReportFile> reportFiles = [];
 
 
@@ -27,10 +26,8 @@ class PreferencesProvider extends ChangeNotifier{
   Future<void> loadPreferences() async{
 
     preferences = await  Preferences.fromSharedPreferences();
-    downloadedFiles = preferences.savedFiles;
+    reportFiles = preferences.savedFiles;
     _updateUI(preferences.darkMode);
-
-    getFilesFromBackend();
   }
 
 
@@ -75,20 +72,36 @@ class PreferencesProvider extends ChangeNotifier{
 
   void addSavedFile(ReportFile reportFile){
 
-    List<ReportFile> matchedFiles = downloadedFiles.where(
+    List<ReportFile> matchedFiles = reportFiles.where(
       (element) => element.fileName == reportFile.fileName && element.fileType == reportFile.fileType && element.url == reportFile.url)
       .toList();
 
     if(matchedFiles.isNotEmpty){
-      int index = downloadedFiles.indexOf(matchedFiles.first);
-      downloadedFiles[index] = reportFile;
+      int index = reportFiles.indexOf(matchedFiles.first);
+      reportFiles[index] = reportFile;
     }else{
-      downloadedFiles.add(reportFile);
+      reportFiles.add(reportFile);
     }
 
-    preferences.savedFiles = downloadedFiles;
+    preferences.savedFiles = reportFiles;
     
     Preferences.save(preferences);
+
+    notifyListeners();
+  }
+
+
+  void deleteReportFile(ReportFile reportFile) async {
+
+    final file = File(reportFile.localFilePath!);
+
+    await file.delete();
+
+    try{
+      reportFiles.remove(reportFile);
+    }on Exception{
+      //do nothing
+    }
 
     notifyListeners();
   }
@@ -111,59 +124,59 @@ class PreferencesProvider extends ChangeNotifier{
 
 
 
-  Future<void> getFilesFromBackend() async {
-
-    final response = await connector.getRequest(endpoint: 'get-all-files/', useCore: true);
-
-    if(response.statusCode != 200){
-      throw Error();
-    }
-
-
-    List<dynamic> responseBody = jsonDecode(response.body);
-
-    if(responseBody.isEmpty && !kIsWeb){
-      reportFiles = downloadedFiles;
-      notifyListeners();
-      return;
-    }
-
-
-    if(kIsWeb){
-      reportFiles = responseBody.map((jsonMap) => ReportFile.fromJson(jsonMap)).toList();
-      return;
-    }
-
-    reportFiles = responseBody.map((jsonMap){
-
-      var matchedFiles = downloadedFiles.where(
-        (rFile){
-
-          bool fNameFlag = rFile.fileName == jsonMap['file_name'];
-
-          bool fTypeFlag = rFile.fileType == jsonMap['file_type'];
-
-          bool urlFlag = rFile.url == jsonMap['file_url'];
-
-          bool localPathFlag = rFile.localFilePath != null;
-
-          bool fileExists = rFile.isFileExistLocally;
-
-          return fNameFlag && fTypeFlag && urlFlag && localPathFlag && fileExists;
-        }
-      ).toList();
-
-      if(matchedFiles.isNotEmpty) {
-        return matchedFiles.first;
-      }
-
-      return ReportFile.fromJson(jsonMap);
-
-    }).toList();
-
-    notifyListeners();
-
-  }
+  // Future<void> getFilesFromBackend() async {
+  //
+  //   final response = await connector.getRequest(endpoint: 'get-all-files/', useCore: true);
+  //
+  //   if(response.statusCode != 200){
+  //     throw Error();
+  //   }
+  //
+  //
+  //   List<dynamic> responseBody = jsonDecode(response.body);
+  //
+  //   if(responseBody.isEmpty && !kIsWeb){
+  //     reportFiles = downloadedFiles;
+  //     notifyListeners();
+  //     return;
+  //   }
+  //
+  //
+  //   if(kIsWeb){
+  //     reportFiles = responseBody.map((jsonMap) => ReportFile.fromJson(jsonMap)).toList();
+  //     return;
+  //   }
+  //
+  //   reportFiles = responseBody.map((jsonMap){
+  //
+  //     var matchedFiles = downloadedFiles.where(
+  //       (rFile){
+  //
+  //         bool fNameFlag = rFile.fileName == jsonMap['file_name'];
+  //
+  //         bool fTypeFlag = rFile.fileType == jsonMap['file_type'];
+  //
+  //         bool urlFlag = rFile.url == jsonMap['file_url'];
+  //
+  //         bool localPathFlag = rFile.localFilePath != null;
+  //
+  //         bool fileExists = rFile.isFileExistLocally;
+  //
+  //         return fNameFlag && fTypeFlag && urlFlag && localPathFlag && fileExists;
+  //       }
+  //     ).toList();
+  //
+  //     if(matchedFiles.isNotEmpty) {
+  //       return matchedFiles.first;
+  //     }
+  //
+  //     return ReportFile.fromJson(jsonMap);
+  //
+  //   }).toList();
+  //
+  //   notifyListeners();
+  //
+  // }
 
 
 

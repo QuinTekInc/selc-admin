@@ -11,8 +11,6 @@ class PageProvider extends ChangeNotifier{
   List<Widget> navigatorStack = [DashboardPage()]; //by default the dashboard would be showing.
   List<String> pageNames = ['Dashboard'];
 
-
-
   PageProvider(); //unnamed construction
 
   void pushPage(Widget page, String name){

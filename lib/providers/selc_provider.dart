@@ -306,6 +306,17 @@ class SelcProvider with ChangeNotifier{
   }
 
 
+  Future<Map<String, dynamic>> getDepartmentGraph(int departmentId) async {
+    final response = await connector.getRequest(endpoint: 'get-department-dashboard-graph/$departmentId');
+
+    if(response.statusCode != 200){
+      throw Error();
+    }
+
+    return Map<String, dynamic>.from(jsonDecode(response.body));
+  }
+
+
 
   Future<void> getLecturers() async {
 

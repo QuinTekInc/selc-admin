@@ -8,8 +8,10 @@ import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
+import 'package:selc_admin/components/stat_graph_section.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/pages/dashboard_page.dart';
 import 'package:selc_admin/pages/evaluations/eval_page.dart';
 import 'package:selc_admin/pages/lecturer_management/lecturer_info_page.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
@@ -37,7 +39,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
   List<ClassCourse> classCourses = [];
   int currentCoursesCount = 0;
 
-
+  Map<String, dynamic> graphData = {};
 
   bool isLoading = false;
 
@@ -48,7 +50,6 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
     //sort the lecturers who are in this department
     lecturers = Provider.of<SelcProvider>(context, listen: false).lecturers
                         .where((lecturer) => lecturer.department == widget.department.departmentName).toList();
-
 
     loadData();
 
@@ -70,6 +71,9 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
       currentCoursesCount = classCourses.where((classCourse) =>
                               classCourse.semester == Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester &&
                               classCourse.year == Provider.of<SelcProvider>(context, listen: false).generalSetting.academicYear).length;
+
+      graphData = await Provider.of<SelcProvider>(context, listen: false).getDepartmentGraph(widget.department.departmentId);
+
     } on SocketException {
       showNoConnectionAlertDialog(context);
 
@@ -166,23 +170,37 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
                   ),
 
 
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    spacing: 12,
+
+                    children: [
+                      if(isLoading) Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          decoration: BoxDecoration(
+                            color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+                            borderRadius: BorderRadius.circular(12)
+                          ),
+
+                          child: Center(
+                            child: CircularProgressIndicator()
+                          ),
+                        ),
+                      )
+                      else Expanded(
+                        child: GraphSection(graphData: graphData,)
+                      ),
+
+                      buildLecturersList(),
+                    ],
+                  ),
 
                   //lecturers list
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 12,
-                    children: [
-                      buildLecturersList(),
+                  buildClassCoursesSection()
 
-                      Expanded(
-                        child: buildClassCoursesSection(),
-                      )
-                    ],
-                  )
-
-
-                  //the courses(taught by lecturers in the department) list should be beside the lecturers list ranging from current to oldest.
                 ]
               )
             ),
@@ -198,9 +216,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
   Widget buildDepartmentInfoCard({required String title, required String detail, IconData? icon, Color? backgroundColor}){
 
 
-    if(backgroundColor == null){
-      backgroundColor = Colors.green.shade300;
-    }
+    backgroundColor ??= Colors.green.shade300;
 
     return Card(  
       shape: RoundedRectangleBorder( 
@@ -261,8 +277,8 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
     return Container(
       padding: const EdgeInsets.all(12),
-      width: MediaQuery.of(context).size.width * 0.25,
-      height: MediaQuery.of(context).size.height * 0.45,
+      width: MediaQuery.of(context).size.width * 0.3,
+      height: MediaQuery.of(context).size.height * 0.5,
 
       decoration: BoxDecoration(
         color: PreferencesProvider.getColor(context, 'table-background-color'),
@@ -289,7 +305,6 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
               itemBuilder: (_, index){
 
                 Lecturer lecturer = lecturers[index];
-
 
                 return DLecturerCell(lecturer: lecturer);
               },
