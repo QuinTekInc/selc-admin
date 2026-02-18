@@ -89,14 +89,11 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
             ],
           ),
 
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.45,
-            child: CustomTextField(
-              controller: searchController,
-              hintText: 'Search by year, semester, course code, title, lecturer, department .....',
-              leadingIcon: Icons.search,
-              onChanged: handleSearchFilter,
-            ),
+          CustomTextField(
+            controller: searchController,
+            hintText: 'Search by year, semester, course code, title, lecturer, department .....',
+            leadingIcon: Icons.search,
+            onChanged: handleSearchFilter,
           ),
 
 

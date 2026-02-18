@@ -30,8 +30,14 @@ class SuggestionsSection extends StatelessWidget {
     }
 
 
-    return Padding(
+    return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
+      
+      decoration: BoxDecoration(  
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
+        borderRadius: BorderRadius.circular(12)
+      ),
 
       child: ListView.separated(
         itemCount: summaryReport.suggestions.length,

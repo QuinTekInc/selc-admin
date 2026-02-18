@@ -484,7 +484,6 @@ class DropdownController<T>{
 
   T? value;
 
-
   DropdownController({this.value});
 
   void reset() => value = null;
@@ -503,18 +502,22 @@ class CollectionPlaceholder extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isRefreshable;
 
+  final IconData? icon;
+
   CollectionPlaceholder({
     super.key,
     this.title,
     required this.detail,
+    this.icon,
     this.isRefreshable = false,
     this.onPressed
   });
 
 
   factory CollectionPlaceholder.withRefresh({
-    String? title, required String detail, required VoidCallback onPressed}){
+    IconData? icon, String? title, required String detail, required VoidCallback onPressed}){
     return CollectionPlaceholder(
+      icon: icon,
       title: title,
       detail: detail,
       isRefreshable: true,

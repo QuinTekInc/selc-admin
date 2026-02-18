@@ -10,6 +10,7 @@ import 'package:selc_admin/model/models.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
 import 'package:open_filex/open_filex.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 
@@ -47,18 +48,13 @@ class _FilesPageState extends State<FilesPage> {
 
           HeaderText('Files', fontSize: 25,),
 
-
           const SizedBox(height: 12,),
 
-
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.4,
-            child: CustomTextField(  
-              controller: searchController,
-              hintText: 'Search Files',
-              leadingIcon: Icons.search,
-              onChanged: (newValue) => handleSearch()
-            ),
+          CustomTextField(
+            controller: searchController,
+            hintText: 'Search Files',
+            leadingIcon: Icons.search,
+            onChanged: (newValue) => handleSearch()
           ),
 
 
@@ -143,7 +139,6 @@ class _FilesPageState extends State<FilesPage> {
                       }
                     ),
                   )
-
                 ],
               ),
             ),
@@ -165,8 +160,6 @@ class _FilesPageState extends State<FilesPage> {
       });
       return;
     }
-
-
 
     setState(() {
       filteredReportFiles = Provider.of<PreferencesProvider>(context, listen: false).reportFiles
@@ -385,9 +378,7 @@ class _ReportFileCellState extends State<ReportFileCell> {
   }
 
 
-
   void handleOpenFile() async {
-
 
     await OpenFilex.open(
         widget.reportFile.localFilePath!,
@@ -399,13 +390,41 @@ class _ReportFileCellState extends State<ReportFileCell> {
 
   void handleOpenContainingFolder() async {
 
+    File file = File(widget.reportFile.localFilePath!);
+    Directory folder = file.parent;
+
+    Uri pathUri = Uri.parse(folder.path);
+
+    if(await canLaunchUrl(pathUri)){
+      await launchUrl(pathUri);
+    }else{
+
+      showCustomAlertDialog(
+        context,
+        title: 'Error',
+        contentText: 'Could open the folder containing this file.'
+      );
+
+    }
 
   }
 
 
   void handleDeleteFile() async {
-    //todo: delete the report file from the file system
-    Provider.of<PreferencesProvider>(context, listen: false).deleteReportFile(widget.reportFile);
+
+    try{
+
+      Provider.of<PreferencesProvider>(context, listen: false).deleteReportFile(widget.reportFile);
+
+    }on Exception{
+      showCustomAlertDialog(
+        context,
+        alertType: AlertType.warning,
+        title: 'Delete Error',
+        contentText: 'There was an error deleting \'${widget.reportFile.localFilePath}\' from the file system.'
+      );
+    }
+
   }
 
 }

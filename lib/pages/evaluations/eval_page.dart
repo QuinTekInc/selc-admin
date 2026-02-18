@@ -287,39 +287,26 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
   Widget buildMainBody(){
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-          color: PreferencesProvider.getColor(context, 'table-background-color'),
-          borderRadius: BorderRadius.circular(12)
-      ),
+    return Column(
+      children: [
 
-      child: DefaultTabController(
-        initialIndex: 0,
-        length: 5,
+        const SizedBox(height: 8,),
 
-        child: Column(
-          children: [
+        Expanded(
+          child: PageTransitionSwitcher(
+            duration: Duration(milliseconds: 500),
 
-            const SizedBox(height: 8,),
+            transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              fillColor: Colors.transparent,
+              child: child,
+            ),
 
-            Expanded(
-              child: PageTransitionSwitcher(
-                duration: Duration(milliseconds: 500),
-
-                transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
-                  animation: animation,
-                  secondaryAnimation: secondaryAnimation,
-                  fillColor: Colors.transparent,
-                  child: child,
-                ),
-
-                child: buildSelectedWidget()
-              ),
-            )
-          ],
-        ),
-
-      ),
+            child: buildSelectedWidget()
+          ),
+        )
+      ],
     );
   }
 
@@ -365,7 +352,7 @@ class _EvaluationPageState extends State<EvaluationPage> {
       case 5:
       default:
         return CCProgramDetailSection(
-            programDetail: ccProgramsInfo
+          programDetail: ccProgramsInfo
         );
     }
   }
@@ -375,31 +362,31 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
   Widget buildCCInfoSection(){
 
-    Map<String, List<(String, dynamic)>> gridItems = {
+    Map<String, List<(String, dynamic, IconData)>> gridItems = {
       "Basic Info": [
-        ("Course", '${ widget.classCourse.course.title} [${widget.classCourse.course.courseCode}]'),
-        ("Lecturer", widget.classCourse.lecturer.name),
-        ("Department", widget.classCourse.lecturer.department),
-        ("Credit Hours", widget.classCourse.credits.toString()),
-        ("Semester", widget.classCourse.semester.toString()),
-        ("Academic Year", widget.classCourse.year.toString()),
-        ("Level", widget.classCourse.level.toString()),
-        ("Number of Programs", widget.classCourse.programs.length.toString()),
+        ("Course", '${ widget.classCourse.course.title} [${widget.classCourse.course.courseCode}]', CupertinoIcons.book),
+        ("Lecturer", widget.classCourse.lecturer.name, CupertinoIcons.person),
+        ("Department", widget.classCourse.lecturer.department, CupertinoIcons.home),
+        ("Credit Hours", widget.classCourse.credits.toString(), CupertinoIcons.timer),
+        ("Semester", widget.classCourse.semester.toString(), CupertinoIcons.alarm),
+        ("Academic Year", widget.classCourse.year.toString(), CupertinoIcons.calendar),
+        ("Level", widget.classCourse.level.toString(), Icons.school_outlined),
+        ("Number of Programs", widget.classCourse.programs.length.toString(), CupertinoIcons.cloud),
 
       ],
 
       "Registration Info":[
-        ("Number of Students", widget.classCourse.registeredStudentsCount.toString()),
-        ("Evaluated Students", widget.classCourse.evaluatedStudentsCount.toString()),
-        ("Response Rate", '${formatDecimal(widget.classCourse.calculateResponseRate())}%')
+        ("Number of Students", widget.classCourse.registeredStudentsCount.toString(), CupertinoIcons.person_2),
+        ("Evaluated Students", widget.classCourse.evaluatedStudentsCount.toString(), CupertinoIcons.person_crop_circle_badge_checkmark),
+        ("Response Rate", '${formatDecimal(widget.classCourse.calculateResponseRate())}%', CupertinoIcons.percent)
       ],
 
       "Eval Info": [
-        ("Mean Score", formatDecimal(widget.classCourse.grandMeanScore)),
-        ("Percentage", "${formatDecimal(widget.classCourse.grandPercentageScore)}%"),
-        ("Remark", widget.classCourse.remark),
+        ("Mean Score", formatDecimal(widget.classCourse.grandMeanScore), CupertinoIcons.check_mark),
+        ("Percentage", "${formatDecimal(widget.classCourse.grandPercentageScore)}%", CupertinoIcons.percent),
+        ("Remark", widget.classCourse.remark, CupertinoIcons.chat_bubble),
 
-        ("Lecturer Rating for Course", formatDecimal(widget.classCourse.lecturerRating))
+        ("Lecturer Rating for Course", formatDecimal(widget.classCourse.lecturerRating), Icons.thumb_up_outlined)
       ]
     };
 
@@ -457,19 +444,39 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
                 List<Widget> sectionItems = List.generate(
                   gridItems[sectionTitle]!.length, (index) {
+
+                    String title = gridItems[sectionTitle]![index].$1;
+                    String detail = gridItems[sectionTitle]![index].$2;
+                    IconData icon = gridItems[sectionTitle]![index].$3;
+
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Column(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        spacing: 5,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 8,
                         children: [
-                          CustomText(
-                            gridItems[sectionTitle]![index].$1,
-                            fontWeight: FontWeight.w600,
+
+                          CircleAvatar(
+                            backgroundColor: PreferencesProvider.getColor(context, 'primary-color'),
+                            radius: 30,
+                            child: Icon(icon, color: Colors.green.shade400, size: 20,),
                           ),
-                          CustomText(gridItems[sectionTitle]![index].$2)
+
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            spacing: 5,
+                            children: [
+                              CustomText(
+                                title,
+                                fontWeight: FontWeight.w600,
+                              ),
+
+                              CustomText(detail)
+                            ],
+                          ),
                         ],
                       ),
                     );

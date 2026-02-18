@@ -20,7 +20,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
           //todo: the heading text.
           HeaderText(
@@ -29,10 +28,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ),
 
           //todo: navigation text buttons
-          NavigationTextButtons()
+          NavigationTextButtons(),
 
+          Expanded(
+            child: CollectionPlaceholder(
+              detail: 'All Notification appear here',
+            )
+          )
         ],
-
       ),
     );
   }

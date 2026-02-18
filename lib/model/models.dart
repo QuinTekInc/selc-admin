@@ -86,7 +86,6 @@ class GeneralCurrentStatistics{
 
 
 
-
 //todo: department
 class Department{
   final int departmentId;

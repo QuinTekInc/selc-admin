@@ -6,6 +6,7 @@ import 'package:selc_admin/components/charts/pie_chart.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
+import 'package:selc_admin/model/preferences.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
 
@@ -93,55 +94,64 @@ class _VisualizationSectionState extends State<VisualizationSection> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        for (final evalDataKey in evalData.keys.toList()) ...[
-          /// Category header
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                decoration: BoxDecoration(
-                  color: PreferencesProvider.getColor(context, 'primary-color'),
-                  borderRadius: BorderRadius.circular(12),
+    return Container(
+      width: double.infinity,
+
+      decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
+        borderRadius: BorderRadius.circular(12)
+      ),
+
+      child: CustomScrollView(
+        slivers: [
+          for (final evalDataKey in evalData.keys.toList()) ...[
+            /// Category header
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: PreferencesProvider.getColor(context, 'primary-color'),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: HeaderText(evalDataKey),
                 ),
-                child: HeaderText(evalDataKey),
               ),
             ),
-          ),
 
-          /// Grid for category
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            sliver: SliverGrid(
+            /// Grid for category
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              sliver: SliverGrid(
 
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                mainAxisExtent: 525,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  mainAxisExtent: 525,
+                ),
+
+                delegate: SliverChildBuilderDelegate(
+                  childCount: evalData[evalDataKey]!.length,
+                  (_, index){
+                    final card = evalData[evalDataKey]![index];
+
+                    return card;
+                  },
+
+                ),
+
               ),
-
-              delegate: SliverChildBuilderDelegate(
-                childCount: evalData[evalDataKey]!.length,
-                (_, index){
-                  final card = evalData[evalDataKey]![index];
-
-                  return card;
-                },
-
-              ),
-
             ),
-          ),
 
-          /// Space after each category
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 16),
-          ),
-        ]
-      ],
+            /// Space after each category
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 16),
+            ),
+          ]
+        ],
+      ),
     );
 
   }

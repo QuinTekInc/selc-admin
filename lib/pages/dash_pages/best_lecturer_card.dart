@@ -42,40 +42,24 @@ Widget buildField(BuildContext context, {required String title, String value = '
 
 class BestLecturerCard extends StatelessWidget {
 
-  //todo: this class will require a Custom class to accommodate the required paramters
+  final Map<String, dynamic> lecturerRatingMap;
 
-  LecturerRating? lecturerRating;
-  bool isLoading;
-
-  BestLecturerCard({super.key, this.isLoading = false});
+  const BestLecturerCard({super.key, required this.lecturerRatingMap});
 
 
   @override
   Widget build(BuildContext context) {
 
-
-    if(Provider.of<SelcProvider>(context).lecturersRatings.isEmpty){
-
-      return Container(
-        height: 120,
-        width: double.infinity,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: PreferencesProvider.getColor(context, 'alt-primary-color')
-        ),
-        child: CircularProgressIndicator(),
-      );
-    }
-
-
-
-    lecturerRating = Provider.of<SelcProvider>(context).lecturersRatings.first;
+    final lecturerName = lecturerRatingMap['lecturer_name'];
+    final departmentName = lecturerRatingMap['department'];
+    final numberOfCourses = lecturerRatingMap['number_of_courses'];
+    final studentsCount = lecturerRatingMap['students_count'];
+    final lecturerRating = lecturerRatingMap['rating'];
 
 
     return Container(
       //height: MediaQuery.of(context).size.height * 0.6,
-      width: double.infinity,
+      width: 500,
       padding: const EdgeInsets.all(8),
 
 
@@ -115,14 +99,14 @@ class BestLecturerCard extends StatelessWidget {
             ),
 
             //lecturer name
-            title: CustomText(
-                inflateValue(lecturerRating!.lecturer.name)
-            ),
+            title: CustomText(lecturerName),
 
             //lecturer department
             subtitle: CustomText(
-              inflateValue(lecturerRating!.lecturer.department),
+              'Department of $departmentName',
               textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
 
@@ -132,7 +116,7 @@ class BestLecturerCard extends StatelessWidget {
           buildField(
             context,
             title: 'No. of Courses',
-            value: inflateValue(lecturerRating!.numberOfCourses.toString())
+            value: numberOfCourses.toString()
           ),
 
 
@@ -140,7 +124,7 @@ class BestLecturerCard extends StatelessWidget {
           buildField(
             context,
             title: 'No. Students (in rating)',
-            value: inflateValue('${lecturerRating!.numberOfStudents}') //todo: fix this later.
+            value: studentsCount.toString() //todo: fix this later.
           ),
 
 
@@ -148,15 +132,14 @@ class BestLecturerCard extends StatelessWidget {
           buildField(
             context,
             title: 'Average Rating',
-            value: inflateValue(formatDecimal(lecturerRating!.parameterRating).toString())
+            value: formatDecimal(lecturerRating)
           ),
 
 
 
           //HeaderText('Rating Summary', fontSize: 15,),
-          if(lecturerRating != null) CustomButton.withText(
+          CustomButton.withText(
             'View profile',
-            disable: isLoading,
             onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(LecturerInfoPage(lecturer: lecturerRating!.lecturer), 'Lecturer Info'),
           )
 
@@ -165,59 +148,25 @@ class BestLecturerCard extends StatelessWidget {
     );
   }
 
-
-
-  String inflateValue(String? value){
-
-    if(isLoading) return 'Loading...';
-
-    if(lecturerRating == null) return 'N/A';
-
-    return value!;
-  }
-
-
 }
 
 
 
 
 
-
-
-
-
-
+//best course card.
 class BestCourseCard extends StatelessWidget {
 
-  CourseRating? courseRating;
-  bool isLoading;
+  final ClassCourse classCourse;
 
-  BestCourseCard({super.key, this.isLoading = false});
+  const BestCourseCard({super.key,  required this.classCourse});
 
   @override
   Widget build(BuildContext context) {
 
-
-    if(Provider.of<SelcProvider>(context).coursesRatings.isEmpty){
-      return Container(
-        height: 120,
-        width: double.infinity,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: PreferencesProvider.getColor(context, 'alt-primary-color')
-        ),
-        child: CircularProgressIndicator(),
-      );
-    }
-
-
-    courseRating = Provider.of<SelcProvider>(context).coursesRatings.first;
-
     return Container(
       //height: MediaQuery.of(context).size.height * 0.6,
-      width: double.infinity,
+      width: 500,
       padding: const EdgeInsets.all(8),
 
       decoration: BoxDecoration(
@@ -241,7 +190,23 @@ class BestCourseCard extends StatelessWidget {
             children: [
               Icon(Icons.ac_unit_outlined, size: 25,),
 
-              HeaderText('Highest Rated Course')
+              HeaderText('Highest Rated Course'),
+
+              Spacer(),
+
+
+              TextButton(
+                child: CustomText(
+                  'View Evaluation',
+                  textColor: Colors.green.shade400,
+                ),
+                onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(
+                  EvaluationPage(classCourse: classCourse),
+                  "Evaluation"
+                ),
+              )
+
+
             ],
           ),
 
@@ -261,10 +226,10 @@ class BestCourseCard extends StatelessWidget {
             ),
 
             //lecturer name
-            title: CustomText(inflateValue(courseRating!.course.title)),
+            title: CustomText(classCourse.course.title),
 
             //lecturer department
-            subtitle: CustomText(courseRating!.course.courseCode, textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),),
+            subtitle: CustomText(classCourse.course.courseCode, textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),),
           ),
 
 
@@ -272,16 +237,18 @@ class BestCourseCard extends StatelessWidget {
           //lecturer
           buildField(
             context,
-            title: 'Number of Lecturers',
-            value: inflateValue(courseRating!.numberOfLecturers.toString()),
+            title: 'Lecturer',
+            value: classCourse.lecturer.name,
+            titleSpan: 1,
+            valueSpan: 2
           ),
 
 
           //number of students
           buildField(
             context,
-            title: 'No. Students [Evaluated]',
-            value: inflateValue('${courseRating!.numberOfStudents} [${courseRating!.evaluatedStudents}]')
+            title: 'Students[Evaluated]',
+            value: '${classCourse.registeredStudentsCount} [${classCourse.evaluatedStudentsCount}]'
           ),
 
 
@@ -289,51 +256,30 @@ class BestCourseCard extends StatelessWidget {
           buildField(
             context,
             title: 'Response rate(%)',
-            value: inflateValue('${formatDecimal(courseRating!.calculateResponseRate())} %')
+            value: '${formatDecimal(classCourse.calculateResponseRate())} %'
           ),
 
 
           //evaluation score rating
           buildField(
             context,
-            title: 'Evaluation Score [% score]',
-            value: inflateValue(
-              '${formatDecimal(courseRating!.parameterMeanScore)} ' //change this.
-              '[${formatDecimal(courseRating!.percentageScore)} %]'
-            )
+            title: 'Score [% score]',
+            value: '${formatDecimal(classCourse.grandMeanScore)} ' //change this.
+              '[${formatDecimal(classCourse.grandPercentageScore)} %]'
           ),
 
           //Remark
           buildField(
             context,
             title: 'Remark',
-            value: inflateValue(courseRating!.remark)
+            value: classCourse.remark!
           ),
-
-
-
-          if(courseRating != null) CustomButton.withText(
-            'View Course Profile',
-            disable: isLoading,
-            onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(
-                CourseProfilePage(course: courseRating!.course,), 'Course Profile'),
-          )
 
         ],
       ),
     );
   }
 
-
-
-  String inflateValue(String? value){
-
-    if(isLoading) return 'Loading...';
-
-    if(courseRating == null) return 'N/A';
-
-    return value!;
-  }
 }
 
 

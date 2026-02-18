@@ -66,7 +66,7 @@ class _LecturersPageState extends State<LecturersPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-
+        spacing: 12,
         children: [
 
 
@@ -114,36 +114,26 @@ class _LecturersPageState extends State<LecturersPage> {
 
 
           //search text field
-          Container(
-            width: MediaQuery.of(context).size.width * 0.45,
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: CustomTextField(
-              controller: searchController,
-              leadingIcon: CupertinoIcons.search,
-              useLabel: false,
-              hintText: 'Search by name or department...',
-              onChanged: (String newValue) => setState(() {
+          CustomTextField(
+            controller: searchController,
+            leadingIcon: CupertinoIcons.search,
+            useLabel: false,
+            hintText: 'Search by name or department...',
+            onChanged: (String newValue) => setState(() {
 
-                if(newValue.isEmpty) {
-                  filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers;
-                  return;
-                }
+              if(newValue.isEmpty) {
+                filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers;
+                return;
+              }
 
 
-                filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers.where((lecturer){
-                  return lecturer.name.toLowerCase().contains(newValue.toLowerCase()) ||
-                          lecturer.department.toLowerCase().contains(newValue.toLowerCase());
-                }).toList();
+              filteredLecturer = Provider.of<SelcProvider>(context, listen: false).lecturers.where((lecturer){
+                return lecturer.name.toLowerCase().contains(newValue.toLowerCase()) ||
+                        lecturer.department.toLowerCase().contains(newValue.toLowerCase());
+              }).toList();
 
-              })
-            ),
+            })
           ),
-
-
-
-
-          const SizedBox(height: 8),
 
 
 
@@ -151,32 +141,14 @@ class _LecturersPageState extends State<LecturersPage> {
             child: Center(child: CircularProgressIndicator(),),
           )
           else if(!isLoading && filteredLecturer.isEmpty) Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-
-                children: [
-
-                  CustomText(
-                    'No Lecturer Data',
-                    fontWeight: FontWeight.bold,
-                    textAlignment: TextAlign.center,
-                  ),
-
-                  CustomText(
-                    'The list of lecturers appear here.',
-                    textAlignment: TextAlign.center,
-                  )
-                ]
-              ),
-            ),
+            child: CollectionPlaceholder(
+              title: 'No Data!',
+              detail: 'List of Lecturers appear here.',
+            )
           )
           else Expanded(
             child: buildLecturersGridView(context, filteredLecturer),
           ),
-
         ],
       ),
     );

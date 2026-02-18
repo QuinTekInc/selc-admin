@@ -19,7 +19,7 @@ class QuestionnaireEvalTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TableContainer(
-    
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,

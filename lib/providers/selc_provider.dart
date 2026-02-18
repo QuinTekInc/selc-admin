@@ -370,20 +370,15 @@ class SelcProvider with ChangeNotifier{
 
     Response response = await connector.getRequest(endpoint: 'class-course-eval-summary/$classCourseId');
 
-
     if(response.statusCode != 200){
       throw Error();
     }
 
     List<dynamic> responseBody = jsonDecode(response.body);
 
-
     /*
     todo: paste the format of the response here
      */
-    //
-    // List<CourseEvaluationSummary> evaluationSummaryList = responseBody.map(
-    //                           (jsonMap) => CourseEvaluationSummary.fromJson(jsonMap)).toList();
 
     return responseBody;
   }

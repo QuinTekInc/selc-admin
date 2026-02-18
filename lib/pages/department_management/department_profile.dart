@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +35,7 @@ class DepartmentProfilePage extends StatefulWidget {
 
 class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
+  int selectedTab = 0;
 
   List<Lecturer> lecturers = [];
   List<ClassCourse> classCourses = [];
@@ -50,6 +52,9 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
     //sort the lecturers who are in this department
     lecturers = Provider.of<SelcProvider>(context, listen: false).lecturers
                         .where((lecturer) => lecturer.department == widget.department.departmentName).toList();
+
+
+
 
     loadData();
 
@@ -80,8 +85,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
     } on Error{
       showCustomAlertDialog(context, title: 'Error', contentText: 'An unknown error occurred. Please try again');
     }
-
-
+    
     setState(() => isLoading = false);
 
   }
@@ -89,134 +93,144 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
 
-        children: [
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+      
+          children: [
+      
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+      
+                HeaderText(
+                  'Department of ${widget.department.departmentName}',
+                  fontSize: 25,
+                ),
+      
+                Spacer(),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+                TextButton.icon(
+                  icon: Icon(Icons.edit_document, color: Colors.green.shade300, size: 25,),
+                  label: CustomText('Generate Report', textColor: Colors.green.shade300, fontSize: 16,),
+                  onPressed: handleGenerateReport,
+                )
+              ],
+            ),
+      
+            const SizedBox(height: 8,),
+      
+            NavigationTextButtons(),
+      
+            const SizedBox(height: 8),
+            
+            //tabs
+            Container(
+              margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
+              height: 50,
+              width: double.infinity, //MediaQuery.of(context).size.width * 0.4,
 
-              HeaderText(
-                'Department of ${widget.department.departmentName}',
-                fontSize: 25,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade400)
               ),
 
-              Spacer(),
+              child: IgnorePointer(
+                ignoring: isLoading,
+                child: TabBar(
+                  indicatorColor: Colors.green.shade200,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+                  indicatorPadding: EdgeInsets.zero,
 
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: Colors.green.shade400,
+                  ),
 
-              TextButton.icon(
-                icon: Icon(Icons.edit_document, color: Colors.green.shade300, size: 25,),
-                label: CustomText('Generate Report', textColor: Colors.green.shade300, fontSize: 16,),
-                onPressed: handleGenerateReport,
-              )
-            ],
-          ),
+                  padding: const EdgeInsets.all(4),
+                  labelPadding: const EdgeInsets.all(8),
+                  indicatorAnimation: TabIndicatorAnimation.elastic,
+                  labelColor: Colors.white,
 
-          const SizedBox(height: 8,),
+                  labelStyle: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600
+                  ),
 
-          NavigationTextButtons(),
-
-          const SizedBox(height: 12),
-
-          Expanded(
-            flex: 2,
-            child: SingleChildScrollView(
-
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 12,
-
-
-                children: [
-
-                  //department name
-
-
-                  //department info (number of lecturers, number of courses)
-                  Row(
-                    children: [
-
-                      buildDepartmentInfoCard(
-                        title: 'Lecturers',
-                        detail: lecturers.length.toString(),
-                        icon: CupertinoIcons.person
-                      ),
-
-
-                      buildDepartmentInfoCard(
-                        title: 'Class Courses',
-                        detail: classCourses.length.toString(),
-                        icon: CupertinoIcons.book,
-                        backgroundColor: Colors.amber
-                      ),
-
-
-
-                      buildDepartmentInfoCard(
-                          title: 'Current Class Courses',
-                          detail: currentCoursesCount.toString(),
-                          icon: Icons.menu_book,
-                          backgroundColor: Colors.red.shade500
-                      ),
-
-                    ]
+                  unselectedLabelStyle: TextStyle(
+                      fontFamily: 'Poppins'
                   ),
 
 
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    spacing: 12,
+                  onTap: (newValue) => setState(() => selectedTab = newValue),
+                  tabs: [
 
-                    children: [
-                      if(isLoading) Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          decoration: BoxDecoration(
-                            color: PreferencesProvider.getColor(context, 'alt-primary-color'),
-                            borderRadius: BorderRadius.circular(12)
-                          ),
+                    Tab(
+                      text: 'Basic Info',
+                    ),
 
-                          child: Center(
-                            child: CircularProgressIndicator()
-                          ),
-                        ),
-                      )
-                      else Expanded(
-                        child: GraphSection(graphData: graphData,)
-                      ),
+                    Tab(
+                      text: 'Lecturers',
+                    ),
 
-                      buildLecturersList(),
-                    ],
-                  ),
+                    Tab(
+                        text: 'Class Courses'
+                    )
 
-                  //lecturers list
-                  buildClassCoursesSection()
-
-                ]
-              )
+                  ]
+                ),
+              ),
             ),
-          )
+            
+            const SizedBox(height: 12,),
+      
+            Expanded(
+              child: PageTransitionSwitcher(
+                duration: Duration(milliseconds: 500),
 
-        ],
+                transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
+                  animation: animation,
+                  secondaryAnimation: secondaryAnimation,
+                  fillColor: Colors.transparent,
+                  child: child,
+                ),
+
+                child: Builder(
+                  builder: (_){
+                    switch(selectedTab){
+                      case 0:
+                        return buildDashboardSection();
+
+                      case 1:
+                        return buildLecturersList();
+
+                      case 2:
+                        return buildClassCoursesSection();
+
+                      default:
+                        return Placeholder();
+                    }
+                  },
+                )
+              )
+            )
+          ],
+        ),
       ),
     );
   }
 
 
 
-  Widget buildDepartmentInfoCard({required String title, required String detail, IconData? icon, Color? backgroundColor}){
-
-
-    backgroundColor ??= Colors.green.shade300;
+  Widget buildDepartmentInfoCard({required String title, required String detail, IconData? icon}){
 
     return Card(  
       shape: RoundedRectangleBorder( 
@@ -228,7 +242,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
         width: 300,
         decoration: BoxDecoration(  
           borderRadius: BorderRadius.circular(12),
-          color: backgroundColor
+          color: PreferencesProvider.getColor(context, 'alt-primary-color')
         ),
 
 
@@ -241,10 +255,9 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
             CircleAvatar(  
               radius: 30,
-              backgroundColor: Color.lerp(backgroundColor, Colors.white, 0.3),
-              child: Icon(icon, color: Colors.white, size: 30,),
+              backgroundColor: PreferencesProvider.getColor(context, 'primary-color'),
+              child: Icon(icon, color: Colors.green.shade400, size: 30,),
             ),
-
 
 
             Column(  
@@ -254,15 +267,14 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
               children: [
 
                 CustomText(  
-                  title, 
-                  textColor: Colors.white,
+                  title,
                   padding: EdgeInsets.zero,
                 ),
 
 
                 HeaderText(  
-                  detail, 
-                  textColor: Colors.white,
+                  detail,
+                  textColor: PreferencesProvider.getColor(context, 'text-color'),
                 )
               ],
             )
@@ -273,12 +285,64 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
   }
 
 
+  Widget buildDashboardSection(){
+
+    final cardItems = [
+      ('Lecturers', lecturers.length.toString(), CupertinoIcons.person),
+      ('All Classes', classCourses.length.toString(), CupertinoIcons.book),
+      ('Current Courses', currentCoursesCount.toString(), Icons.menu_book)
+    ];
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12,
+      
+        children: [
+      
+      
+          //department info (number of lecturers, number of courses)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: List.generate(
+              cardItems.length,
+                (index) => buildDepartmentInfoCard(
+                title: cardItems[index].$1,
+                detail: cardItems[index].$2,
+                icon: cardItems[index].$3
+              )
+            )
+          ),
+      
+      
+          if(isLoading) Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.6,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+              borderRadius: BorderRadius.circular(12)
+            ),
+          
+            child: CircularProgressIndicator(),
+          )
+          else GraphSection(
+            graphData: graphData,
+          ),
+        ]
+      ),
+    );
+  }
+
+
   Widget buildLecturersList(){
 
     return Container(
       padding: const EdgeInsets.all(12),
-      width: MediaQuery.of(context).size.width * 0.3,
-      height: MediaQuery.of(context).size.height * 0.5,
+      width: double.infinity,
+      height: double.infinity,
 
       decoration: BoxDecoration(
         color: PreferencesProvider.getColor(context, 'table-background-color'),
@@ -321,10 +385,9 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
   //class course table.
   Widget buildClassCoursesSection(){
 
-
     return Container(
       padding: const EdgeInsets.all(12),
-      height: MediaQuery.of(context).size.height * 0.45,
+      height: double.infinity,
       width: double.infinity,
       decoration: BoxDecoration(
         color: PreferencesProvider.getColor(context, 'table-background-color'),
@@ -434,7 +497,7 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
 
 
 
-          if(!classCourses.isEmpty) Align(
+          if(classCourses.isNotEmpty) Align(
             alignment: Alignment.centerRight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -648,8 +711,8 @@ class _DClassCourseCellState extends State<DClassCourseCell> {
 
               //lecturer's name
               Expanded(
-                  flex: 2,
-                  child: CustomText(widget.classCourse.lecturer.name)
+                flex: 2,
+                child: CustomText(widget.classCourse.lecturer.name)
               ),
 
 

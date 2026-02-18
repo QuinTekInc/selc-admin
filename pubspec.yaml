@@ -30,6 +30,7 @@ dependencies:
   web_socket_client: ^0.2.1
   open_filex: ^4.7.0
   flutter_staggered_grid_view: ^0.7.0
+  url_launcher: ^6.3.2
   
 
 dev_dependencies:

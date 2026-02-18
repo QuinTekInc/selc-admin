@@ -102,7 +102,6 @@ class _QuestionsPageState extends State<QuestionsPage> {
               ),
 
 
-
               TextButton(
                 onPressed: () => loadData(),
                 child: Row(
@@ -130,10 +129,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
           Row(
             children: [
 
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.45,
-                height: 40,
-
+              Expanded(
                 child: CustomTextField(
                   controller: searchController,
                   hintText: 'Search Questions And Categories',
@@ -142,8 +138,6 @@ class _QuestionsPageState extends State<QuestionsPage> {
                   onChanged: handleSearch
                 ),
               ),
-
-              Spacer(),
 
 
 
