@@ -30,7 +30,6 @@ Widget buildField(BuildContext context, {required String title, String value = '
 
       ),
 
-
       Expanded(
         flex: valueSpan,
         child: CustomText(value),
@@ -82,7 +81,7 @@ class BestLecturerCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 5,
             children: [
-              Icon(Icons.ac_unit_outlined, size: 25,),
+              Icon(CupertinoIcons.person, size: 25, color: Colors.green.shade400,),
 
               HeaderText('Highest Rated Lecturer')
             ],
@@ -188,7 +187,7 @@ class BestCourseCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 5,
             children: [
-              Icon(Icons.ac_unit_outlined, size: 25,),
+              Icon(CupertinoIcons.book, size: 25, color: Colors.green.shade400,),
 
               HeaderText('Highest Rated Course'),
 

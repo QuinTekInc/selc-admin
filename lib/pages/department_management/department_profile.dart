@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
+import 'package:selc_admin/components/custom_tab_bar.dart';
 import 'package:selc_admin/components/stat_graph_section.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
@@ -132,62 +133,9 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
             const SizedBox(height: 8),
             
             //tabs
-            Container(
-              margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
-              height: 50,
-              width: double.infinity, //MediaQuery.of(context).size.width * 0.4,
-
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade400)
-              ),
-
-              child: IgnorePointer(
-                ignoring: isLoading,
-                child: TabBar(
-                  indicatorColor: Colors.green.shade200,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  indicatorPadding: EdgeInsets.zero,
-
-                  indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: Colors.green.shade400,
-                  ),
-
-                  padding: const EdgeInsets.all(4),
-                  labelPadding: const EdgeInsets.all(8),
-                  indicatorAnimation: TabIndicatorAnimation.elastic,
-                  labelColor: Colors.white,
-
-                  labelStyle: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600
-                  ),
-
-                  unselectedLabelStyle: TextStyle(
-                      fontFamily: 'Poppins'
-                  ),
-
-
-                  onTap: (newValue) => setState(() => selectedTab = newValue),
-                  tabs: [
-
-                    Tab(
-                      text: 'Basic Info',
-                    ),
-
-                    Tab(
-                      text: 'Lecturers',
-                    ),
-
-                    Tab(
-                        text: 'Class Courses'
-                    )
-
-                  ]
-                ),
-              ),
+            CustomTabBar(
+              tabLabels: ['Basic Info', 'Lecturers', 'Class Courses'],
+              onChanged: (index) => setState(() => selectedTab = index)
             ),
             
             const SizedBox(height: 12,),
@@ -216,7 +164,9 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
                         return buildClassCoursesSection();
 
                       default:
-                        return Placeholder();
+                        return Center(
+                          child: CustomText('You selected the wrong tab'),
+                        );
                     }
                   },
                 )

@@ -41,7 +41,6 @@ class GraphSection extends StatelessWidget {
 
         //todo: the various graphs
 
-
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

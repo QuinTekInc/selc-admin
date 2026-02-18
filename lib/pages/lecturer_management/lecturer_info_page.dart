@@ -11,6 +11,7 @@ import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
 import 'package:selc_admin/components/cells.dart';
 import 'package:selc_admin/components/charts/bar_chart.dart';
+import 'package:selc_admin/components/custom_tab_bar.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
@@ -35,6 +36,8 @@ class LecturerInfoPage extends StatefulWidget {
 }
 
 class _LecturerInfoPageState extends State<LecturerInfoPage> {
+  
+  int selectedTab = 0;
 
   List<dynamic> detailFields = [];
 
@@ -97,7 +100,11 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
       lecturerClassCourses = await Provider.of<SelcProvider>(context, listen: false).getLecturerInfo(widget.lecturer.username);
 
-      currentClassCourses = lecturerClassCourses.where((classCourse) => classCourse.year == DateTime.now().year).toList();
+      currentClassCourses = lecturerClassCourses.where(
+        (classCourse) => classCourse.year == Provider.of<SelcProvider>(context, listen: false).generalSetting.academicYear &&
+                          classCourse.semester == Provider.of<SelcProvider>(context, listen: false).generalSetting.currentSemester
+
+      ).toList();
 
 
       detailFields = initDetailFields();
@@ -135,73 +142,106 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-
-          HeaderText('${widget.lecturer.username}\'s Profile', fontSize: 25,),
-
-          NavigationTextButtons(),
-
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 12,
-
-                children: [
-
-                  const SizedBox(height: 4,),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 12,
-                    children: [
-
-                      buildLectureNameSection(),
-
-                      Expanded(child: buildAdditionInfoSection()),
-
-                      buildRatingDetailSection(),
-                    ],
-                  ),
-
-
-
-
-
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 12,
-
-                    children: [
-
-                      buildCurrentCourseSection(),
-
-                      Expanded(
-                        flex: 2,
-                        child: buildCummulativeCourseTable(),
-                      )
-
-                    ],
-                  ),
-
-
-
-
-                ],
-              ),
+      child: DefaultTabController(
+        length: 2,
+        
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+        
+          children: [
+        
+            HeaderText('${widget.lecturer.username}\'s Profile', fontSize: 25,),
+        
+            NavigationTextButtons(),
+            
+            //tab bar
+            CustomTabBar(  
+              tabLabels: ['Basic Info', 'Class Courses'],
+              onChanged: (index) => setState(() => selectedTab = index)
             ),
-          )
 
-        ],
+            const SizedBox(height: 12),
+        
+            Expanded(
+              child: PageTransitionSwitcher(
+                duration: Duration(milliseconds: 500),
+
+                transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
+                  animation: animation,
+                  secondaryAnimation: secondaryAnimation,
+                  fillColor: Colors.transparent,
+                  child: child,
+                ),
+
+                child: Builder(
+                  builder: (_){
+                    switch(selectedTab){
+                      case 0:
+                        return buildDashboardSection();
+
+                      case 1:
+                        return buildCumulativeCourseTable();
+
+                      default:
+                        return Center(
+                          child: CustomText('You selected the wrong tab'),
+                        );
+                    }
+                  },
+                )
+              )
+            )
+        
+          ],
+        ),
       ),
+    );
+  }
+
+
+
+  Widget buildDashboardSection() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 12,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 12,
+          children: [
+
+            buildLectureNameSection(),
+
+            Expanded(child: buildAdditionInfoSection()),
+
+            buildRatingDetailSection(),
+          ],
+        ),
+
+
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: [
+
+              Expanded(
+                child: buildYearlyRatingLineChart(),
+              ),
+
+
+              buildCurrentCourseSection()
+
+            ],
+          ),
+        )
+
+
+      ],
     );
   }
 
@@ -253,7 +293,6 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
 
   Widget buildAdditionInfoSection() {
-
 
     return Container(
       //width: MediaQuery.of(context).size.width * 0.4,
@@ -351,7 +390,6 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
               }
             ),
           )
-
         ],
       ),
     );
@@ -362,7 +400,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
   Widget buildRatingDetailSection(){
     
     
-    final ratingSummaryViews = [buildRatingCustomBarChart(), buildRatingPieChart(), buildRatingStarsDetail(), buildYearlyRatingLineChart()];
+    final ratingSummaryViews = [buildRatingCustomBarChart(), buildRatingPieChart(), buildRatingStarsDetail()];
 
 
     return Container(
@@ -426,11 +464,11 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
                   if(selectedRatingViewIndex == ratingSummaryViews.length) selectedRatingViewIndex = 0;
                 }),
                 icon: Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: PreferencesProvider.getColor(context, 'primary-color')
-                    ),
-                    child: Icon(Icons.navigate_next, size: 25,)
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: PreferencesProvider.getColor(context, 'primary-color')
+                  ),
+                  child: Icon(Icons.navigate_next, size: 25,)
                 ),
               ),
 
@@ -453,7 +491,6 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
               child: ratingSummaryViews[selectedRatingViewIndex],
             ),
           ),
-
         ],
 
       )
@@ -482,8 +519,8 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
           label: ratingSummary[index].rating.toString(),
           rods: [
             Rod(
-                y: ratingSummary[index].ratingCount.toDouble(),
-                rodColor: colors[index]
+              y: ratingSummary[index].ratingCount.toDouble(),
+              rodColor: colors[index]
             )
           ]
         )
@@ -613,45 +650,66 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
   Widget buildYearlyRatingLineChart(){
 
-    return CustomLineChart(
+    return Container(
+      height: double.infinity,
       width: double.infinity,
-      showXLabels: false,
-      showYLabels: false,
-      containerBackgroundColor: PreferencesProvider.getColor(context, 'alt-primary-color'),
-      leftAxisTitle: 'Rating',
-      bottomAxisitle: 'Years',
-      maxY: 5,
-      spotData: List<CustomLineChartSpotData>.generate(
-          yearlyLecturerRatingSummary.length,
-            (index) {
+      padding: const EdgeInsets.all(8),
 
-              double x = index.toDouble();
-
-              int year = yearlyLecturerRatingSummary[index].$1;
-
-              //now the actual rating
-              double y = yearlyLecturerRatingSummary[index].$2;
-
-
-              final label = 'Year: $year\nAvg Rating: ${formatDecimal(y)}';
-
-              return CustomLineChartSpotData( x: x, y: y, label: label,);
-            }
-      ) + List.generate(
-          20,
-          (index) {
-
-            double rating =  [1, 1.7, 2, 2.1, 2.5, 2, 3.2, 3.6, 4, 4.3, 4.8, 5][Random().nextInt(12)].toDouble();
-
-            return CustomLineChartSpotData(
-              x: (1+index).toDouble(),
-              y: rating,
-              label: 'Year: ${2026+index}\nAvg Rating: ${rating}'
-            );
-          }
+      decoration: BoxDecoration(
+        color: PreferencesProvider.getColor(context, 'alt-primary-color'),
+        borderRadius: BorderRadius.circular(12)
       ),
-      
 
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 8,
+        children: [
+
+          HeaderText('Yearly Rating Summary'),
+
+          CustomLineChart(
+            width: double.infinity,
+            showXLabels: false,
+            showYLabels: false,
+            containerBackgroundColor: PreferencesProvider.getColor(context, 'alt-primary-color'),
+            leftAxisTitle: 'Rating',
+            bottomAxisitle: 'Years',
+            maxY: 5,
+            spotData: List<CustomLineChartSpotData>.generate(
+              yearlyLecturerRatingSummary.length,
+              (index) {
+
+                double x = index.toDouble();
+
+                int year = yearlyLecturerRatingSummary[index].$1;
+
+                //now the actual rating
+                double y = yearlyLecturerRatingSummary[index].$2;
+
+
+                final label = 'Year: $year\nAvg Rating: ${formatDecimal(y)}';
+
+                return CustomLineChartSpotData( x: x, y: y, label: label,);
+              }
+            ) + List.generate(
+              20,
+              (index) {
+
+                double rating =  [1, 1.7, 2, 2.1, 2.5, 2, 3.2, 3.6, 4, 4.3, 4.8, 5][Random().nextInt(12)].toDouble();
+
+                return CustomLineChartSpotData(
+                  x: (1+index).toDouble(),
+                  y: rating,
+                  label: 'Year: ${2026+index}\nAvg Rating: ${rating}'
+                );
+              }
+            ),
+
+
+          ),
+        ],
+      ),
     );
   }
   
@@ -662,7 +720,7 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.25,
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: double.infinity,
 
       padding: const EdgeInsets.all(12),
 
@@ -707,12 +765,12 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
 
 
 
-  Widget buildCummulativeCourseTable(){
+  Widget buildCumulativeCourseTable(){
 
     return Container(
       padding: const EdgeInsets.all(8),
       width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: double.infinity,
 
 
       constraints: BoxConstraints(
@@ -720,8 +778,8 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
       ),
 
       decoration: BoxDecoration(
-          color: PreferencesProvider.getColor(context, 'table-background-color'),
-          borderRadius: BorderRadius.circular(12)
+        color: PreferencesProvider.getColor(context, 'table-background-color'),
+        borderRadius: BorderRadius.circular(12)
       ),
 
       child: Column(
@@ -754,51 +812,51 @@ class _LecturerInfoPageState extends State<LecturerInfoPage> {
               children: [
 
                 SizedBox(
-                    width: 120,
-                    child: CustomText(
-                      'Year',
-                    )
+                  width: 120,
+                  child: CustomText(
+                    'Year',
+                  )
                 ),
 
                 const SizedBox(
-                    width: 100,
-                    child: CustomText(
-                      'Semester',
-                    )
+                  width: 100,
+                  child: CustomText(
+                    'Semester',
+                  )
                 ),
 
 
                 Expanded(
-                    child: CustomText(
-                      'Course Code',
-                    )
+                  child: CustomText(
+                    'Course Code',
+                  )
                 ),
 
 
                 Expanded(
-                    flex: 2,
-                    child: CustomText(
-                        'Course Title'
-                    )
+                  flex: 2,
+                  child: CustomText(
+                      'Course Title'
+                  )
                 ),
 
 
                 SizedBox(
-                    width: 120,
-                    child: CustomText('Reg. Students')
+                  width: 120,
+                  child: CustomText('Reg. Students')
                 ),
 
 
 
                 SizedBox(
-                    width: 120,
-                    child: CustomText('Score')
+                  width: 120,
+                  child: CustomText('Score')
                 ),
 
 
                 SizedBox(
-                    width: 120,
-                    child: CustomText('Remarks')
+                  width: 120,
+                  child: CustomText('Remarks')
                 ),
 
               ],
@@ -934,11 +992,6 @@ class _LCurrentCourseCellState extends State<LCurrentCourseCell> {
 
 
 
-//average rating at the current semester
-//students suggestion sentiments of the lecturer of overall and current semester (In a graph form){pie chart}
-
-
-
 
 
 //======================================================================
@@ -968,110 +1021,109 @@ class _LCummulativeCourseCellState extends State<LCummulativeCourseCell> {
 
       child: GestureDetector(
 
-          onTap: openEvaluation,
+        onTap: openEvaluation,
 
-          onDoubleTap: openClassCourseInfo,
+        onDoubleTap: openClassCourseInfo,
 
 
-          onSecondaryTapDown: (details) => showContextMenu(
-            details.globalPosition,
-            context,
-                (_) => [
+        onSecondaryTapDown: (details) => showContextMenu(
+          details.globalPosition,
+          context,
+              (_) => [
 
-              ListTile(
-                leading: Icon(CupertinoIcons.info),
-                title: CustomText('View Info'),
-                onTap: openClassCourseInfo,
-              ),
-
-              ListTile(
-                  leading: Icon(CupertinoIcons.graph_square),
-                  title: CustomText('View Evaluation'),
-                  onTap: openEvaluation
-              ),
-
-              ListTile(
-                  leading: Icon(Icons.grid_on_outlined),
-                  title: CustomText('Generate Excel Report'),
-                  onTap: generalExcelReport
-              ),
-
-              ListTile(
-                leading: Icon(Icons.file_copy_outlined),
-                title: CustomText('Generate PDF report'),
-              )
-            ],
-            12.0,
-            300.0
-          ),
-
-          child: Container(
-            padding: EdgeInsets.all(8),
-            margin: const EdgeInsets.only(top: 8),
-
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: backgroundColor
+            ListTile(
+              leading: Icon(CupertinoIcons.info),
+              title: CustomText('View Info'),
+              onTap: openClassCourseInfo,
             ),
 
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+            ListTile(
+                leading: Icon(CupertinoIcons.graph_square),
+                title: CustomText('View Evaluation'),
+                onTap: openEvaluation
+            ),
 
-                SizedBox(
+            ListTile(
+                leading: Icon(Icons.grid_on_outlined),
+                title: CustomText('Generate Excel Report'),
+                onTap: generalExcelReport
+            ),
+
+            ListTile(
+              leading: Icon(Icons.file_copy_outlined),
+              title: CustomText('Generate PDF report'),
+            )
+          ],
+          12.0,
+          300.0
+        ),
+
+        child: Container(
+          padding: EdgeInsets.all(8),
+          margin: const EdgeInsets.only(top: 8),
+
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: backgroundColor
+          ),
+
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+
+              SizedBox(
+                width: 120,
+                child: CustomText(
+                    widget.classCourse.year.toString()
+                ),
+              ),
+
+
+              //todo: semester
+              SizedBox(
+                width: 100,
+                child: CustomText(
+                    widget.classCourse.semester.toString()
+                ),
+              ),
+
+              //todo: course code
+              Expanded(
+                child: CustomText(
+                    widget.classCourse.course.courseCode
+                ),
+              ),
+
+              //todo: course title
+              Expanded(
+                flex: 2,
+                child: CustomText(
+                    widget.classCourse.course.title
+                ),
+              ),
+
+
+              SizedBox(
                   width: 120,
-                  child: CustomText(
-                      widget.classCourse.year.toString()
-                  ),
-                ),
+                  child: CustomText(widget.classCourse.registeredStudentsCount.toString())
+              ),
 
 
-                //todo: semester
-                SizedBox(
-                  width: 100,
-                  child: CustomText(
-                      widget.classCourse.semester.toString()
-                  ),
-                ),
-
-                //todo: course code
-                Expanded(
-                  child: CustomText(
-                      widget.classCourse.course.courseCode
-                  ),
-                ),
-
-                //todo: course title
-                Expanded(
-                  flex: 2,
-                  child: CustomText(
-                      widget.classCourse.course.title
-                  ),
-                ),
+              SizedBox(
+                  width: 120,
+                  child: CustomText(formatDecimal(widget.classCourse.grandMeanScore))
+              ),
 
 
-                SizedBox(
-                    width: 120,
-                    child: CustomText(widget.classCourse.registeredStudentsCount.toString())
-                ),
+              SizedBox(
+                  width: 120,
+                  child: CustomText(widget.classCourse.remark!)
+              ),
 
 
-
-                SizedBox(
-                    width: 120,
-                    child: CustomText(formatDecimal(widget.classCourse.grandMeanScore))
-                ),
-
-
-                SizedBox(
-                    width: 120,
-                    child: CustomText(widget.classCourse.remark!)
-                ),
-
-
-              ],
-            ),
+            ],
           ),
+        ),
         )
     );
   }

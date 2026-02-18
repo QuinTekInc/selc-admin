@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
+import 'package:selc_admin/components/custom_tab_bar.dart';
 import 'package:selc_admin/components/donwloader_util/file_downloader.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/button.dart';
@@ -117,6 +118,11 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    final List<String> tabLabels = [
+      'Basic Info', 'Questionnaire Analysis', 'Visualisations', 'Category Remarks', 'Suggestions', 'Individual Classes'];
+
     return DefaultTabController(
 
       initialIndex: 0,
@@ -184,74 +190,10 @@ class _EvaluationPageState extends State<EvaluationPage> {
             const SizedBox(height: 8),
 
             //Tab headers
-            Container(
-              margin: const EdgeInsets.only(top: 12, left: 12, right: 12),
-              height: 50,
-              width: double.infinity, //MediaQuery.of(context).size.width * 0.4,
-
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade400)
-              ),
-
-              child: IgnorePointer(
-                ignoring: isLoading,
-                child: TabBar(
-                  indicatorColor: Colors.green.shade200,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  indicatorPadding: EdgeInsets.zero,
-
-                  indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: Colors.green.shade400,
-                  ),
-
-                  padding: const EdgeInsets.all(4),
-                  labelPadding: const EdgeInsets.all(8),
-                  indicatorAnimation: TabIndicatorAnimation.elastic,
-                  labelColor: Colors.white,
-
-                  labelStyle: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600
-                  ),
-
-                  unselectedLabelStyle: TextStyle(
-                      fontFamily: 'Poppins'
-                  ),
-
-
-                  onTap: (newValue) => setState(() => selectedTab = newValue),
-                  tabs: [
-
-                    Tab(
-                      text: 'Basic Info',
-                    ),
-
-                    Tab(
-                      text: 'Questionnaire Answer Analysis',
-                    ),
-
-                    Tab(
-                        text: 'Visualisations'
-                    ),
-
-                    Tab(
-                      text: 'Category Remarks',
-                    ),
-
-                    Tab(
-                      text: 'Suggestions',
-                    ),
-
-                    Tab(
-                        text: 'Individual Classes'
-                    )
-
-                  ]
-                ),
-              ),
+            CustomTabBar(
+              disable: isLoading,
+              tabLabels: tabLabels,
+              onChanged: (newValue) => setState(() => selectedTab = newValue),
             ),
 
             const SizedBox(height: 12,),
@@ -287,26 +229,18 @@ class _EvaluationPageState extends State<EvaluationPage> {
 
   Widget buildMainBody(){
 
-    return Column(
-      children: [
+    return Expanded(
+      child: PageTransitionSwitcher(
+        duration: Duration(milliseconds: 500),
+        transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          fillColor: Colors.transparent,
+          child: child,
+        ),
 
-        const SizedBox(height: 8,),
-
-        Expanded(
-          child: PageTransitionSwitcher(
-            duration: Duration(milliseconds: 500),
-
-            transitionBuilder: (child, animation, secondaryAnimation ) => FadeThroughTransition(
-              animation: animation,
-              secondaryAnimation: secondaryAnimation,
-              fillColor: Colors.transparent,
-              child: child,
-            ),
-
-            child: buildSelectedWidget()
-          ),
-        )
-      ],
+        child: buildSelectedWidget()
+      ),
     );
   }
 
