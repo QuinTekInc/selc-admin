@@ -37,9 +37,7 @@ class VisualizationSection extends StatefulWidget {
 
 class _VisualizationSectionState extends State<VisualizationSection> {
 
-
   late final Map<String, List<Widget>> evalData;
-
 
   @override
   void initState() {

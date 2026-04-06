@@ -21,7 +21,7 @@ class ReportWizard extends StatefulWidget {
   final int? id;
   final String? fileType;
   final int? semester;
-  final int? year;
+  final String? year;
 
   const ReportWizard({super.key, this.reportType, this.id, this.fileType, this.semester, this.year});
 
@@ -42,7 +42,7 @@ class _ReportWizardState extends State<ReportWizard> {
 
   final semesterController = DropdownController<int>();
 
-  final yearController = DropdownController<int>();
+  final yearController = DropdownController<String>();
 
   @override
   void initState() {

@@ -409,7 +409,7 @@ class ExcelExporter{
     // Save file
     final fileBytes = _excel.save();
 
-    int academicYear = classCourse.year;
+    String academicYear = classCourse.year;
     int semester = classCourse.semester;
     String lecturerName = classCourse.lecturer.name;
     String courseCode = classCourse.course.courseCode;

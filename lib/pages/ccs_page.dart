@@ -152,6 +152,9 @@ class _ClassCoursesPageState extends State<ClassCoursesPage> {
                         ),
 
 
+                        //todo: we may need to add level and program columns to the table.
+
+
                         SizedBox(
                           width: 120,
                           child: CustomText('Students'),

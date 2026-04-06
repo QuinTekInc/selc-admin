@@ -91,7 +91,6 @@ class _CoursesPageState extends State<CoursesPage> {
                 fontSize: 25,
               ),
 
-
               //todo: refresh button.
               refreshButton(onPress: loadCourseData)
             ],
@@ -101,50 +100,11 @@ class _CoursesPageState extends State<CoursesPage> {
           const SizedBox(height: 12),
 
 
-          Row(
-
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-
-            children: [
-
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.45,
-                height: 40,
-                child: CustomTextField(
-                  controller: searchController,
-                  leadingIcon: CupertinoIcons.search,
-                  hintText: 'Search Courses...course code and course titles.',
-                  onChanged: (newValue) => handleSearchFilter(),
-                ),
-              ),
-
-
-              Spacer(),
-
-
-              // if(isSuperuser) CustomButton.withIcon(
-              //   'Add Course',
-              //   icon: CupertinoIcons.add,
-              //   forceIconLeading: true,
-              //   onPressed: () => showModalBottomSheet(
-              //     context: context, 
-              //     backgroundColor: Colors.transparent,
-              //     constraints: BoxConstraints(
-              //       minWidth: double.infinity,
-              //       minHeight: double.infinity
-              //     ),
-              //     builder: (_) => Container(
-              //       height: MediaQuery.of(context).size.height,
-              //       width: MediaQuery.of(context).size.width,
-              //       alignment: Alignment.bottomRight,
-
-              //       child: AddCoursePage()
-              //     )
-              //   ),
-              // )
-
-            ],
+          CustomTextField(
+            controller: searchController,
+            leadingIcon: CupertinoIcons.search,
+            hintText: 'Search Courses...course code and course titles.',
+            onChanged: (newValue) => handleSearchFilter(),
           ),
 
           const SizedBox(height: 12,),

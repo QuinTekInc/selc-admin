@@ -11,7 +11,7 @@ import 'package:selc_admin/components/utils.dart';
 //todo: general settings model
 class GeneralSetting{
   final int currentSemester;
-  final int academicYear;
+  final String academicYear;
   final bool enableEvaluations;
   final DateTime semesterEndDate;
   
@@ -343,7 +343,7 @@ class ClassCourse{
   int classCourseId;
   String level;
   int semester;
-  int year;
+  String year;
   int credits;
   Lecturer lecturer;
   Course course;

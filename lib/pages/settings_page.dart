@@ -563,7 +563,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
       final generalSetting = GeneralSetting( 
         currentSemester: semesterController.value!,
-        academicYear: int.parse(academicYearController.text),
+        academicYear: academicYearController.text,
         enableEvaluations: isDisableEvaluations,
         semesterEndDate: semesterEndDate ??  DateTime.now()
       );

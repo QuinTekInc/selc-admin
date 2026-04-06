@@ -9,6 +9,7 @@ import 'package:selc_admin/pages/ccs_page.dart';
 import 'package:selc_admin/pages/courses_page.dart';
 import 'package:selc_admin/pages/dashboard_page.dart';
 import 'package:selc_admin/pages/department_management/departments_page.dart';
+import 'package:selc_admin/pages/directorate/directorate_interface_page.dart';
 import 'package:selc_admin/pages/lecturer_management/lecturers_page.dart';
 import 'package:selc_admin/pages/questions_page.dart';
 import 'package:selc_admin/pages/settings_page.dart';
@@ -32,9 +33,7 @@ class _HomepageState extends State<Homepage> {
 
   int selectedIndex = 0;
 
-  List<Widget> fragments = [
-    
-  ];
+  late List<Widget> fragments;
 
   List<String> fragmentNames = [];
 
@@ -45,7 +44,6 @@ class _HomepageState extends State<Homepage> {
 
     isSuperuser = Provider.of<SelcProvider>(context, listen: false).user.userRole == UserRole.SUPERUSER;
 
-
     fragments = [
       DashboardPage(),
       DepartmentsPage(),
@@ -53,9 +51,10 @@ class _HomepageState extends State<Homepage> {
       CoursesPage(),
       ClassCoursesPage(),
       QuestionsPage(),
+      if(isSuperuser) DirectorateInterfacePage(),
       if(isSuperuser) FilesPage(),
       if(isSuperuser) UsersPage(),
-      SettingsPage()
+      SettingsPage(),
     ];
 
 
@@ -67,6 +66,7 @@ class _HomepageState extends State<Homepage> {
       'Courses',
       'Classes',
       'Questionnaire',
+      if(isSuperuser) 'Directorate',
       if(isSuperuser) 'Files',
       if(isSuperuser) 'Users',
       'Settings'
@@ -150,11 +150,12 @@ class _SideBarState extends State<SideBar> {
 
     navigatorItems = [
       (CupertinoIcons.speedometer, 'Dashboard'),
-      (CupertinoIcons.home, 'Depts.'),
+      (Icons.home_outlined, 'Departments'),
       (CupertinoIcons.person, 'Lecturers'),
       (CupertinoIcons.book, 'Courses'),
       (Icons.school_outlined, 'Classes'),
       (CupertinoIcons.chat_bubble_2, 'Questions'),
+      if(widget.isSuperSuper) (CupertinoIcons.cube_box, "Directorate"),
       if(widget.isSuperSuper) (CupertinoIcons.folder, "Files"),
       if(widget.isSuperSuper) (CupertinoIcons.person_3, 'Users'),
       (Icons.settings_outlined, 'Settings')
@@ -175,7 +176,7 @@ class _SideBarState extends State<SideBar> {
 
       child: Container(
         //width: 129,
-        padding: EdgeInsets.symmetric(vertical:12, horizontal: 0),
+        padding: EdgeInsets.symmetric(vertical:12, horizontal: 8),
       
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12)
@@ -184,16 +185,13 @@ class _SideBarState extends State<SideBar> {
         child: Column(  
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
-      
+          spacing: 12,
           children:[ 
       
             Image.asset(
               'lib/assets/imgs/UENR-Logo.png',
               height: 60,
             ),
-      
-            const SizedBox(height: 12,),
-
 
             Expanded(
               flex: 2,
@@ -201,6 +199,7 @@ class _SideBarState extends State<SideBar> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 8,
                   children: List<Widget>.generate(  
                     navigatorItems.length,
                     (int index) => NavigatorItem(
@@ -213,8 +212,6 @@ class _SideBarState extends State<SideBar> {
                 ),
               ),
             )
-      
-          
           ]
         ),
       ),
@@ -263,40 +260,18 @@ class _NavigatorItemState extends State<NavigatorItem> {
         onEnter: (pointerEvent) => setState(() => isHovered = true),
         onExit: (pointerEvent) => setState(() => isHovered = false),
 
-        child: Container(
-
-          padding: EdgeInsets.all(8),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-          
-            children: [
-      
-              Card(
-
-                color: tileBackgroundColor,
-
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(
-                    widget.icon, 
-                    size: 35, 
-                    color: iconColor,
-                  ),
-                ),
-              ), 
-      
-              SizedBox(height: 3,),
-      
-              CustomText(
-                widget.name,
-                textColor: textColor,
-                fontWeight: widget.selected ? FontWeight.w600 : FontWeight.normal,
-                padding: EdgeInsets.zero,
-              )
-          
-            ],
+        child: Tooltip(
+          message: widget.name,
+          child: Card(
+            color: tileBackgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                widget.icon,
+                size: 35,
+                color: iconColor,
+              ),
+            ),
           ),
         ),
       ),
