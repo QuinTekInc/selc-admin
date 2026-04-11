@@ -32,8 +32,6 @@ class _SettingsPageState extends State<SettingsPage> {
   SelcProvider? _selcProvider;
   SelcProvider get selcProvider => _selcProvider!;
 
-
- //just don't mind this instanciation
   final semesterController = DropdownController<int>();
   final academicYearController = TextEditingController();
 
@@ -41,6 +39,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   bool isDisableEvaluations = false;
   bool isSuperuser = false;
+
+  bool isCalendarFieldEnabled = false;
 
 
   DateTime? semesterEndDate;
@@ -110,7 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
             
                 children: [
 
-                  buildAcademicCalendarSection(),                  
+                  if(isSuperuser) buildAcademicCalendarSection(),
 
 
                   if(!kIsWeb)Padding(
@@ -129,7 +129,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Divider(),
                   ),
-
 
 
                   buildAppearanceSection(),
@@ -165,6 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
+      spacing: 8,
       children: [
 
         Row(
@@ -174,7 +174,7 @@ class _SettingsPageState extends State<SettingsPage> {
             Spacer(), 
 
 
-            if(selcProvider.generalSetting.requireUpdateCalendar && selcProvider.user.userRole == UserRole.SUPERUSER) TextButton.icon(
+            TextButton.icon(
 
               icon: Icon(Icons.update, color: Colors.green.shade400,),
 
@@ -188,9 +188,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 //INFO: when the academic year changes to use the two-year system, changes semester, we'll have to use the start-end date to update the academic calendar info.
                 
                 //set the academic year to the current academic year.
-                if(semesterController.value == 2){
-                  academicYearController.text = DateTime.now().year.toString();
-                }
+                // if(semesterController.value == 2){
+                //   academicYearController.text = DateTime.now().year.toString();
+                // }
 
                 semesterController.value = semesterController.value == 2 ? 1 : 2;
                 
@@ -205,14 +205,15 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
-        
-        const SizedBox(height: 8,),
+
+
         
         CustomText(
           'Helps to retrieve information related to the current academic calendar (the academic year and semester)'
         ),
 
-        if(selcProvider.user.userRole == UserRole.SUPERUSER) RichText(  
+
+        RichText(
           text: TextSpan( 
             text: 'Note: ',
             style: TextStyle(
@@ -234,64 +235,75 @@ class _SettingsPageState extends State<SettingsPage> {
             ]
           )
         ),
-        
-        
-        const SizedBox(height: 8,),
 
 
-        CustomText(
-          'Current Academic Year',
-          fontWeight: FontWeight.w600,
+        CustomCheckBox(
+            value: isCalendarFieldEnabled,
+            text: 'Enable Editing',
+            onChanged: (newValue) => setState(() => isCalendarFieldEnabled = newValue!)
         ),
 
-        const SizedBox(height: 8,),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 8,
+          children: [
+            CustomText(
+              'Current Academic Year',
+              fontWeight: FontWeight.w600,
+            ),
 
-        CustomTextField(
-          controller: academicYearController,
-          enabled: false,
-          hintText: 'Current Academic year',
+
+            Expanded(
+              child: CustomTextField(
+                controller: academicYearController,
+                enabled: isCalendarFieldEnabled,
+                hintText: 'Current Academic year',
+              ),
+            ),
+
+
+
+            CustomText(
+              'Current Semester',
+              fontWeight: FontWeight.w600,
+            ),
+
+
+            //todo: the dropdown button for selecting the current academic semester
+            //this field only editable for only superusers.
+            Expanded(
+              child: IgnorePointer(
+                ignoring: !isCalendarFieldEnabled,
+                child: CustomDropdownButton<int>(
+                  controller: semesterController,
+                  hint: 'Select academic semester',
+                  items: [1, 2],
+                  onChanged: (newValue) => setState((){}) //todo: just update the semester visually
+                ),
+              ),
+            ),
+          ],
         ),
 
-        const SizedBox(height: 8),
-
-        CustomText(
-          'Current Semester',
-          fontWeight: FontWeight.w600,
-        ),
-
-        const SizedBox(height: 8,),
-
-        //todo: the dropdown button for selecting the current academic semester
-        //this field only editable for only superusers.
-        IgnorePointer(
-          ignoring: selcProvider.user.userRole != UserRole.SUPERUSER,
-          child: CustomDropdownButton<int>(
-            controller: semesterController,
-            hint: 'Select academic semester',
-            items: [1, 2],
-            onChanged: (newValue) => setState((){}) //todo: just update the semester visually 
-          ),
-        ),
-
-        const SizedBox(height: 8,),
 
 
         //tood: widget to send the date for a semester
-        CustomText(  
-          'Semester End Date: ',
-          fontWeight: FontWeight.w600,
-        ), 
 
 
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 12,
+          spacing: 8,
 
           children: [
 
+            CustomText(
+              'Semester End Date: ',
+              fontWeight: FontWeight.w600,
+            ),
+
             SizedBox(  
-              width: MediaQuery.of(context).size.width * 0.3,
+              width: MediaQuery.of(context).size.width * 0.2,
               child: CustomTextField(  
                 controller: dateTextController,
                 enabled: false,
@@ -301,7 +313,7 @@ class _SettingsPageState extends State<SettingsPage> {
             
             
             IgnorePointer(  
-              ignoring: selcProvider.user.userRole != UserRole.SUPERUSER,
+              ignoring: !isCalendarFieldEnabled,
               child: IconButton(
                 icon: Icon(Icons.calendar_month_outlined, color: Colors.green.shade400,),
                 tooltip: 'Click to change date',
@@ -324,14 +336,11 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
 
 
-        const SizedBox(height: 8),
-
-
         //todo: button to update the academic calendar settings
         Align(
           alignment: Alignment.centerRight,
           child: CustomButton.withText(
-            'Update Settings',
+            'Update Calendar Settings',
             onPressed: handleUpdateCalendarSetting,
           ),
         )
@@ -346,15 +355,12 @@ class _SettingsPageState extends State<SettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
+      spacing: 8,
       children: [
         
         buildSettingsTitle(icon: Icons.download, title: 'Download Settings'),
         
-        const SizedBox(height: 8),
-        
         CustomText('Change the download destination for files'),
-        
-        const SizedBox(height: 8,),
         
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
@@ -382,12 +388,15 @@ class _SettingsPageState extends State<SettingsPage> {
             )
           ),
         ),
-
-
-        const SizedBox(height: 8),
     
         //todo: the change button.
-        CustomButton.withText('Change Destinations', onPressed: handleChangeDestinationPressed),
+        Align(
+          alignment: Alignment.centerRight,
+          child: CustomButton.withText(
+            'Change Destination',
+            onPressed: handleChangeDestinationPressed
+          )
+        ),
 
       ],
     );
@@ -523,36 +532,33 @@ class _SettingsPageState extends State<SettingsPage> {
 
 
   //TODO: fix this later.
-  Widget buildStartEndDate(){
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      spacing: 8,
-      children: [
-
-
-        CustomText('Start Date: '),
-
-
-        TextButton(
-          onPressed: (){}, //show time start date
-          child: CustomText(DateTime.now().toString(), textColor: Colors.green.shade400, fontWeight: FontWeight.w600,),
-        ),
-
-
-
-        CustomText('End Date: '),
-
-        TextButton(
-          onPressed: (){}, //show time start date
-          child: CustomText(DateTime.now().toString(), textColor: Colors.green.shade400, fontWeight: FontWeight.w600,),
-        ),
-
-      ]
-    );
-  }
-
+  // Widget buildStartEndDate(){
+  //
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.start,
+  //     crossAxisAlignment: CrossAxisAlignment.center,
+  //     spacing: 8,
+  //     children: [
+  //
+  //       CustomText('Start Date: '),
+  //
+  //       TextButton(
+  //         onPressed: (){}, //show time start date
+  //         child: CustomText(DateTime.now().toString(), textColor: Colors.green.shade400, fontWeight: FontWeight.w600,),
+  //       ),
+  //
+  //
+  //       CustomText('End Date: '),
+  //
+  //       TextButton(
+  //         onPressed: (){}, //show time start date
+  //         child: CustomText(DateTime.now().toString(), textColor: Colors.green.shade400, fontWeight: FontWeight.w600,),
+  //       ),
+  //
+  //     ]
+  //   );
+  // }
+  //
 
 
 
@@ -565,13 +571,30 @@ class _SettingsPageState extends State<SettingsPage> {
         currentSemester: semesterController.value!,
         academicYear: academicYearController.text,
         enableEvaluations: isDisableEvaluations,
-        semesterEndDate: semesterEndDate ??  DateTime.now()
+        semesterEndDate: semesterEndDate
       );
     
       await Provider.of<SelcProvider>(context, listen:false).updateGeneralSetting(generalSetting);
+      
+      showCustomAlertDialog( 
+        context, 
+        alertType: AlertType.success,
+        title: 'Success',
+        contentText: 'Calendar parameters has been updated to the database'
+      );
+      
+      setState(() => isCalendarFieldEnabled = false);
 
     }catch(e){
-      showToastMessage(context, 'Could not update general setting to the database. please try again.');
+
+      debugPrint(e.toString());
+
+      showCustomAlertDialog(
+        context,
+        alertType: AlertType.warning,
+        title: 'Update Error',
+        contentText: 'Could not update general setting to the database. please try again.'
+      );
     }
   
   }

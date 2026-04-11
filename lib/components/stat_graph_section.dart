@@ -26,9 +26,9 @@ class GraphSection extends StatelessWidget {
 
     final Widget ratingBarChart = buildLecturerRatingBarChart(context, Map<String, dynamic>.from(graphData['lecturer_rating']));
 
-    final Widget bestCourseCard = buildBestCourseCard(context, Map<String, dynamic>.from(graphData['best_class_course']));
+    final Widget bestCourseCard = buildBestCourseCard(context, graphData['best_class_course']);
 
-    final Widget bestLecturerCard = buildBestLecturerCard(context, Map<String, dynamic>.from(graphData['best_lecturer']));
+    final Widget bestLecturerCard = buildBestLecturerCard(context, graphData['best_lecturer']);
 
 
 
@@ -481,8 +481,10 @@ class GraphSection extends StatelessWidget {
 
 
   //todo: card to store the information for the best ClassCourse/Class
-  Widget buildBestCourseCard(context, Map<String, dynamic> bestClassMap){
-    ClassCourse classCourse = ClassCourse.fromJson(bestClassMap);
+  Widget buildBestCourseCard(context, Map<String, dynamic>? bestClassMap){
+
+    ClassCourse? classCourse = bestClassMap == null ? null : ClassCourse.fromJson(bestClassMap);
+
     return BestCourseCard(
       classCourse: classCourse
     );
@@ -490,7 +492,7 @@ class GraphSection extends StatelessWidget {
 
 
   //todo: card to store the information for the highest rated lecturer.
-  Widget buildBestLecturerCard(context, Map<String, dynamic> bestLecturerMap){
+  Widget buildBestLecturerCard(context, Map<String, dynamic>? bestLecturerMap){
     return BestLecturerCard(
       lecturerRatingMap: bestLecturerMap,
     );

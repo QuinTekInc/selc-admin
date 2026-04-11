@@ -13,7 +13,7 @@ class GeneralSetting{
   final int currentSemester;
   final String academicYear;
   final bool enableEvaluations;
-  final DateTime semesterEndDate;
+  final DateTime? semesterEndDate;
   
   bool requireUpdateCalendar;
   
@@ -31,7 +31,7 @@ class GeneralSetting{
       currentSemester: jsonMap['current_semester'],
       academicYear: jsonMap['academic_year'],
       enableEvaluations: jsonMap['enable_evaluations'],
-      semesterEndDate: DateTime.parse(jsonMap['semester_end_date']),
+      semesterEndDate: jsonMap['semester_end_date'] == null ? null : DateTime.parse(jsonMap['semester_end_date']),
       requireUpdateCalendar: jsonMap['require_update_calendar'] ?? false,
     );
   }
@@ -40,6 +40,7 @@ class GeneralSetting{
   Map<String, dynamic> toMap() =>{
     'current_semester': currentSemester,
     'academic_year': academicYear,
+    'semester_end_date': semesterEndDate?.toIso8601String(),
     'enable_evaluations': enableEvaluations
   };
 }
@@ -127,18 +128,19 @@ class User{
 
   factory User.fromJson(Map<String, dynamic> jsonMap){
     return User(
-        username: jsonMap['username'],
-        firstName: jsonMap['first_name'],
-        lastName: jsonMap['last_name'] ?? 'N/A',
-        email: jsonMap['email'] ?? 'N/A',
-        userRole: UserRole.fromString(jsonMap['role']),
-        isActive: jsonMap['is_active'] ?? true
+      username: jsonMap['username'],
+      firstName: jsonMap['first_name'],
+      lastName: jsonMap['last_name'] ?? 'N/A',
+      email: jsonMap['email'] ?? 'N/A',
+      userRole: UserRole.fromString(jsonMap['role']),
+      isActive: jsonMap['is_active'] ?? true
     );
   }
 
 
-  String fullName() => '${firstName} ${lastName}';
-
+  String get fullName{
+    return '$firstName $lastName'.trim();
+  }
 
 
   @override

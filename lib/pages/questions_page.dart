@@ -75,7 +75,6 @@ class _QuestionsPageState extends State<QuestionsPage> {
     bool isQuestionsEmpty = selcProvider!.questions.isEmpty;
     bool isFilteredQuestionsEmpty = filteredQuestions.isEmpty;
 
-
     bool isCategoriesEmpty = selcProvider!.categories.isEmpty;
     bool isFilteredCategoriesEmpty = filteredCategories.isEmpty;
 
@@ -160,6 +159,14 @@ class _QuestionsPageState extends State<QuestionsPage> {
                 //width: 140,
                 forceIconLeading: true,
                 onPressed: () => handleQuestionModalSheet(),
+              ),
+
+
+              //todo: add default categories and questions
+              if(isSuperuser && isFilteredCategoriesEmpty && isQuestionsEmpty) IconButton(
+                icon: Icon(CupertinoIcons.add_circled, fontWeight: FontWeight.bold, color: Colors.grey.shade400,),
+                onPressed: handlePopulateWithDefaultData,
+                tooltip: 'Populate the database with default categories and questions',
               )
             ],
           ),
@@ -371,6 +378,58 @@ class _QuestionsPageState extends State<QuestionsPage> {
     isDismissible: false,
     child: inEditMode ? AddCategoryPage.openEdit(category!) : AddCategoryPage()
   );
+
+
+
+  void handlePopulateWithDefaultData() async {
+
+    bool cancelled = false;
+
+    await showCustomAlertDialog(
+      context,
+      title: 'Categories and Questionnaire Items',
+      contentText: 'Would you like to populate the database with the predefined questionnaire categories and questionnaires items ?',
+      addDefaultButton: false,
+      controls: [
+        TextButton(
+          child: CustomText('Yes, Populate', textColor: Colors.green.shade400,),
+          onPressed: () => Navigator.pop(context), //closes the alert.
+        ),
+
+        TextButton(
+          child: CustomText('No, Cancel', textColor: Colors.red.shade400,),
+          onPressed: (){
+            cancelled = true;
+            Navigator.pop(context); //closes the alert
+          },
+        )
+      ]
+    );
+
+
+    if(cancelled) return;
+
+    showDialog(
+      context: context,
+      builder: (_) => LoadingDialog()
+    );
+
+
+    try {
+      await Provider .of<SelcProvider>(context, listen: false) .populateQuestionnaireDefaultData();
+      Navigator.pop(context); //closes the custom alert dialog.
+    }on SocketException{
+      showNoConnectionAlertDialog(context);
+    }catch(ex){
+      showCustomAlertDialog(
+        context,
+        alertType: AlertType.warning,
+        title: 'Error',
+        contentText: ex.toString()
+      );
+    }
+
+  }
 
 
 }

@@ -47,7 +47,7 @@ class SelcProvider with ChangeNotifier{
     
 
 
-    if(response.statusCode == 403 || response.statusCode == 401){
+    if([400, 401, 403, 404].contains(response.statusCode)){
       throw Exception(jsonDecode(response.body)['message']);
     }
 
@@ -144,6 +144,7 @@ class SelcProvider with ChangeNotifier{
 
 
   Future<void> updateGeneralSetting(GeneralSetting generalSetting) async{
+
     final response = await connector.postRequest(
       endpoint: 'update-general-settings/', 
       body: jsonEncode( generalSetting.toMap())
@@ -153,10 +154,7 @@ class SelcProvider with ChangeNotifier{
       throw Error();
     }
 
-
-
     _generalSetting = generalSetting;
-
 
     notifyListeners();
 
@@ -465,13 +463,21 @@ class SelcProvider with ChangeNotifier{
   }
 
 
+  Future<void> populateQuestionnaireDefaultData() async {
+    
+    final response = await connector.getRequest(endpoint: 'populate-default-questionnaire-data/', useCore: true);
 
+    if(response.statusCode != 200){
+      throw Exception("Could not populate the database wid the default questions. Please try again");
+    }
+    await getQuestionsAndCategories();
+    getGeneralCurrentStatistics();
+  }
 
 
   Future<void> getQuestionsAndCategories() async{
 
     Response response = await connector.getRequest(endpoint: 'questions-and-categories/');
-
 
     if(response.statusCode != 200) throw Error();
 

@@ -41,20 +41,13 @@ Widget buildField(BuildContext context, {required String title, String value = '
 
 class BestLecturerCard extends StatelessWidget {
 
-  final Map<String, dynamic> lecturerRatingMap;
+  final Map<String, dynamic>? lecturerRatingMap;
 
   const BestLecturerCard({super.key, required this.lecturerRatingMap});
 
 
   @override
   Widget build(BuildContext context) {
-
-    final lecturerName = lecturerRatingMap['lecturer_name'];
-    final departmentName = lecturerRatingMap['department'];
-    final numberOfCourses = lecturerRatingMap['number_of_courses'];
-    final studentsCount = lecturerRatingMap['students_count'];
-    final lecturerRating = lecturerRatingMap['rating'];
-
 
     return Container(
       //height: MediaQuery.of(context).size.height * 0.6,
@@ -87,64 +80,89 @@ class BestLecturerCard extends StatelessWidget {
             ],
           ),
 
-
-          //show the lecturer's name
-
-          ListTile(
-            leading: CircleAvatar(
-              radius: 28,
-              backgroundColor: Colors.green.shade400,
-              child: Icon(CupertinoIcons.person, color: Colors.white),
-            ),
-
-            //lecturer name
-            title: CustomText(lecturerName),
-
-            //lecturer department
-            subtitle: CustomText(
-              'Department of $departmentName',
-              textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-
-
-
-          //number of courses taught and his rating summary,
-          buildField(
-            context,
-            title: 'No. of Courses',
-            value: numberOfCourses.toString()
-          ),
-
-
-          //number of students who have rated the lecturer this semester
-          buildField(
-            context,
-            title: 'No. Students (in rating)',
-            value: studentsCount.toString() //todo: fix this later.
-          ),
-
-
-          //average rating
-          buildField(
-            context,
-            title: 'Average Rating',
-            value: formatDecimal(lecturerRating)
-          ),
-
-
-
-          //HeaderText('Rating Summary', fontSize: 15,),
-          CustomButton.withText(
-            'View profile',
-            onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(LecturerInfoPage(lecturer: lecturerRating!.lecturer), 'Lecturer Info'),
+          if(lecturerRatingMap == null) Container(
+            padding: const EdgeInsets.all(12),
+            height: 120,
+            child: CustomText('No Data: No evaluation and lecturer rating has been carried out yet.'),
           )
+          else buildContentSection(context)
 
         ],
       ),
     );
+  }
+
+
+
+  Widget buildContentSection(BuildContext context){
+
+    final lecturerName = lecturerRatingMap!['lecturer_name'];
+    final departmentName = lecturerRatingMap!['department'];
+    final numberOfCourses = lecturerRatingMap!['number_of_courses'];
+    final studentsCount = lecturerRatingMap!['students_count'];
+    final lecturerRating = lecturerRatingMap!['rating'];
+
+    //show the lecturer's name
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          leading: CircleAvatar(
+            radius: 28,
+            backgroundColor: Colors.green.shade400,
+            child: Icon(CupertinoIcons.person, color: Colors.white),
+          ),
+
+          //lecturer name
+          title: CustomText(lecturerName),
+
+          //lecturer department
+          subtitle: CustomText(
+            'Department of $departmentName',
+            textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+
+
+
+        //number of courses taught and his rating summary,
+        buildField(
+            context,
+            title: 'No. of Courses',
+            value: numberOfCourses.toString()
+        ),
+
+
+        //number of students who have rated the lecturer this semester
+        buildField(
+            context,
+            title: 'No. Students (in rating)',
+            value: studentsCount.toString() //todo: fix this later.
+        ),
+
+
+        //average rating
+        buildField(
+            context,
+            title: 'Average Rating',
+            value: formatDecimal(lecturerRating)
+        ),
+
+
+
+        //HeaderText('Rating Summary', fontSize: 15,),
+        CustomButton.withText(
+          'View profile',
+          onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(LecturerInfoPage(lecturer: lecturerRating!.lecturer), 'Lecturer Info'),
+        ),
+      ],
+    );
+
   }
 
 }
@@ -156,7 +174,7 @@ class BestLecturerCard extends StatelessWidget {
 //best course card.
 class BestCourseCard extends StatelessWidget {
 
-  final ClassCourse classCourse;
+  final ClassCourse? classCourse;
 
   const BestCourseCard({super.key,  required this.classCourse});
 
@@ -194,13 +212,13 @@ class BestCourseCard extends StatelessWidget {
               Spacer(),
 
 
-              TextButton(
+              if(classCourse != null)TextButton(
                 child: CustomText(
                   'View Evaluation',
                   textColor: Colors.green.shade400,
                 ),
                 onPressed: () => Provider.of<PageProvider>(context, listen: false).pushPage(
-                  EvaluationPage(classCourse: classCourse),
+                  EvaluationPage(classCourse: classCourse!),
                   "Evaluation"
                 ),
               )
@@ -209,69 +227,80 @@ class BestCourseCard extends StatelessWidget {
             ],
           ),
 
+          if(classCourse == null) Container(
+            padding: const EdgeInsets.all(12),
+            height: 120,
+            child: CustomText(
+              'No Course evaluation has been carried out yet.'
+            ),
+          )
+          else Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 8,
+            children: [
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(12),
 
-          //show the lecturer's name
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.green.shade400,
+                  ),
 
-          ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(12),
+                  child: Icon(CupertinoIcons.book, color: Colors.white,),
+                ),
 
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.green.shade400,
+                //lecturer name
+                title: CustomText(classCourse!.course.title),
+
+                //lecturer department
+                subtitle: CustomText(classCourse!.course.courseCode, textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),),
               ),
 
-              child: Icon(CupertinoIcons.book, color: Colors.white,),
-            ),
 
-            //lecturer name
-            title: CustomText(classCourse.course.title),
-
-            //lecturer department
-            subtitle: CustomText(classCourse.course.courseCode, textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),),
-          ),
-
-
-
-          //lecturer
-          buildField(
-            context,
-            title: 'Lecturer',
-            value: classCourse.lecturer.name,
-            titleSpan: 1,
-            valueSpan: 2
-          ),
+              //lecturer
+              buildField(
+                context,
+                title: 'Lecturer',
+                value: classCourse!.lecturer.name,
+                titleSpan: 1,
+                valueSpan: 2
+              ),
 
 
-          //number of students
-          buildField(
-            context,
-            title: 'Students[Evaluated]',
-            value: '${classCourse.registeredStudentsCount} [${classCourse.evaluatedStudentsCount}]'
-          ),
+              //number of students
+              buildField(
+                context,
+                title: 'Students[Evaluated]',
+                value: '${classCourse!.registeredStudentsCount} [${classCourse!.evaluatedStudentsCount}]'
+              ),
 
 
-          //response
-          buildField(
-            context,
-            title: 'Response rate(%)',
-            value: '${formatDecimal(classCourse.calculateResponseRate())} %'
-          ),
+              //response
+              buildField(
+                context,
+                title: 'Response rate(%)',
+                value: '${formatDecimal(classCourse!.calculateResponseRate())} %'
+              ),
 
 
-          //evaluation score rating
-          buildField(
-            context,
-            title: 'Score [% score]',
-            value: '${formatDecimal(classCourse.grandMeanScore)} ' //change this.
-              '[${formatDecimal(classCourse.grandPercentageScore)} %]'
-          ),
+              //evaluation score rating
+              buildField(
+                context,
+                title: 'Score [% score]',
+                value: '${formatDecimal(classCourse!.grandMeanScore)} ' //change this.
+                  '[${formatDecimal(classCourse!.grandPercentageScore)} %]'
+              ),
 
-          //Remark
-          buildField(
-            context,
-            title: 'Remark',
-            value: classCourse.remark!
+              //Remark
+              buildField(
+                context,
+                title: 'Remark',
+                value: classCourse!.remark!
+              ),
+            ],
           ),
 
         ],

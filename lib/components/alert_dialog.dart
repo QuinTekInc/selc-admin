@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:selc_admin/components/text.dart';
 
-void showCustomAlertDialog(BuildContext context,{
+Future<void> showCustomAlertDialog(BuildContext context,{
   AlertType alertType = AlertType.info,
   required String title, 
   required String contentText,
@@ -10,7 +10,7 @@ void showCustomAlertDialog(BuildContext context,{
   bool addDefaultButton = true,
   String? defaultButtonText,
   VoidCallback? onDismiss,
-}){
+}) async {
 
 
 
@@ -39,7 +39,7 @@ void showCustomAlertDialog(BuildContext context,{
   }
 
 
-  showDialog(
+  await showDialog(
     context: context,
     builder: (_) => AlertDialog(
 
@@ -73,7 +73,7 @@ void showCustomAlertDialog(BuildContext context,{
 
 
 void showNoConnectionAlertDialog(BuildContext context){
-  return showCustomAlertDialog(
+  showCustomAlertDialog(
     context, 
     title: 'Error', 
     contentText: 'Could not connect to the server........Make sure you have an active internet connection and try again',

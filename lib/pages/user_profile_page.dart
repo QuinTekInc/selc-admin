@@ -77,7 +77,7 @@ class UserProfilePage extends StatelessWidget {
 
                           DetailContainer(
                             title: 'Full Name',
-                            detail: Provider.of<SelcProvider>(context).user.fullName()
+                            detail: Provider.of<SelcProvider>(context).user.fullName
                           ),
 
                           const SizedBox(height: 12,),

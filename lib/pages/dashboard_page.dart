@@ -204,11 +204,9 @@ class _DashboardPageState extends State<DashboardPage> {
             flex: 2,
 
             child: SingleChildScrollView(
-
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
-
                 children: [
 
                   //welcome container
@@ -286,50 +284,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                   ),
 
-
-
                   const SizedBox(height: 12,),
 
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    spacing: 12,
-                    children: [
-
-                      //todo: ratings tables section
-                      Expanded(
-                        flex: 3,
-                        child: DashboardGraphSection(websocketEndpoint: 'ws/admin-dashboard/',),
-                      ),
-
-
-
-                      const SizedBox(width: 12),
-
-
-                      // Expanded(
-                      //   child: Column(
-                      //     mainAxisSize: MainAxisSize.min,
-                      //     mainAxisAlignment: MainAxisAlignment.start,
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     spacing: 12,
-                      //
-                      //     children: [
-                      //
-                      //       BestLecturerCard(isLoading: this.isLRatingsLoading,),
-                      //
-                      //       BestCourseCard(isLoading: this.isCRatingsLoading),
-                      //
-                      //       buildRecentFilesSection(),
-                      //
-                      //       //buildRecentAction(context),
-                      //
-                      //     ],
-                      //   ),
-                      // )
-                    ],
-                  ),
-
+                  DashboardGraphSection(websocketEndpoint: 'ws/admin-dashboard/',),
 
                 ],
               ),
@@ -345,7 +302,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Column buildUserWelcomeWidget(BuildContext context) {
 
-    String name = Provider.of<SelcProvider>(context).user.fullName();
+    String name = Provider.of<SelcProvider>(context).user.fullName;
+
+    if(name.isEmpty) name = '@${Provider.of<SelcProvider>(context).user.username!}';
 
     return Column(   
       mainAxisAlignment: MainAxisAlignment.start,
@@ -356,7 +315,7 @@ class _DashboardPageState extends State<DashboardPage> {
         CustomText('Welcome', fontSize: 17, fontWeight: FontWeight.w600,),
 
         CustomText(
-          '$name,', 
+          '$name,',
           fontSize: 20, 
           fontWeight: FontWeight.bold,
         ),
