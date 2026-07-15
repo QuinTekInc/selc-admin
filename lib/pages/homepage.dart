@@ -4,8 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:selc_admin/components/text.dart';
-import 'package:selc_admin/pages/ccs_page.dart';
+import 'package:selc_admin/pages/class_courses_page.dart';
 import 'package:selc_admin/pages/courses_page.dart';
 import 'package:selc_admin/pages/dashboard_page.dart';
 import 'package:selc_admin/pages/department_management/departments_page.dart';
@@ -245,11 +244,11 @@ class _NavigatorItemState extends State<NavigatorItem> {
 
     Color tileBackgroundColor = isHovered ? Colors.green.shade200 : PreferencesProvider.getColor(context, 'table-background-color');
 
-    Color? textColor;
+    //Color? textColor;
 
     if(widget.selected){
       tileBackgroundColor = Colors.green.shade500;
-      textColor = Colors.green.shade400;
+      //textColor = Colors.green.shade400;
     }
 
 
