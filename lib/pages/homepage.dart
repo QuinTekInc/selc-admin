@@ -10,6 +10,7 @@ import 'package:selc_admin/pages/dashboard_page.dart';
 import 'package:selc_admin/pages/department_management/departments_page.dart';
 import 'package:selc_admin/pages/directorate/directorate_interface_page.dart';
 import 'package:selc_admin/pages/lecturer_management/lecturers_page.dart';
+import 'package:selc_admin/pages/notifications_page.dart';
 import 'package:selc_admin/pages/questions_page.dart';
 import 'package:selc_admin/pages/settings_page.dart';
 import 'package:selc_admin/pages/user_management/users_page.dart';
@@ -53,6 +54,7 @@ class _HomepageState extends State<Homepage> {
       if(isSuperuser) DirectorateInterfacePage(),
       if(isSuperuser) FilesPage(),
       if(isSuperuser) UsersPage(),
+      NotificationsPage(),
       SettingsPage(),
     ];
 
@@ -68,6 +70,7 @@ class _HomepageState extends State<Homepage> {
       if(isSuperuser) 'Directorate',
       if(isSuperuser) 'Files',
       if(isSuperuser) 'Users',
+      'Notifications',
       'Settings'
     ];
 

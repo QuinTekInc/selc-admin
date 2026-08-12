@@ -31,13 +31,19 @@ class GraphSection extends StatelessWidget {
     final Widget bestLecturerCard = buildBestLecturerCard(context, graphData['best_lecturer']);
 
 
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       spacing: 12,
       children: [
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 12, 
+          children: [bestLecturerCard, bestCourseCard].map((child)=>Expanded(child: child)).toList(),
+        ),
 
         //todo: the various graphs
 
@@ -55,17 +61,6 @@ class GraphSection extends StatelessWidget {
               child: sentimentPieChart
             ),
 
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              spacing: 12,
-              children: [
-                bestLecturerCard,
-
-                bestCourseCard
-              ],
-            )
           ]
         ),
 
@@ -332,7 +327,7 @@ class GraphSection extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(12),
-      width: MediaQuery.of(context).size.width * 0.64,
+      width: MediaQuery.of(context).size.width * 0.55,
       //height: 415,
 
       decoration: BoxDecoration(

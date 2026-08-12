@@ -7,15 +7,12 @@ import 'package:open_filex/open_filex.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/components/alert_dialog.dart';
 import 'package:selc_admin/components/button.dart';
-import 'package:selc_admin/components/charts/bar_chart.dart';
 import 'package:selc_admin/components/custom_notification_badge.dart';
 import 'package:selc_admin/components/stat_graph_section.dart';
 import 'package:selc_admin/components/server_connector.dart';
 import 'package:selc_admin/components/text.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
-import 'package:selc_admin/pages/dash_pages/admin_dash_details.dart';
-import 'package:selc_admin/pages/dash_pages/best_lecturer_card.dart';
 import 'package:selc_admin/pages/dash_pages/course_ratings_page.dart';
 import 'package:selc_admin/pages/files_page.dart';
 import 'package:selc_admin/pages/dash_pages/lecturer_ratings_page.dart';
@@ -25,8 +22,6 @@ import 'package:selc_admin/pages/user_profile_page.dart';
 import 'package:selc_admin/providers/page_provider.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 import 'package:selc_admin/providers/selc_provider.dart';
-
-import '../components/charts/pie_chart.dart';
 
 class DashboardPage extends StatefulWidget {
 
@@ -275,10 +270,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
 
 
-                          const SizedBox(width: 12,),
+                          // const SizedBox(width: 12,),
                           
-                          //todo: button to show in-depth administrator dashboard of the course evaluation
-                          DashSeeMoreButton(onPressed: () => Provider.of<PageProvider>(context, listen:false).pushPage(AdminDashPage(), 'Overall Details')),
+                          // //todo: button to show in-depth administrator dashboard of the course evaluation
+                          // DashSeeMoreButton(onPressed: () => Provider.of<PageProvider>(context, listen:false).pushPage(AdminDashPage(), 'Overall Details')),
                         ],
                       ),
                     ),

@@ -1,52 +1,44 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
 
-
 class NormalText extends StatelessWidget {
-
   final String textContent;
   final double fontSize;
   final EdgeInsetsGeometry? padding;
   final Color textColor;
   final TextAlign textAlignment;
 
-  const NormalText(
-    this.textContent,
-    {
-    super.key,
-    this.fontSize = 14,
-    this.padding,
-    this.textColor = Colors.black87,
-    this.textAlignment = TextAlign.left
-  });
+  const NormalText(this.textContent,
+      {super.key,
+      this.fontSize = 14,
+      this.padding,
+      this.textColor = Colors.black87,
+      this.textAlignment = TextAlign.left});
 
   @override
   Widget build(BuildContext context) {
-
     Text text = Text(
       textContent,
       textAlign: textAlignment,
-      style: TextStyle(  
+      style: TextStyle(
         fontSize: fontSize,
         color: textColor,
       ),
     );
 
-    return Padding(  
-      padding: (padding == null) ? const EdgeInsets.symmetric(horizontal: 8) : padding!,
+    return Padding(
+      padding: (padding == null)
+          ? const EdgeInsets.symmetric(horizontal: 8)
+          : padding!,
       child: text,
     );
   }
 }
 
-
-
 class HeaderText extends StatelessWidget {
-
   final String textContent;
   final Color? textColor;
   final TextAlign textAlignment;
@@ -54,16 +46,15 @@ class HeaderText extends StatelessWidget {
   final FontWeight fontWeight;
   final int? maxLines;
 
-  const HeaderText(this.textContent,{
-    super.key,
-    this.textColor = Colors.green,
-    this.textAlignment = TextAlign.left,
-    this.fontSize = 18,
-    this.fontWeight = FontWeight.bold,
-    this.maxLines
-  });
+  const HeaderText(this.textContent,
+      {super.key,
+      this.textColor = Colors.green,
+      this.textAlignment = TextAlign.left,
+      this.fontSize = 18,
+      this.fontWeight = FontWeight.bold,
+      this.maxLines});
 
-  factory HeaderText.appBar(String textContent){
+  factory HeaderText.appBar(String textContent) {
     return HeaderText(
       textContent,
       textColor: Colors.white,
@@ -74,24 +65,18 @@ class HeaderText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      textContent,
-      textAlign: textAlignment,
-      maxLines: maxLines,
-      style: TextStyle(
-        color: textColor,
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        fontFamily: 'Poppins'
-      )
-    );
+    return Text(textContent,
+        textAlign: textAlignment,
+        maxLines: maxLines,
+        style: TextStyle(
+            color: textColor,
+            fontSize: fontSize,
+            fontWeight: fontWeight,
+            fontFamily: 'Poppins'));
   }
 }
 
-
-
 class CustomText extends StatelessWidget {
-
   final String text;
   final Color? textColor;
   final double fontSize;
@@ -103,50 +88,65 @@ class CustomText extends StatelessWidget {
   final bool? softwrap;
   final TextOverflow? overflow;
 
-  const CustomText(this.text, {
-    super.key,
-    this.textColor,
-    this.fontSize = 14,
-    this.padding = const EdgeInsets.symmetric(horizontal: 8),
-    this.textAlignment = TextAlign.left,
-    this.fontWeight = FontWeight.normal,
-    this.fontStyle = FontStyle.normal,
-    this.maxLines,
-    this.softwrap,
-    this.overflow = TextOverflow.fade
-  });
+  const CustomText(this.text,
+      {super.key,
+      this.textColor,
+      this.fontSize = 14,
+      this.padding = const EdgeInsets.symmetric(horizontal: 8),
+      this.textAlignment = TextAlign.left,
+      this.fontWeight = FontWeight.normal,
+      this.fontStyle = FontStyle.normal,
+      this.maxLines,
+      this.softwrap,
+      this.overflow = TextOverflow.fade});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
-      child: Text(  
-        text,
-        maxLines: maxLines, 
-        softWrap: softwrap, 
-        textAlign: textAlignment,
-        overflow: overflow,
-        style: TextStyle(
-          //text-color: Colors.black87
-          color: textColor ?? PreferencesProvider.getColor(context, 'text-color'),
-          fontSize: fontSize + Provider.of<PreferencesProvider>(context).preferences.fontScale,
-          fontWeight: fontWeight,
-          fontStyle: fontStyle,
-          fontFamily: "Poppins"
-        )
-      ),
+      child: Text(text,
+          maxLines: maxLines,
+          softWrap: softwrap,
+          textAlign: textAlignment,
+          overflow: overflow,
+          style: TextStyle(
+              //text-color: Colors.black87
+              color: textColor ??
+                  PreferencesProvider.getColor(context, 'text-color'),
+              fontSize: fontSize +
+                  Provider.of<PreferencesProvider>(context)
+                      .preferences
+                      .fontScale,
+              fontWeight: fontWeight,
+              fontStyle: fontStyle,
+              fontFamily: "Poppins")),
     );
   }
 }
 
+class FragmentHeader extends StatelessWidget {
+  final String title;
+  final String? subtitle;
 
+  const FragmentHeader({super.key, required this.title, this.subtitle});
 
-
-
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: 3,
+      children: [
+        HeaderText(title),
+        if (subtitle != null) CustomText(subtitle!)
+      ],
+    );
+  }
+}
 
 //todo: custom textfield
 class CustomTextField extends StatelessWidget {
-
   final TextEditingController controller;
   final String? hintText;
   final IconData? leadingIcon;
@@ -161,95 +161,71 @@ class CustomTextField extends StatelessWidget {
   final TextAlign textAlignment;
   final bool enabled;
 
-  const CustomTextField({
-    super.key,
-    required this.controller,
-    this.hintText,
-    this.leadingIcon,
-    this.onChanged,
-    this.maxLines = 1,
-    this.suffix,
-    this.keyboardType = TextInputType.text,
-    this.obscureText = false,
-    this.useLabel = false,
-    this.enabled = true,
-    this.fillColor,
-    this.inputFormatters,
-    this.textAlignment = TextAlign.left
-  });
+  const CustomTextField(
+      {super.key,
+      required this.controller,
+      this.hintText,
+      this.leadingIcon,
+      this.onChanged,
+      this.maxLines = 1,
+      this.suffix,
+      this.keyboardType = TextInputType.text,
+      this.obscureText = false,
+      this.useLabel = false,
+      this.enabled = true,
+      this.fillColor,
+      this.inputFormatters,
+      this.textAlignment = TextAlign.left});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-
-      child: TextField(  
+      child: TextField(
         controller: controller,
         onChanged: onChanged,
-
         maxLines: maxLines,
         obscureText: obscureText,
         textAlign: textAlignment,
-
-        style: TextStyle(
-          fontFamily: "Poppins"
-        ),
-
-
-        cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.green.shade300 : Colors.black45,
-
+        style: TextStyle(fontFamily: "Poppins"),
+        cursorColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.green.shade300
+            : Colors.black45,
         decoration: InputDecoration(
-
-          contentPadding: EdgeInsets.all(8),
-
-          border: OutlineInputBorder(  
-            borderSide: const BorderSide(
-              width: 1.5,
-              color: Colors.black26
+            contentPadding: EdgeInsets.all(8),
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(width: 1.5, color: Colors.black26),
+              borderRadius: BorderRadius.circular(12),
             ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-
-
-          enabled: enabled,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              width: 1.5,
-              color: Colors.black26
-            )
-          ),
-
-          
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none
-          ),
-
-          focusedBorder: OutlineInputBorder(  
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              width: 1.5,
-              color: Colors.green
-            )
-          ),
-
-          hintText: hintText,
-          hintStyle: TextStyle(
-            fontFamily: "Poppins",
-            fontWeight: FontWeight.w500,
-            color:  PreferencesProvider.getColor(context, 'placeholder-text-color')
-          ),
-
-          filled: true,
-          fillColor: fillColor ?? PreferencesProvider.getColor(context, 'alt-primary-color'),
-
-          prefixIcon: leadingIcon == null ? null : Icon(leadingIcon),
-          suffix: suffix,
-          
-          label: (!useLabel || hintText == null) ? null : CustomText(hintText!, fontSize: 15, textColor:  PreferencesProvider.getColor(context, 'placeholder-text-color'),)
-        ),
-
+            enabled: enabled,
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(width: 1.5, color: Colors.black26)),
+            disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(width: 1.5, color: Colors.green)),
+            hintText: hintText,
+            hintStyle: TextStyle(
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w500,
+                color: PreferencesProvider.getColor(
+                    context, 'placeholder-text-color')),
+            filled: true,
+            fillColor: fillColor ??
+                PreferencesProvider.getColor(context, 'alt-primary-color'),
+            prefixIcon: leadingIcon == null ? null : Icon(leadingIcon),
+            suffix: suffix,
+            label: (!useLabel || hintText == null)
+                ? null
+                : CustomText(
+                    hintText!,
+                    fontSize: 15,
+                    textColor: PreferencesProvider.getColor(
+                        context, 'placeholder-text-color'),
+                  )),
         inputFormatters: inputFormatters,
       ),
     );
@@ -259,26 +235,23 @@ class CustomTextField extends StatelessWidget {
 //todo: custom password field
 
 class CustomPasswordField extends StatefulWidget {
-
   final TextEditingController controller;
   final String? hintText;
   final bool useLabel;
   final void Function(String)? onChanged;
 
-  const CustomPasswordField({
-    super.key, 
-    required this.controller,
-    this.hintText,
-    this.useLabel = true,
-    this.onChanged
-  });
+  const CustomPasswordField(
+      {super.key,
+      required this.controller,
+      this.hintText,
+      this.useLabel = true,
+      this.onChanged});
 
   @override
   State<CustomPasswordField> createState() => _CustomPasswordFieldState();
 }
 
 class _CustomPasswordFieldState extends State<CustomPasswordField> {
-
   bool obscureText = true;
 
   @override
@@ -295,23 +268,20 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
   }
 
   Widget buildTrailingIconButton() => GestureDetector(
-    onTap: (){
-      setState(() {
-        obscureText = !obscureText;
-      });
-    }, 
-    child: Icon(obscureText ?  CupertinoIcons.eye: CupertinoIcons.eye_slash, color: Colors.green, size: 20,)
-  );
+      onTap: () {
+        setState(() {
+          obscureText = !obscureText;
+        });
+      },
+      child: Icon(
+        obscureText ? CupertinoIcons.eye : CupertinoIcons.eye_slash,
+        color: Colors.green,
+        size: 20,
+      ));
 }
-
-
-
-
-
 
 //todo: a six digit code otp text field.
 class OtpTextField extends StatefulWidget {
-
   final OtpTextEditingController controller;
 
   const OtpTextField({super.key, required this.controller});
@@ -321,8 +291,8 @@ class OtpTextField extends StatefulWidget {
 }
 
 class _OtpTextFieldState extends State<OtpTextField> {
-
-  final List<TextEditingController> textControllers = List.generate(6, (index) => TextEditingController());
+  final List<TextEditingController> textControllers =
+      List.generate(6, (index) => TextEditingController());
 
   @override
   Widget build(BuildContext context) {
@@ -331,62 +301,48 @@ class _OtpTextFieldState extends State<OtpTextField> {
       child: Row(
         //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
-      
+
         children: List<Widget>.generate(6, (index) {
-
           return Expanded(
-            
-            child: CustomTextField(
-              controller: textControllers[index],
-              textAlignment: TextAlign.center,
-              keyboardType: TextInputType.number,
+              child: CustomTextField(
+            controller: textControllers[index],
+            textAlignment: TextAlign.center,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(1),
+              FilteringTextInputFormatter.digitsOnly
+            ],
+            onChanged: (newValue) {
+              if (textControllers[index].text.length == 1 && index != 5)
+                FocusScope.of(context).nextFocus();
 
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(1),
-                FilteringTextInputFormatter.digitsOnly
-              ],
+              String otpText = '';
 
-              onChanged: (newValue){
-                    
-                if(textControllers[index].text.length == 1 && index != 5) FocusScope.of(context).nextFocus();
+              //todo: collect the text from every text field in the Otp Text field controllers.
+              for (TextEditingController textController in textControllers) {
+                otpText += textController.text;
+              }
 
-                String otpText = '';
-
-                //todo: collect the text from every text field in the Otp Text field controllers. 
-                for(TextEditingController textController in textControllers){
-                 otpText += textController.text;
-                }
-
-
-                widget.controller.text = otpText;
-
-              },
-            )
-          );
+              widget.controller.text = otpText;
+            },
+          ));
         }),
       ),
     );
   }
 }
 
-class OtpTextEditingController{
-
+class OtpTextEditingController {
   String text;
 
-  OtpTextEditingController({this.text=''});
+  OtpTextEditingController({this.text = ''});
 
-  void clear(){
+  void clear() {
     text = '';
   }
-
 }
 
-
-
-
-
 class CustomDropdownButton<T> extends StatefulWidget {
-
   final List<T> items;
   final DropdownController controller;
   final Function(T? newValue)? onChanged;
@@ -394,108 +350,78 @@ class CustomDropdownButton<T> extends StatefulWidget {
   final IconData? icon;
   final Color? backgroundColor;
 
-  const CustomDropdownButton({
-    super.key,
-    required this.controller, 
-    this.hint,
-    this.icon,
-    required this.items, 
-    required this.onChanged,
-    this.backgroundColor
-  });
+  const CustomDropdownButton(
+      {super.key,
+      required this.controller,
+      this.hint,
+      this.icon,
+      required this.items,
+      required this.onChanged,
+      this.backgroundColor});
 
   @override
   State<CustomDropdownButton> createState() => _CustomDropdownButtonState<T>();
 }
 
 class _CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
-
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.symmetric(horizontal: 8),
-
       decoration: BoxDecoration(
-
-        color: widget.backgroundColor ?? PreferencesProvider.getColor(context, 'alt-primary-color'),
-        borderRadius: BorderRadius.circular(12),
-
-        border: Border.all(
-          color: Colors.black26,
-          width: 1.5
-        )
-      ),
-
+          color: widget.backgroundColor ??
+              PreferencesProvider.getColor(context, 'alt-primary-color'),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black26, width: 1.5)),
       child: DropdownButton<T>(
-        value: widget.controller.value,
+          value: widget.controller.value,
+          icon: Icon(
+            widget.icon ?? Icons.arrow_drop_down,
+            color: Colors.green.shade400,
+            size: widget.icon == null ? 28 : null,
+          ),
+          isExpanded: true,
+          isDense: true,
+          underline: SizedBox(),
+          hint: widget.hint != null
+              ? CustomText(
+                  widget.hint!,
+                  fontWeight: FontWeight.w600,
+                  textColor: PreferencesProvider.getColor(
+                      context, 'placeholder-text-color'),
+                )
+              : null,
+          items: List<DropdownMenuItem<T>>.generate(
+              widget.items.length,
+              (index) => DropdownMenuItem<T>(
+                    value: widget.items[index],
+                    child: CustomText(widget.items[index].toString()),
+                  )),
+          borderRadius: BorderRadius.circular(12),
+          //Colors.grey.shade200
+          dropdownColor: PreferencesProvider.getColor(context, 'primary-color'),
+          focusColor: Colors.green.shade100,
+          onChanged: (newValue) {
+            setState(() => widget.controller.value = newValue);
 
-        icon: Icon(
-          widget.icon ?? Icons.arrow_drop_down, 
-          color: Colors.green.shade400, 
-          size: widget.icon == null ? 28 : null,
-        ),
-
-        isExpanded: true,
-        isDense: true,
-
-        underline: SizedBox(),
-
-        hint: widget.hint != null ? CustomText(
-          widget.hint!,
-          fontWeight: FontWeight.w600,
-          textColor: PreferencesProvider.getColor(context, 'placeholder-text-color'),
-        ) : null,
-
-        items: List<DropdownMenuItem<T>>.generate(  
-          widget.items.length,
-          (index) => DropdownMenuItem<T>(
-            value: widget.items[index],
-            child: CustomText(
-              widget.items[index].toString()
-            ),
-          )
-        ), 
-
-
-        borderRadius: BorderRadius.circular(12),
-        //Colors.grey.shade200
-        dropdownColor: PreferencesProvider.getColor(context, 'primary-color'),
-        focusColor: Colors.green.shade100,
-
-        onChanged: (newValue) {
-
-          setState(() => widget.controller.value = newValue);
-          
-
-          if(widget.onChanged != null){
-            widget.onChanged!.call(newValue);
-          }
-          
-        }
-      ),
+            if (widget.onChanged != null) {
+              widget.onChanged!.call(newValue);
+            }
+          }),
     );
   }
 }
 
-
-class DropdownController<T>{
-
+class DropdownController<T> {
   T? value;
 
   DropdownController({this.value});
 
   void reset() => value = null;
-
 }
 
-
-
-
-
 class CollectionPlaceholder extends StatelessWidget {
-
   final String? title;
   final String detail;
 
@@ -504,18 +430,19 @@ class CollectionPlaceholder extends StatelessWidget {
 
   final IconData? icon;
 
-  CollectionPlaceholder({
-    super.key,
-    this.title,
-    required this.detail,
-    this.icon,
-    this.isRefreshable = false,
-    this.onPressed
-  });
+  CollectionPlaceholder(
+      {super.key,
+      this.title,
+      required this.detail,
+      this.icon,
+      this.isRefreshable = false,
+      this.onPressed});
 
-
-  factory CollectionPlaceholder.withRefresh({
-    IconData? icon, String? title, required String detail, required VoidCallback onPressed}){
+  factory CollectionPlaceholder.withRefresh(
+      {IconData? icon,
+      String? title,
+      required String detail,
+      required VoidCallback onPressed}) {
     return CollectionPlaceholder(
       icon: icon,
       title: title,
@@ -533,43 +460,36 @@ class CollectionPlaceholder extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 8,
         children: [
-
-          if(title != null)CustomText(
-            title!,
-            fontWeight: FontWeight.bold,
-            textAlignment: TextAlign.center,
-          ),
-
-          CustomText(  
+          if (title != null)
+            CustomText(
+              title!,
+              fontWeight: FontWeight.bold,
+              textAlignment: TextAlign.center,
+            ),
+          CustomText(
             detail,
             textAlignment: TextAlign.center,
           ),
-
-
-          if(isRefreshable) TextButton(
-            onPressed: onPressed ?? (){},
-            child: CustomText(
-              'Refresh',
-              textColor: Colors.green.shade400,
-              fontWeight: FontWeight.w600,
-            ),
-          )
+          if (isRefreshable)
+            TextButton(
+              onPressed: onPressed ?? () {},
+              child: CustomText(
+                'Refresh',
+                textColor: Colors.green.shade400,
+                fontWeight: FontWeight.w600,
+              ),
+            )
         ],
       ),
-    
     );
   }
 }
 
-
-
-
 //todo: hello world
 class CustomVerticalDivider extends StatelessWidget {
-
   final double height;
   final Color? color;
-  const CustomVerticalDivider({super.key, this.height=250, this.color});
+  const CustomVerticalDivider({super.key, this.height = 250, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -581,21 +501,16 @@ class CustomVerticalDivider extends StatelessWidget {
   }
 }
 
-
-
-
-
 class TableContainer extends StatelessWidget {
-  
   final EdgeInsets padding;
   final EdgeInsets margin;
-  final double? height; 
+  final double? height;
   final double width;
 
   final Widget child;
 
   const TableContainer({
-    super.key, 
+    super.key,
     this.padding = const EdgeInsets.all(8),
     this.margin = EdgeInsets.zero,
     this.height,
@@ -605,51 +520,41 @@ class TableContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(  
+    return Container(
       padding: const EdgeInsets.all(8),
       width: double.infinity,
-      
-      decoration: BoxDecoration(  
-        borderRadius: BorderRadius.circular(12),
-        color: PreferencesProvider.getColor(context, 'table-background-color')
-      ),
-
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color:
+              PreferencesProvider.getColor(context, 'table-background-color')),
       child: child,
     );
   }
 }
 
-
-
-
 class TableHeaderContainer extends StatelessWidget {
-
   final List<Widget> headerChildren;
-  
+
   final MainAxisAlignment mainAxisAlignment;
   final CrossAxisAlignment crossAxisAlignment;
   final double spacing;
 
-  const TableHeaderContainer({
-    super.key, 
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.crossAxisAlignment = CrossAxisAlignment.center,
-    this.spacing = 0,
-    this.headerChildren = const[]
-  });
+  const TableHeaderContainer(
+      {super.key,
+      this.mainAxisAlignment = MainAxisAlignment.start,
+      this.crossAxisAlignment = CrossAxisAlignment.center,
+      this.spacing = 0,
+      this.headerChildren = const []});
 
   @override
   Widget build(BuildContext context) {
-    return Container(  
+    return Container(
       padding: const EdgeInsets.all(8),
       width: double.infinity,
-      
-      decoration: BoxDecoration(  
-        borderRadius: BorderRadius.circular(12),
-        color: PreferencesProvider.getColor(context, 'table-header-color')
-      ),
-
-      child: Row(  
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: PreferencesProvider.getColor(context, 'table-header-color')),
+      child: Row(
         mainAxisAlignment: mainAxisAlignment,
         crossAxisAlignment: crossAxisAlignment,
         spacing: spacing,
@@ -658,4 +563,3 @@ class TableHeaderContainer extends StatelessWidget {
     );
   }
 }
-

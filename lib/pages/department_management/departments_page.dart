@@ -77,7 +77,6 @@ class _DepartmentsPageState extends State<DepartmentsPage> {
 
               Spacer(),
 
-
               TextButton.icon(
                 onPressed: loadData,
                 icon: Icon(CupertinoIcons.refresh, color: Colors.green.shade300,),

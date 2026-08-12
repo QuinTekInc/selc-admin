@@ -13,7 +13,6 @@ import 'package:selc_admin/components/custom_tab_bar.dart';
 import 'package:selc_admin/components/stat_graph_section.dart';
 import 'package:selc_admin/components/utils.dart';
 import 'package:selc_admin/model/models.dart';
-import 'package:selc_admin/pages/dashboard_page.dart';
 import 'package:selc_admin/pages/evaluations/eval_page.dart';
 import 'package:selc_admin/pages/lecturer_management/lecturer_info_page.dart';
 import 'package:selc_admin/providers/pref_provider.dart';
@@ -53,9 +52,6 @@ class _DepartmentProfilePageState extends State<DepartmentProfilePage> {
     //sort the lecturers who are in this department
     lecturers = Provider.of<SelcProvider>(context, listen: false).lecturers
                         .where((lecturer) => lecturer.department == widget.department.departmentName).toList();
-
-
-
 
     loadData();
 

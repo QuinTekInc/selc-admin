@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                 backgroundColor: Colors.green.shade400,
                 radius: 50,
                 child: Icon(
-                  CupertinoIcons.person,
+                  CupertinoIcons.lock,
                   size: 50,
                   color: Colors.white,
                 ),
